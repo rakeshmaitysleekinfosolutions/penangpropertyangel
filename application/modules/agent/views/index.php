@@ -1,7 +1,12 @@
 <div class="content container-fluid">
     <div class="row">
-        <?php if(hasMessage('warning')) { ?>
-            <div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i><?php echo getMessage('warning');?>
+        <?php if(hasMessage('message')) { ?>
+            <div class="alert alert-info alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getMessage('message');?>
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        <?php } ?>
+        <?php if(getWarning('message')) { ?>
+            <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getWarning('message');?>
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         <?php } ?>
@@ -10,14 +15,14 @@
         </div>
 
         <div class="col-sm-8 text-right m-b-30">
-            <button type="submit" class="btn btn-primary"><i class="fa fa-trash"></i> Delete</button>
+            <button type="button" class="btn btn-primary" id="delete"><i class="fa fa-trash"></i> Delete</button>
             <a href="<?php echo $addLink;?>" class="btn btn-primary"><i class="fa fa-plus"></i> Add</a>
         </div>
     </div>
 <div class="row">
     <div class="col-md-12">
         <div class="table-responsive">
-            <table class="table table-striped custom-table ">
+            <table class="table table-striped custom-table" id="agentTable">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 2%;">
@@ -44,9 +49,9 @@
 <script>
     var myLabel             = myLabel || {};
     myLabel.baseUrl         = '<?php echo base_url();?>';
-    myLabel.users           = '<?php echo admin_url('agent/onLoadDatatableEventHandler');?>';
-    myLabel.updateStatus    = '<?php echo admin_url('agent/onChangeStatusEventHandler');?>';
-    myLabel.delete          = '<?php echo admin_url('agent/delete');?>';
-    myLabel.states          = '<?php echo admin_url('agent/states');?>';
-    myLabel.edit            = '<?php echo admin_url('agent/edit/');?>';
+    myLabel.agents           = '<?php echo url('agent/onLoadDatatableEventHandler');?>';
+    myLabel.updateStatus    = '<?php echo url('agent/onChangeStatusEventHandler');?>';
+    myLabel.delete          = '<?php echo url('agent/delete');?>';
+    myLabel.states          = '<?php echo url('agent/states');?>';
+    myLabel.edit            = '<?php echo url('agent/edit/');?>';
 </script>

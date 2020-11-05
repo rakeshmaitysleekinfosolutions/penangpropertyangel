@@ -20,18 +20,17 @@ class AdminController extends BaseController {
      */
     private $meta;
     private $currencyArray;
-    public function __constructor() {
-        parent::__constructor();
-        $this->getTemplate();
+    public function __construct() {
+        parent::__construct();
+        $this->setLayout('layout/admin');
 
     }
     public function setId($id) {
         $this->id = $id;
         return $this;
     }
-    public function getTemplate() {
-        $this->load->library('template');
-        return $this->template->set_template('layout/admin');
+    public function setLayout($layout) {
+        return $this->template->set_template($layout);
     }
     public function setLocaleKey($localeKey) {
         $this->localeKey = $localeKey;
@@ -68,5 +67,10 @@ class AdminController extends BaseController {
 	
     public function uuid() {
         return (time() * 3) + rand(1, 15);
+    }
+
+    public function render($view, $data = null) {
+        $this->template->content->view($view, $data);
+        $this->template->publish();
     }
 }

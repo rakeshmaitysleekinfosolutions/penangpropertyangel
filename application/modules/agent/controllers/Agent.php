@@ -3,9 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 use Carbon\Carbon;
 class Agent extends AdminController {
 
-    public function __constructor() {
+    private $agent;
+    private $address;
+
+    public function __construct() {
         parent::__construct();
-        $this->template->set_template('layout/admin');
+        if(!isAdmin()) {
+            redirect(url('admin/'));
+        }
     }
 
     /**
@@ -15,7 +20,7 @@ class Agent extends AdminController {
         $this->data['salt'] = token(9);
         if (!empty($this->agent)) {
             $this->data['title'] = 'Edit Agent';
-            $this->data['route'] = url('agent/update');
+            $this->data['route'] = url('agent/update/'.$this->agent->id);
             $this->data['uuid'] = $this->agent->uuid;
         } else {
             $this->data['title'] = 'Add Agent';
@@ -62,7 +67,7 @@ class Agent extends AdminController {
         } elseif (!empty($this->agent)) {
             $this->data['password'] = $this->agent->password;
         } else {
-            $this->data['password'] = '';
+            $this->data['password'] = sha1($this->data['salt'] . sha1($this->data['salt'] . sha1(123456)));;
         }
         // Gender
         if (!empty($this->input->post('gender'))) {
@@ -78,7 +83,7 @@ class Agent extends AdminController {
         } elseif (!empty($this->agent)) {
             $this->data['birthday'] = $this->agent->birthday;
         } else {
-            $this->data['birthday'] = 0;
+            $this->data['birthday'] = '';
         }
         // NRIC
         if (!empty($this->input->post('nric'))) {
@@ -86,7 +91,7 @@ class Agent extends AdminController {
         } elseif (!empty($this->agent)) {
             $this->data['nric'] = $this->agent->nric;
         } else {
-            $this->data['nric'] = 0;
+            $this->data['nric'] = '';
         }
         // Telephone
         if (!empty($this->input->post('phone'))) {
@@ -183,18 +188,18 @@ class Agent extends AdminController {
         } else {
             $this->data['status'] = 0;
         }
-        if (!empty($this->input->post('logo'))) {
-            $this->data['logo'] = $this->input->post('logo');
+        if (!empty($this->input->post('image'))) {
+            $this->data['image'] = $this->input->post('image');
         } elseif (!empty($this->agent)) {
-            $this->data['logo'] = $this->agent->logo;
+            $this->data['image'] = $this->agent->image;
         } else {
-            $this->data['logo'] = '';
+            $this->data['image'] = '';
         }
 
-        if (!empty($this->input->post('logo')) && is_file(DIR_IMAGE . $this->input->post('logo'))) {
-            $this->data['thumb'] = $this->resize($this->input->post('logo'), 100, 100);
-        } elseif (!empty($this->agent) && is_file(DIR_IMAGE . $this->agent->logo)) {
-            $this->data['thumb'] = $this->resize($this->agent->logo, 100, 100);
+        if (!empty($this->input->post('image')) && is_file(DIR_IMAGE . $this->input->post('image'))) {
+            $this->data['thumb'] = $this->resize($this->input->post('image'), 100, 100);
+        } elseif (!empty($this->agent) && is_file(DIR_IMAGE . $this->agent->image)) {
+            $this->data['thumb'] = $this->resize($this->agent->image, 100, 100);
         } else {
             $this->data['thumb'] = $this->resize('no_image.png', 100, 100);
         }
@@ -207,10 +212,9 @@ class Agent extends AdminController {
      *
      */
     public function index() {
-
         //$this->beforeRender();
 
-        $this->data['title'] = 'agent';
+        $this->data['title'] = 'Mange Your Agent';
         //$this->data['datatable'] = array();
         $this->data['columns'][] = 'NO';
         $this->data['columns'][] = 'FB';
@@ -225,14 +229,13 @@ class Agent extends AdminController {
         $this->data['columns'][] = 'Occupation';
         $this->data['columns'][] = 'Address';
         $this->data['columns'][] = 'Avatar';
+        $this->data['columns'][] = 'Status';
         $this->data['columns'][] = 'CrtDt';
         $this->data['columns'][] = 'UpdDt';
         //$this->data['columns'][] = 'Action';
 
         $this->data['addLink'] = url('agent/create');
-        $this->template->set_template('layout/admin');
-        $this->template->content->view('index', $this->data);
-        $this->template->publish();
+        render('index', $this->data);
     }
 
     /**
@@ -240,10 +243,7 @@ class Agent extends AdminController {
      */
     public function create() {
         $this->setData();
-        $this->template->set_template('layout/admin');
-        $this->template->content->view('agent/create', $this->data);
-        $this->template->publish();
-
+        render('agent/create', $this->data);
     }
 
     /**
@@ -251,6 +251,11 @@ class Agent extends AdminController {
      */
     public function store() {
         try {
+            $this->agent = Agent_model::factory()->getAgentByEmail($this->input->post('email'));
+            if ($this->agent) {
+                setWarning('message', "Warning: Agent already exists on {$this->agent->email} this mail id!");
+                redirect(url('agent/create/'));
+            }
             $this->setData();
             Agent_model::factory()->insert([
                 'firstname' => $this->data['firstname'],
@@ -259,33 +264,139 @@ class Agent extends AdminController {
                 'uuid'      => $this->data['uuid'],
                 'salt'      => $this->data['salt'],
                 'password'  => $this->data['password'],
+                'gender'    => $this->data['gender'],
+                'birthday'  => $this->data['birthday'],
+                'nric'      => $this->data['nric'],
+                'phone'     => $this->data['phone'],
+                'mobile'    => $this->data['mobile'],
+                'fax'       => $this->data['fax'],
+                'occupation'=> $this->data['occupation'],
+                'status'    => $this->data['status'],
+                'image'     => $this->data['image'],
+
             ]);
-            $this->create();
+            AgentAddress_model::factory()->insert([
+                'agent_id'   => Agent_model::factory()->getLastInsertID(),
+                'firstname' => $this->data['firstname'],
+                'lastname'  => $this->data['lastname'],
+                'address_1' => $this->data['address_1'],
+                'country_id'=> $this->data['country_id'],
+                'state_id'  => $this->data['state_id'],
+                'city'      => $this->data['city'],
+                'postcode'  => $this->data['postcode'],
+            ]);
+            setMessage('message', "Success: You have modified agent! ");
+            redirect(url('agent/create/'));
+            //$this->create();
         } catch (Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
     }
-    public function edit($id) {}
-    public function update() {}
-    public function delete() {}
+    public function edit($id) {
+        $this->agent = Agent_model::factory()->findOne($id);
+        if(!$this->agent) {
+            setMessage('message', 'Info: Agent does not exists!');
+            redirect(url('agent'));
+        }
+        $this->address = $this->agent->address;
+        $this->setData();
+        render('agent/edit', $this->data);
+    }
+    public function update($id) {
+        try {
+            $this->setData();
+            Agent_model::factory()->update([
+                'firstname' => $this->data['firstname'],
+                'lastname'  => $this->data['lastname'],
+                'email'     => $this->data['email'],
+                'uuid'      => $this->data['uuid'],
+                'salt'      => $this->data['salt'],
+                'password'  => $this->data['password'],
+                'gender'    => $this->data['gender'],
+                'birthday'  => $this->data['birthday'],
+                'nric'      => $this->data['nric'],
+                'phone'     => $this->data['phone'],
+                'mobile'    => $this->data['mobile'],
+                'fax'       => $this->data['fax'],
+                'occupation'=> $this->data['occupation'],
+                'status'    => $this->data['status'],
+                'image'     => $this->data['image'],
+
+            ],['id' => $id]);
+            AgentAddress_model::factory()->update([
+                'agent_id'   => $id,
+                'firstname' => $this->data['firstname'],
+                'lastname'  => $this->data['lastname'],
+                'address_1' => $this->data['address_1'],
+                'country_id'=> $this->data['country_id'],
+                'state_id'  => $this->data['state_id'],
+                'city'      => $this->data['city'],
+                'postcode'  => $this->data['postcode'],
+            ], ['agent_id' => $id]);
+            setMessage('message', "Success: You have modified agent! ");
+            redirect(url('agent/edit/'. $id));
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+
+    }
+    public function delete() {
+        if($this->isAjaxRequest()) {
+            $this->request = $this->input->post();
+
+            if(!empty($this->request['selected']) && isset($this->request['selected'])) {
+                if(array_key_exists('selected', $this->request) && is_array($this->request['selected'])) {
+                    $this->selected = $this->request['selected'];
+                }
+            }
+            if($this->selected) {
+                foreach ($this->selected as $productId) {
+                    Agent_model::factory()->delete($productId);
+                    AgentAddress_model::factory()->delete(['agent_id' => $productId]);
+                }
+                return $this->output
+                    ->set_content_type('application/json')
+                    ->set_status_header(200)
+                    ->set_output(json_encode(array('data' => $this->onLoadDatatableEventHandler(), 'status' => true,'message' => 'Record has been successfully deleted')));
+            }
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(200)
+                ->set_output(json_encode(array('data' => $this->onLoadDatatableEventHandler(), 'status' => false, 'message' => 'Sorry! we could not delete this record')));
+
+        }
+    }
     public function validateForm() {}
     public function onLoadDatatableEventHandler() {
-        $this->load->model('Agent_model', 'Agent_model');
-        $this->results = $this->agent_model->findAll();
+        $this->results = Agent_model::factory()->findAll();
         if($this->results) {
             foreach($this->results as $result) {
                 $this->rows[] = array(
                     'id'			=> $result->id,
+                    'uuid'			=> $result->uuid,
                     'firstname'		=> $result->firstname,
                     'lastname' 		=> $result->lastname,
                     'email' 		=> $result->email,
+                    'gender' 		=> $result->gender,
+                    'birthday' 		=> $result->birthday,
+                    'phone' 		=> $result->phone,
+                    'mobile' 		=> $result->mobile,
+                    'occupation' 	=> $result->occupation,
+                    'address' 	    => $result->address->address_1,
+                    'image' 	    => $result->image,
+                    'nric' 	        => $result->nric,
+                    'fax' 	        => $result->fax,
                     'status' 		=> ($result->status && $result->status == 1) ? 1 : 0,
-                    'created_at'    => Carbon::createFromTimeStamp(strtotime($result->created_at))->diffForHumans(),
-                    'updated_at'    => ($result->updated_at) ? Carbon::createFromTimeStamp(strtotime($result->updated_at))->diffForHumans() : ''
+                    'created_at'    => $result->created_at,
+                    'updated_at'    => $result->updated_at
                 );
             }
             $i = 0;
+            $counter = 1;
             foreach($this->rows as $row) {
+
+
                 $selected = ($row['status']) ? 'selected' : '';
                 $this->data[$i][] = '<td class="text-center">
 											<label class="css-control css-control-primary css-checkbox">
@@ -293,36 +404,35 @@ class Agent extends AdminController {
 												<span class="css-control-indicator"></span>
 											</label>
 										</td>';
-                $this->data[$i][] = '<td>'.$row['firstname'].'</td>';
-                $this->data[$i][] = '<td>'.$row['lastname'].'</td>';
+                $this->data[$i][] = '<td>'.$counter.'</td>';
+                $this->data[$i][] = '<td>'.$row['uuid'].'</td>';
                 $this->data[$i][] = '<td>'.$row['email'].'</td>';
-//					$this->data[$i][] = '<td>
-//											<div class="material-switch pull-right">
-//											<input data-id="'.$row['id'].'" class="checkboxStatus" id="chat_module" type="checkbox" value="'.$row['status']['value'].'" '.$checked.'/>
-//											<label for="chat_module" class="label-success"></label>
-//										</div>
-//                                        </td>';
+                $this->data[$i][] = '<td>'.$row['firstname'].' '.$row['lastname'].'</td>';
+                $this->data[$i][] = '<td>'.$row['gender'].'</td>';
+                $this->data[$i][] = '<td>'.$row['birthday'].'</td>';
+                $this->data[$i][] = '<td>'.$row['nric'].'</td>';
+                $this->data[$i][] = '<td>'.$row['phone'].'</td>';
+                $this->data[$i][] = '<td>'.$row['mobile'].'</td>';
+                $this->data[$i][] = '<td>'.$row['fax'].'</td>';
+                $this->data[$i][] = '<td>'.$row['occupation'].'</td>';
+                $this->data[$i][] = '<td>'.$row['address'].'</td>';
+                $this->data[$i][] = '<td><img src="'.resize($row['image'],100,100).'"></td>';
                 $this->data[$i][] = '<td>
-                                            <select data-id="'.$row['id'].'" name="status" class="select floating checkboxStatus" id="input-payment-status" >
-                                                <option value="0" '.$selected.'>Inactive</option>
-                                                <option value="1" '.$selected.'>Active</option>
-                                            </select>
-                                        </td>';
+                                        <select data-id="'.$row['id'].'" name="status" class="form-control select floating updateStatus" id="input-payment-status" >
+                                            <option value="0" '.$selected.'>Inactive</option>
+                                            <option value="1" '.$selected.'>Active</option>
+                                        </select>
+                                     </td>';
                 $this->data[$i][] = '<td>'.$row['created_at'].'</td>';
                 $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
                 $this->data[$i][] = '<td class="text-right">
-	                            <div class="dropdown">
-	                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
-	                                <ul class="dropdown-menu pull-right">
-	                                    <li><a class="edit" href="javascript:void(0);" data-id="'.$row['id'].'" data-toggle="modal" data-target="#edit_client"><i class="fa fa-pencil m-r-5"></i> Edit</a></li>
-	                                    <li><a class="delete" href="#" data-toggle="modal" data-target="#delete_client"><i class="fa fa-trash-o m-r-5"></i> Delete</a></li>
-	                                </ul>
-	                            </div>
+	                            <a href="'.url('agent/edit/').$row['id'].'" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></a> 
 	                        </td>
                         ';
 
                 //  $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
                 $i++;
+                $counter++;
             }
 
 
@@ -348,8 +458,8 @@ class Agent extends AdminController {
                 $this->agentId   = (isset($this->request['id'])) ? $this->request['id'] : '';
                 $this->status       = (isset($this->request['status'])) ? $this->request['status'] : '';
 
-                $this->load->model('Agent_model');
-                $this->agent_model->updateStatus($this->agentId, $this->status);
+
+                Agent_model::factory()->updateStatus($this->agentId, $this->status);
 
                 $this->json['status'] = 'Status has been successfully updated';
                 return $this->output
@@ -357,6 +467,24 @@ class Agent extends AdminController {
                     ->set_status_header(200)
                     ->set_output(json_encode($this->json));
             }
+        }
+    }
+    public function states() {
+        if($this->isAjaxRequest()) {
+            $json = array();
+
+            $this->country =  Country_model::factory()->findOne($this->input->post('country_id'));
+
+            if ($this->country) {
+                $json = array(
+                    'country_id'        => $this->country->id,
+                    'states'            => $this->country->states(),
+                );
+            }
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(200)
+                ->set_output(json_encode($json));
         }
     }
 }

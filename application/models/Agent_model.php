@@ -3,7 +3,7 @@
 
 class Agent_model extends BaseModel {
     
-    protected $table = "users";
+    protected $table = "agents";
 
     protected $primaryKey = 'id';
 
@@ -29,7 +29,7 @@ class Agent_model extends BaseModel {
    
 	
     public static function factory($attr = array()) {
-        return new User_model($attr);
+        return new Agent_model($attr);
     }
 
 
@@ -89,7 +89,7 @@ class Agent_model extends BaseModel {
     public function updateStatus($userId, $status) {
 //        echo $userId. $status;
 //        exit;
-        $this->db->query("UPDATE users SET status = '" . $this->db->escape_str($status) . "' WHERE id = '" . (int)$userId . "'");
+        $this->db->query("UPDATE agents SET status = '" . $this->db->escape_str($status) . "' WHERE id = '" . (int)$userId . "'");
     }
 	public function editPassword($email, $password) {
 		$this->db->query("UPDATE users SET salt = '" . $this->db->escape_str($salt = token(9)) . "', password = '" . $this->db->escape_str(sha1($salt . sha1($salt . sha1($password)))) . "', code = '' WHERE LOWER(email) = '" . $this->db->escape_str(strtolower($email)) . "'");
@@ -112,8 +112,8 @@ class Agent_model extends BaseModel {
 
     }
 
-	public function getUserByEmail($email) {
-		$query = $this->db->query("SELECT * FROM users WHERE LOWER(email) = '" . $this->db->escape_str(strtolower($email)) . "'");
+	public function getAgentByEmail($email) {
+		$query = $this->db->query("SELECT * FROM agents WHERE LOWER(email) = '" . $this->db->escape_str(strtolower($email)) . "'");
 
 		return $query->row_array();
 	}
@@ -175,7 +175,7 @@ class Agent_model extends BaseModel {
     }
 
 	public function address() {
-        return $this->hasMany('UserAddress_model', 'user_id', 'id')->get()->row_object();
+        return $this->hasOne(AgentAddress_model::class, 'agent_id', 'id');
     }
 
 //    public function getAddress() {

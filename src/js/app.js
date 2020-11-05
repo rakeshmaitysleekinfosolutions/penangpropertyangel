@@ -2,18 +2,26 @@ require('./bootstrap');
 require('./additional-methods');
 require('./jquery.validate');
 require ('./jquery.slimscroll');
-require('./datatables/datatables');
+import 'datatables.net-bs4'
 
 import 'jquery-ui/ui/widgets/datepicker.js';
 import 'select2/dist/js/select2';
-import 'sweetalert2';
+
+
 import 'summernote';
 import 'jquery-ui/ui/widgets/datepicker.js';
-
+import 'bootstrap-datepicker';
 
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+$(function () {
+    if($('.datetimepicker').length > 0 ){
+        $('.datetimepicker').datepicker({
+            format: 'dd-mm-yyyy'
+        });
     }
 });
 /**
@@ -112,22 +120,6 @@ $(document).ready(function() {
     }
 });
 
-$(document).ready(function() {
-    if($('.modal').length > 0 ){
-        var modalUniqueClass = ".modal";
-        $('.modal').on('show.bs.modal', function(e) {
-            var $element = $(this);
-            var $uniques = $(modalUniqueClass + ':visible').not($(this));
-            if ($uniques.length) {
-                $uniques.modal('hide');
-                $uniques.one('hidden.bs.modal', function(e) {
-                    $element.modal('show');
-                });
-                return false;
-            }
-        });
-    }
-});
 
 // $(document).ready(function() {
 // 	if($('.floating').length > 0 ){
@@ -197,13 +189,7 @@ $(window).resize(function(){
     }
 });
 
-$(function () {
-    if($('.datetimepicker').length > 0 ){
-        $('.datetimepicker').datetimepicker({
-            format: 'DD/MM/YYYY'
-        });
-    }
-});
+
 
 
 /*
@@ -376,6 +362,7 @@ $('#button-menu').on('click', function() {
 // Image Manager
 $(document).on('click', 'a[data-toggle=\'image\']', function(e) {
     var $element = $(this);
+    //console.log($element);
     var $popover = $element.data('bs.popover'); // element has bs popover?
 
     e.preventDefault();
@@ -387,18 +374,18 @@ $(document).on('click', 'a[data-toggle=\'image\']', function(e) {
     if ($popover) {
         return;
     }
-
+    console.log($element);
     $element.popover({
         html: true,
         placement: 'right',
         trigger: 'manual',
         content: function() {
-            return '<button type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></button> <button type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></button>';
+            return '<a type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>';
         }
     });
 
     $element.popover('show');
-
+    console.log(1);
     $('#button-image').on('click', function() {
         var $button = $(this);
         var $icon   = $button.find('> i');
@@ -438,4 +425,233 @@ $(document).on('click', 'a[data-toggle=\'image\']', function(e) {
 
         $element.popover('destroy');
     });
+});
+
+$('select[name="country_id"]').on('change', function() {
+    var country_id = $('select[name="country_id"]').find(":selected").val();
+    $.ajax({
+        url: myLabel.states,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            country_id: country_id
+        },
+        beforeSend: function() {
+            $('select[name="country_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+        },
+        complete: function() {
+            $('.fa-spin').remove();
+        },
+        success: function(json) {
+            // console.log(json);
+            // if (json['postcode_required'] == '1') {
+            //     $('input[name=\'postcode\']').parent().parent().addClass('required');
+            // } else {
+            //     $('input[name=\'postcode\']').parent().parent().removeClass('required');
+            // }
+            var html = '';
+            html = '<option value="">select option</option>';
+
+            if (json['states'] && json['states'] != '') {
+                for (var i = 0; i < json['states'].length; i++) {
+                    html += '<option value="' + json['states'][i]['id'] + '"';
+                    //console.log(json['states'][i]['id']);
+                    if (json['states'][i]['id'] == myLabel.state_id) {
+
+                        html += ' selected="selected"';
+                    }
+
+                    html += '>' + json['states'][i]['name'] + '</option>';
+                }
+            } else {
+                html += '<option value="0" selected="selected">Empty</option>';
+            }
+
+            $('select[name="state_id"]').html(html);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+$('select[name="country_id"]').trigger('change');
+
+// Agent Form Validation
+var $frmAgent = $("#frmAgent"),
+    validate = ($.fn.validate !== undefined),
+dataTable = ($.fn.dataTable !== undefined);
+if ($frmAgent.length > 0 && validate) {
+    $frmAgent.validate({
+        rules:{
+            firstname: {
+                required: true,
+                lettersonly: true
+            },
+            lastname: {
+                required: true,
+                lettersonly: true
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            "input-password": {
+                alphanumeric: true,
+                nowhitespace: true
+            },
+            "input-confirm": {
+                alphanumeric: true,
+                nowhitespace: true,
+                equalTo: "#input-password"
+            },
+            phone: {
+                integer: true
+            },
+            mobile: {
+                integer: true
+            },
+            postcode: {
+                nowhitespace: true,
+                integer: true
+            },
+        },
+        submitHandler: function (form) {
+            $.ajax({
+                type: "POST",
+                url: $(form).attr('action'),
+                dataType: "json",
+                data: $(form).serialize(),
+                beforeSend: function() {
+                    $.LoadingOverlay("show");
+                },
+                success: function (json) {
+
+                    if (json['error']) {
+                        //$('#button-register').button('reset');
+                        $.LoadingOverlay("hide");
+                        if (json['error']['warning']) {
+
+                            $('#my-container .signup-form').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        }
+                        //var i;
+
+                        for (var i in json['error']) {
+                            var element = $('#input-payment-' + i.replace('_', '-'));
+                            //console.log(element);
+                            if ($(element).parent().hasClass('input-group')) {
+                                $(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+                            } else {
+                                $(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+                            }
+                        }
+
+                        // Highlight any found errors
+                        $('.text-danger').parent().addClass('has-error');
+                    }
+                    if (json['success']) {
+                        setTimeout(function() {
+                            $('#my-container > .signup-form').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
+                            location.href = json['redirect'];
+                        },3000);
+                    }
+                }
+            });
+
+            return false; // required to block normal submit since you used ajax
+        }
+
+    });
+}
+
+if ($("#agentTable").length > 0 && dataTable) {
+    var dataTable = $('#agentTable').DataTable( {
+        "processing": true,
+        "searching" : true,
+        "paging": true,
+        "order" : [],
+        "ajax": {
+            "url": myLabel.agents,
+            "type": 'POST',
+            "dataSrc": "data"
+        },
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': '<div class="spinner"></div>'
+        },
+        "oLanguage": {
+            "sEmptyTable": "Empty Table"
+        },
+        dom: 'lBfrtip',
+        buttons: [
+            'excel', 'csv', 'pdf'
+        ],
+        "columnDefs": [ {
+            "targets": 0,
+            "orderable": false
+        },{
+            visible: false
+        } ],
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
+    }).on('change', '.updateStatus', function (e) {
+        var id      = $(this).attr('data-id');
+        var status  = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: myLabel.updateStatus,
+            cache: false,
+            data: {id: id, status: status},
+            success: function (res) {
+                if (res.status) {
+                    dataTable.ajax.reload();
+                }
+            }
+        });
+    }).on('click', '#checkAll', function () {
+        $('#agentTable input[type=checkbox]').prop('checked', this.checked);
+    });
+}
+$(document).on('click', '#delete', function (e) {
+    var selected = [];
+    $('#agentTable .selectCheckbox').each(function () {
+        if ($(this).is(":checked")) {
+            var id = $(this).data('id');
+
+            if (id != undefined || id != 0 || id != '' || id != null) {
+                selected.push(id);
+            }
+        }
+    });
+
+    if (selected.length > 0) {
+        swal({
+            title: "Confirm Delete",
+            text: "Are you want to delete this record?(Yes/No)",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url: myLabel.delete,
+                    data: {selected: selected},
+                    cache: false,
+                    success: function (res) {
+                        if (res.status === true) {
+                            swal(res.message);
+                        } else {
+                            swal(res.message);
+                        }
+
+                        dataTable.ajax.reload();
+                    }
+                });
+            }, 2000);
+
+        });
+    } else {
+        swal("You must select one record");
+    }
 });

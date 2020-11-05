@@ -35,8 +35,14 @@ class AdminDashboard extends AdminController {
 				'role'=> $usr_data['admin_role'],
 				'last_login'=> $usr_data['admin_last_login'],
 			);
-			$this->session->set_userdata('logged_in', True);
-			$this->session->set_userdata('sess_data', $sess_arr);
+			setSession('isAdmin', true);
+			setSession('loggedIn', true);
+			setSession('userId', $usr_data['admin_id']);
+			setSession('userEmail', $usr_data['admin_email']);
+			setSession('userName', $usr_data['admin_email']);
+			setSession('userLastLogin', $usr_data['admin_last_login']);
+			//$this->session->set_userdata('logged_in', True);
+			//$this->session->set_userdata('sess_data', $sess_arr);
             $settings         = Settings_model::factory()->find()->get()->row_array();
             $meta             = SettingsMetaData_model::factory()->find()->get()->row_array();
             $currencyArray    = $this->currency->getCurrency(SettingsCurrencyConfiguration_model::factory()->getCurrency($settings['id']));
@@ -75,7 +81,13 @@ class AdminDashboard extends AdminController {
 
 
 	public function admin_logout(){
-		$this->session->sess_destroy();
+        unsetSession('isAdmin');
+        unsetSession('loggedIn');
+        unsetSession('userId');
+        unsetSession('userEmail');
+        unsetSession('userName');
+        unsetSession('userLastLogin');
+		//$this->session->sess_destroy();
 		redirect('admin');
 	}
 }

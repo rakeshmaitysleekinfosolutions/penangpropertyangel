@@ -108,25 +108,31 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
     if(!function_exists('isLogged')) {
         function isLogged() {
             $ci = get_instance();
-            return ($ci->session->userdata('user_id')) && (int) $ci->session->userdata('user_id') > 0 ? (int) $ci->session->userdata('user_id') : false;
+            return ($ci->session->userdata('loggedIn')) && (int) $ci->session->userdata('loggedIn') > 0 ? (int) $ci->session->userdata('loggedIn') : false;
         }
     }
     if(!function_exists('userId')) {
         function userId() {
             $ci = get_instance();
-            return (int)$ci->session->userdata('user_id');
+            return (int)$ci->session->userdata('userId');
+        }
+    }
+    if(!function_exists('isAdmin')) {
+        function isAdmin() {
+            $ci = get_instance();
+            return (int)$ci->session->userdata('isAdmin');
         }
     }
     if(!function_exists('userName')) {
         function userName() {
             $ci = get_instance();
-            return $ci->session->userdata('user')['firstname']." ".$ci->session->userdata('user')['lastname'];
+            return $ci->session->userdata('userEmail');
         }
     }
     if(!function_exists('userEmail')) {
         function userEmail() {
             $ci = get_instance();
-            return $ci->session->userdata('user')['email'];
+            return $ci->session->userdata('userEmail');
         }
     }
     if ( ! function_exists('url')) {
@@ -169,9 +175,21 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
         }
     }
     if(!function_exists('setMessage')) {
-        function setMessage($key, $value) {
+        function setMessage($key, $value, $options = array()) {
             $ci = get_instance();
             $ci->session->set_flashdata($key, $value);
+        }
+    }
+    if(!function_exists('setWarning')) {
+        function setWarning($key, $value, $options = array()) {
+            $ci = get_instance();
+            $ci->session->set_flashdata($key, $value);
+        }
+    }
+    if(!function_exists('getWarning')) {
+        function getWarning($key) {
+            $ci = get_instance();
+            return ($ci->session->flashdata($key) && !empty($ci->session->flashdata($key))) ? $ci->session->flashdata($key) : '';
         }
     }
     if(!function_exists('getMessage')) {
@@ -462,6 +480,14 @@ if(!function_exists('currencyFormat')) {
         }
 
         return $string;
+    }
+    if(!function_exists('render')) {
+        function render($view, $data = null) {
+            $ci = get_instance();
+            $ci->load->library('template');
+            $ci->template->content->view($view, $data);
+            $ci->template->publish();
+        }
     }
 }
 ?>
