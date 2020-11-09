@@ -10,24 +10,26 @@ class BaseController extends MX_Controller {
 	private $level = 0;
     private $output;
     
-    public function __constructor() {
-         parent::__constructor();
+    public function __construct() {
+         parent::__construct();
          $this->load->library('security');
 
 	}
-    
+    public function setLayout($layout) {
+        return $this->template->set_template($layout);
+    }
     protected function dd($attr) {
         echo "<pre>";
         print_r($attr);
         die();
     }
-    protected function isAjaxRequest() {
+    public function isAjaxRequest() {
         if ($this->input->is_ajax_request()) {
             return true;
         }
          return false;
     }
-    protected function isPost() {
+    public function isPost() {
         if ($this->input->server('REQUEST_METHOD') == 'POST') {
             return true;
         }

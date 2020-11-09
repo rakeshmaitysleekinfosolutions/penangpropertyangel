@@ -16,18 +16,40 @@ class Agent extends AdminController {
     /**
      * @throws Exception
      */
-    public function setData() {
+    public function init() {
+        $this->data['heading']          = 'Agent Management';
+        $this->data['entryUsername']    = 'Username';
+        $this->data['entryPassword']    = 'Password';
+        $this->data['entryConfirmPassword']    = 'Confirm Password';
+        $this->data['entryFirstname']   = 'First Name';
+        $this->data['entryLastname']    = 'Last Name';
+        $this->data['entryGender']      = 'Gender';
+        $this->data['entryBirthday']    = 'Birthday';
+        $this->data['entryNric']        = 'NRIC';
+        $this->data['entryTelephone']   = 'Telephone';
+        $this->data['entryMobile']      = 'Mobile';
+        $this->data['entryFax']         = 'Fax';
+        $this->data['entryOccupation']  = 'Occupation';
+        $this->data['entryAddress']     = 'Address';
+        $this->data['entryCity']        = 'City';
+        $this->data['entryState']       = 'State/Province';
+        $this->data['entryCountry']     = 'Country';
+        $this->data['entryZipcode']     = 'Zipcode';
+        $this->data['entryAvatar']      = 'Avatar';
+        $this->data['entryStatus']      = 'Status';
+        $this->data['datePlaceholder']  = 'mm-dd-yyyy';
+        $this->data['form']             = array(
+            'id'    => 'frmAgent',
+            'name'  => 'frmAgent',
+        );
+
         $this->data['salt'] = token(9);
         if (!empty($this->agent)) {
-            $this->data['title'] = 'Edit Agent';
-            $this->data['route'] = url('agent/update/'.$this->agent->id);
             $this->data['uuid'] = $this->agent->uuid;
         } else {
-            $this->data['title'] = 'Add Agent';
-            $this->data['route'] = url('agent/store');
             $this->data['uuid'] = $this->uuid();
         }
-        $this->data['form'] = 'frmAgent';
+
         // User ID
         if (!empty($this->input->post('id'))) {
             $this->data['id'] = $this->input->post('id');
@@ -207,15 +229,9 @@ class Agent extends AdminController {
         $this->data['placeholder']  = $this->resize('no_image.png', 100, 100);
         $this->data['back']         = url('agent');
     }
-
-    /**
-     *
-     */
     public function index() {
-        //$this->beforeRender();
-
-        $this->data['title'] = 'Mange Your Agent';
-        //$this->data['datatable'] = array();
+        $this->init();
+        $this->data['title']    = 'Agent List';
         $this->data['columns'][] = 'NO';
         $this->data['columns'][] = 'FB';
         $this->data['columns'][] = 'Username';
@@ -232,8 +248,6 @@ class Agent extends AdminController {
         $this->data['columns'][] = 'Status';
         $this->data['columns'][] = 'CrtDt';
         $this->data['columns'][] = 'UpdDt';
-        //$this->data['columns'][] = 'Action';
-
         $this->data['addLink'] = url('agent/create');
         render('index', $this->data);
     }
@@ -242,7 +256,9 @@ class Agent extends AdminController {
      * @throws Exception
      */
     public function create() {
-        $this->setData();
+        $this->init();
+        $this->data['title'] = 'Add Agent';
+        $this->data['route'] = url('agent/store');
         render('agent/create', $this->data);
     }
 
@@ -256,7 +272,7 @@ class Agent extends AdminController {
                 setWarning('message', "Warning: Agent already exists on {$this->agent->email} this mail id!");
                 redirect(url('agent/create/'));
             }
-            $this->setData();
+            $this->init();
             Agent_model::factory()->insert([
                 'firstname' => $this->data['firstname'],
                 'lastname'  => $this->data['lastname'],
@@ -285,6 +301,10 @@ class Agent extends AdminController {
                 'city'      => $this->data['city'],
                 'postcode'  => $this->data['postcode'],
             ]);
+            GroupAgent_model::factory()->insert([
+               'agent_id' => Agent_model::factory()->getLastInsertID(),
+               'group_id' => 2,
+            ]);
             setMessage('message', "Success: You have modified agent! ");
             redirect(url('agent/create/'));
             //$this->create();
@@ -292,6 +312,11 @@ class Agent extends AdminController {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
     }
+
+    /**
+     * @param $id
+     * @throws Exception
+     */
     public function edit($id) {
         $this->agent = Agent_model::factory()->findOne($id);
         if(!$this->agent) {
@@ -299,12 +324,14 @@ class Agent extends AdminController {
             redirect(url('agent'));
         }
         $this->address = $this->agent->address;
-        $this->setData();
+        $this->init();
+        $this->data['title']    = 'Edit Agent';
+        $this->data['route'] = url('agent/update/'.$id);
         render('agent/edit', $this->data);
     }
     public function update($id) {
         try {
-            $this->setData();
+            $this->init();
             Agent_model::factory()->update([
                 'firstname' => $this->data['firstname'],
                 'lastname'  => $this->data['lastname'],
@@ -333,6 +360,9 @@ class Agent extends AdminController {
                 'city'      => $this->data['city'],
                 'postcode'  => $this->data['postcode'],
             ], ['agent_id' => $id]);
+            GroupAgent_model::factory()->update([
+                'group_id' => 2,
+            ],['agent_id' => $id]);
             setMessage('message', "Success: You have modified agent! ");
             redirect(url('agent/edit/'. $id));
         } catch (Exception $e) {
@@ -369,7 +399,14 @@ class Agent extends AdminController {
     }
     public function validateForm() {}
     public function onLoadDatatableEventHandler() {
-        $this->results = Agent_model::factory()->findAll();
+        $users = GroupAgent_model::factory()->find()->where('group_id', 2)->get()->result();
+        $userIds = array();
+        if(count($users) > 0) {
+            foreach ($users as $user) {
+                $userIds[] = $user->agent_id;
+            }
+        }
+        $this->results = Agent_model::factory()->findAll($userIds);
         if($this->results) {
             foreach($this->results as $result) {
                 $this->rows[] = array(
@@ -400,7 +437,7 @@ class Agent extends AdminController {
                 $selected = ($row['status']) ? 'selected' : '';
                 $this->data[$i][] = '<td class="text-center">
 											<label class="css-control css-control-primary css-checkbox">
-												<input data-id="'.$row['id'].'" type="checkbox" class="css-control-input selectCheckbox" id="row_'.$row['id'].'" name="row_'.$row['id'].'">
+												<input type="checkbox" class="css-control-input selectCheckbox" value="'.$row['id'].'" name="selected[]">
 												<span class="css-control-indicator"></span>
 											</label>
 										</td>';
@@ -416,7 +453,7 @@ class Agent extends AdminController {
                 $this->data[$i][] = '<td>'.$row['fax'].'</td>';
                 $this->data[$i][] = '<td>'.$row['occupation'].'</td>';
                 $this->data[$i][] = '<td>'.$row['address'].'</td>';
-                $this->data[$i][] = '<td><img src="'.resize($row['image'],100,100).'"></td>';
+                $this->data[$i][] = '<td><img src="'.resize($row['image'],32,32).'"></td>';
                 $this->data[$i][] = '<td>
                                         <select data-id="'.$row['id'].'" name="status" class="form-control select floating updateStatus" id="input-payment-status" >
                                             <option value="0" '.$selected.'>Inactive</option>
@@ -426,7 +463,7 @@ class Agent extends AdminController {
                 $this->data[$i][] = '<td>'.$row['created_at'].'</td>';
                 $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
                 $this->data[$i][] = '<td class="text-right">
-	                            <a href="'.url('agent/edit/').$row['id'].'" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></a> 
+	                            <a href="'.url('agent/edit/').$row['id'].'" id="button-image" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a> 
 	                        </td>
                         ';
 

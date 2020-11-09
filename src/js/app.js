@@ -1,6 +1,7 @@
 require('./bootstrap');
 require('./additional-methods');
 require('./jquery.validate');
+require('./loadingoverlay.min');
 require ('./jquery.slimscroll');
 import 'datatables.net-bs4'
 
@@ -29,10 +30,6 @@ $(function () {
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
-
-
-
 var $sidebarOverlay = $(".task-overlay");
 $(".task-chat, #mobile_btn").on("click", function(e) {
     var $target = $($(this).attr("href"));
@@ -113,21 +110,38 @@ $(document).ready(function() {
     }(window.jQuery);
 
 $(document).ready(function() {
-    if($('select').length > 0 ){
-        $('select').select2({
+    if($('.select').length > 0 ){
+        $('.select').select2({
+            minimumResultsForSearch: -1,
             width: '100%'
         });
     }
 });
 
+$(document).ready(function() {
+    if($('.modal').length > 0 ){
+        var modalUniqueClass = ".modal";
+        $('.modal').on('show.bs.modal', function(e) {
+            var $element = $(this);
+            var $uniques = $(modalUniqueClass + ':visible').not($(this));
+            if ($uniques.length) {
+                $uniques.modal('hide');
+                $uniques.one('hidden.bs.modal', function(e) {
+                    $element.modal('show');
+                });
+                return false;
+            }
+        });
+    }
+});
 
-// $(document).ready(function() {
-// 	if($('.floating').length > 0 ){
-// 		$('.floating').on('focus blur', function (e) {
-// 		$(this).parents('.form-focus').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
-// 		}).trigger('blur');
-// 	}
-// });
+$(document).ready(function() {
+    if($('.floating').length > 0 ){
+        $('.floating').on('focus blur', function (e) {
+            $(this).parents('.form-focus').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
+        }).trigger('blur');
+    }
+});
 
 $(document).ready(function() {
     if($('.msg-list-scroll').length > 0 ){
@@ -191,16 +205,14 @@ $(window).resize(function(){
 
 
 
-
-/*
 $(document).ready(function() {
-	if($('.datatable').length > 0 ){
-		$('.datatable').DataTable({
-			"bFilter": false,
-		});
-	}
+    if($('.datatable').length > 0 ){
+        $('.datatable').DataTable({
+            "bFilter": false,
+        });
+    }
 });
-*/
+
 $(document).ready(function() {
     if($('[data-toggle="tooltip"]').length > 0 ){
         $('[data-toggle="tooltip"]').tooltip();
@@ -302,6 +314,14 @@ $( document ).ready(function() {
         });
     }
 });
+$(document).ready(function() {
+    if($('select').length > 0 ){
+        $('select').select2({
+            width: '100%'
+        });
+    }
+});
+
 
 /* Dynamic Menu Selction */
 /** Select Dynamic Menu*/
@@ -443,14 +463,9 @@ $('select[name="country_id"]').on('change', function() {
             $('.fa-spin').remove();
         },
         success: function(json) {
-            // console.log(json);
-            // if (json['postcode_required'] == '1') {
-            //     $('input[name=\'postcode\']').parent().parent().addClass('required');
-            // } else {
-            //     $('input[name=\'postcode\']').parent().parent().removeClass('required');
             // }
             var html = '';
-            html = '<option value="">select option</option>';
+           // html = '<option value="">select option</option>';
 
             if (json['states'] && json['states'] != '') {
                 for (var i = 0; i < json['states'].length; i++) {
@@ -478,8 +493,12 @@ $('select[name="country_id"]').trigger('change');
 
 // Agent Form Validation
 var $frmAgent = $("#frmAgent"),
+    $frmLogin = $("#frmLogin"),
+    $frmResetPassword = $("#frmResetPassword"),
+    $frmEditProfile = $("#frmEditProfile"),
     validate = ($.fn.validate !== undefined),
 dataTable = ($.fn.dataTable !== undefined);
+// Agent Form Validation
 if ($frmAgent.length > 0 && validate) {
     $frmAgent.validate({
         rules:{
@@ -515,53 +534,86 @@ if ($frmAgent.length > 0 && validate) {
                 integer: true
             },
         },
+    });
+}
+// Reset Password
+if ($frmResetPassword.length > 0 && validate) {
+    $frmResetPassword.validate({
+        rules:{
+            "input-old": {
+                required: true,
+                nowhitespace: true
+            },
+            "input-password": {
+                alphanumeric: true,
+                required: true,
+                nowhitespace: true
+            },
+            "input-confirm": {
+                alphanumeric: true,
+                required: true,
+                nowhitespace: true,
+                equalTo: "#input-password"
+            }
+        },
         submitHandler: function (form) {
             $.ajax({
                 type: "POST",
                 url: $(form).attr('action'),
                 dataType: "json",
                 data: $(form).serialize(),
-                beforeSend: function() {
-                    $.LoadingOverlay("show");
-                },
                 success: function (json) {
-
                     if (json['error']) {
-                        //$('#button-register').button('reset');
-                        $.LoadingOverlay("hide");
-                        if (json['error']['warning']) {
-
-                            $('#my-container .signup-form').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        $("#btnReset").LoadingOverlay("show");
+                        if (json['error']) {
+                            $('#containerBox .frmResetPassword').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $("#btnReset").LoadingOverlay("hide");
                         }
-                        //var i;
-
-                        for (var i in json['error']) {
-                            var element = $('#input-payment-' + i.replace('_', '-'));
-                            //console.log(element);
-                            if ($(element).parent().hasClass('input-group')) {
-                                $(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
-                            } else {
-                                $(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
-                            }
-                        }
-
-                        // Highlight any found errors
-                        $('.text-danger').parent().addClass('has-error');
                     }
                     if (json['success']) {
+                        $('#containerBox > .frmResetPassword').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
+                        $("#btnReset").LoadingOverlay("hide");
+                        $frmResetPassword[0].reset();
                         setTimeout(function() {
-                            $('#my-container > .signup-form').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
                             location.href = json['redirect'];
-                        },3000);
+                        },600);
                     }
                 }
             });
 
             return false; // required to block normal submit since you used ajax
         }
-
     });
 }
+// Profile Form Validation
+if ($frmEditProfile.length > 0 && validate) {
+    $frmEditProfile.validate({
+        rules:{
+            firstname: {
+                required: true,
+                lettersonly: true
+            },
+            lastname: {
+                required: true,
+                lettersonly: true
+            },
+            email: {
+                email: true
+            },
+            phone: {
+                integer: true
+            },
+            mobile: {
+                integer: true
+            },
+            postcode: {
+                nowhitespace: true,
+                integer: true
+            },
+        },
+    });
+}
+
 
 if ($("#agentTable").length > 0 && dataTable) {
     var dataTable = $('#agentTable').DataTable( {
@@ -655,3 +707,48 @@ $(document).on('click', '#delete', function (e) {
         swal("You must select one record");
     }
 });
+
+
+// Admin Login Form Valiation
+if ($frmLogin.length > 0 && validate) {
+    $frmLogin.validate({
+        rules:{
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                required: true,
+            }
+        },
+        submitHandler: function (form) {
+            $.ajax({
+                type: "POST",
+                url: $(form).attr('action'),
+                dataType: "json",
+                data: $(form).serialize(),
+                beforeSend: function() {
+                    $("#loginButton").LoadingOverlay("show");
+                },
+                success: function (json) {
+                    if (json['error']) {
+                        $("#loginButton").LoadingOverlay("hide");
+                        if (json['error']) {
+                            $('#containerBox .adminLoginForm').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $("#loginButton").LoadingOverlay("hide");
+                        }
+                    }
+                    if (json['success']) {
+                        $('#containerBox > .adminLoginForm').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
+                        location.href = json['redirect'];
+                        setTimeout(function() {
+                        },600);
+                    }
+                }
+            });
+
+            return false; // required to block normal submit since you used ajax
+        }
+
+    });
+}

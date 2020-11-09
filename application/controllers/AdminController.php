@@ -29,9 +29,7 @@ class AdminController extends BaseController {
         $this->id = $id;
         return $this;
     }
-    public function setLayout($layout) {
-        return $this->template->set_template($layout);
-    }
+
     public function setLocaleKey($localeKey) {
         $this->localeKey = $localeKey;
         return $this;
@@ -69,8 +67,5 @@ class AdminController extends BaseController {
         return (time() * 3) + rand(1, 15);
     }
 
-    public function render($view, $data = null) {
-        $this->template->content->view($view, $data);
-        $this->template->publish();
-    }
+
 }

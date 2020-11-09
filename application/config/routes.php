@@ -1,18 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$route['default_controller'] 	= 'app';
+$route['default_controller'] 	= 'Login';
 $route['404_override']          = 'PageNotFoundController/index';
-
-
-$route['admin']                 = 'adminDashboard';
-$route['admin-login']           = 'adminDashboard/login';
-$route['admin-dashboard']       = 'adminDashboard/dashboard/';
-$route['admin-logout']          = 'adminDashboard/admin_logout';
-
-
-
-
+$route['admin']                 = 'login';
+$route['admin/logout']                 = 'login/logout';
+//$route['admin/login']           = 'login';
 $route['filemanager']           = 'filemanager';
 
 

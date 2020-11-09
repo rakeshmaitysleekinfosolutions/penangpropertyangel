@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <?php echo $this->template->meta; ?>
@@ -17,7 +17,7 @@
         <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/css/style.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/js/sweetalert/sweetalert.css">
         <link rel="stylesheet" href="<?php echo base_url();?>dist/app.css">
-
+        <?php echo $this->template->stylesheet; ?>
 	</head>
     <body>
         <div class="main-wrapper">
@@ -40,8 +40,9 @@
 							<i class="caret"></i>
 						</a>
 						<ul class="dropdown-menu">
-                            <li><a href="<?php echo admin_url('resetpassword'); ?>">Reset Password</a></li>
-							<li><a href="<?php echo base_url('admin-logout'); ?>">Logout</a></li>
+                            <li><a href="<?php echo base_url('resetpassword'); ?>">Reset Password</a></li>
+                            <li><a href="<?php echo base_url('profile'); ?>">Edit Profile</a></li>
+							<li><a href="<?php echo base_url('admin/logout'); ?>">Logout</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -50,12 +51,12 @@
                 <div class="sidebar-inner slimscroll">
 					<div id="sidebar-menu" class="sidebar-menu">
 						<ul id="menu">
-                            <li class="submenu">
-                                <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;PROFILE</span> <span class="menu-arrow"></span></a>
-                                <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="#"><i class="fa fa-double-angle-right"></i>PROFILE</a></li>
-                                </ul>
-                            </li>
+<!--                            <li class="submenu">-->
+<!--                                <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;PROFILE</span> <span class="menu-arrow"></span></a>-->
+<!--                                <ul class="list-unstyled" style="display: none;">-->
+<!--                                    <li><a href="--><?php //echo url('profile');?><!--"><i class="fa fa-double-angle-right"></i>PROFILE</a></li>-->
+<!--                                </ul>-->
+<!--                            </li>-->
                             <li class="submenu">
                                 <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;ENQUIRY</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
@@ -105,6 +106,7 @@
         </div>
 		<div class="sidebar-overlay" data-reff="#sidebar"></div>
 		 <script type="text/javascript" src="<?php echo base_url();?>dist/app.js" ></script>
+        <?php echo $this->template->javascript; ?>
         <script type="text/javascript" src="<?php echo base_url();?>assets/theme/light/js/sweetalert/sweetalert.js" ></script>
     </body>
 

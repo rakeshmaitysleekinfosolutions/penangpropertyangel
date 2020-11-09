@@ -1,169 +1,176 @@
 <div class="content container-fluid">
-    <form id="<?php echo $form;?>" action="<?php echo $route;?>" method="post">
+    <form id="<?php echo $form['id'];?>" name="<?php echo $form['name'];?>" action="<?php echo $route;?>" method="post">
         <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
         <div class="row">
-            <?php if(hasMessage('message')) { ?>
-                <div class="alert alert-info alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getMessage('message');?>
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                </div>
-            <?php } ?>
             <div class="col-sm-4 col-xs-3">
                 <h4 class="page-title"><?php echo $title;?></h4>
             </div>
             <div class="col-sm-8 text-right m-b-30">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save & Update</button>
                 <a href="<?php echo $back;?>" class="btn btn-primary"><i class="fa fa-back"></i> Back</a>
             </div>
         </div>
         <div class="row">
-        <div class="col-md-12">
-            <div class="card-box">
-                <h3 class="page-title">Add Main Information</h3>
-                <div class="row">
-                    <div class="col-sm-3 col-lg-3">
-                        <div class="form-group">
+            <div class="col-md-12">
+                <div class="card-box">
+                    <?php if(hasMessage('message')) { ?>
+                        <div class="alert alert-info alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getMessage('message');?>
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+                    <?php } ?>
+                    <h3 class="card-title">Basic Informations</h3>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="profile-img-wrap">
+                                <a href="javascript:void(0);" id="thumb-image" data-toggle="image" class="" type="image"><img src="<?php echo $thumb;?>" alt="" title="" data-placeholder="<?php echo $placeholder;?>"/></a>
+                                <input type="hidden" name="image" value="<?php echo $image;?>" id="input-image" />
+                            </div>
+                            <div class="profile-basic">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus">
+                                            <label class="control-label"><?php echo $entryFirstname;?><span class="text-danger">*</span></label>
+                                            <input value="<?php echo $firstname;?>" name="firstname" class="form-control floating"  type="text" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus">
+                                            <label class="control-label"><?php echo $entryLastname;?><span class="text-danger">*</span></label>
+                                            <input value="<?php echo $lastname;?>" name="lastname" class="form-control floating"  type="text" autocomplete="off">
+                                        </div>
+                                    </div>
 
-                            <a href="javascript:void(0);" id="thumb-image" data-toggle="image" class="" type="image"><img src="<?php echo $thumb;?>" alt="" title="" data-placeholder="<?php echo $placeholder;?>"/></a>
-                            <input type="hidden" name="image" value="<?php echo $image;?>" id="input-image" />
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus">
+                                            <label class="control-label"><?php echo $entryBirthday;?><span class="text-danger"></span></label>
+                                            <input value="<?php echo $birthday;?>" name="birthday" class="form-control floating datetimepicker"  type="text" placeholder="dd-mm-yyyy" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-focus select-focus">
+                                            <label class="control-label"><?php echo $entryGender;?></label>
+                                            <select class="select form-control floating" name="gender">
+                                                <option value="">Select Gendar</option>
+                                                <option value="Male" <?php echo ($gender == 'Male') ? "selected" : "" ;?>>Male</option>
+                                                <option value="Female" <?php echo ($gender == 'Female') ? "selected" : "" ;?>>Female</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group form-focus">
+                                            <label class="control-label"><?php echo $entryUsername;?><span class="text-danger">*</span></label>
+                                            <input value="<?php echo $email;?>" name="email" id="email" class="form-control floating" type="email" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>First Name<span class="text-danger">*</span></label>
-                            <input value="<?php echo $firstname;?>" name="firstname" class="form-control"  type="text" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Last Name<span class="text-danger">*</span></label>
-                            <input value="<?php echo $lastname;?>" name="lastname" class="form-control"  type="text" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Username(Email)<span class="text-danger">*</span></label>
-                            <input value="<?php echo $email;?>" name="email" id="email" class="form-control" type="email" autocomplete="off" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="control-label">Password <span class="text-danger">*</span></label>
-                            <input class="form-control floating" type="password" name="password" id="input-password" autocomplete="off" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="control-label">Confirm Password <span class="text-danger">*</span></label>
-                            <input class="form-control floating" type="password" name="confirm" id="input-confirm" autocomplete="off" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
+                <div class="card-box">
+                    <h3 class="card-title">Password Informations</h3>
+                    <div class="row">
+                        <div class="col-md-12">
 
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label>Gender</label>
-                            <input <?php echo ($gender === 'Male') ? : "checked" ;?> type="radio" name="gender" value="Male"> Male
-                            <input <?php echo ($gender === 'Female') ? : "checked" ;?> type="radio" name="gender" value="Female"> Female
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryNric;?></label>
+                                    <input value="<?php echo $nric;?>" name="nric" class="form-control floating" type="text" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryOccupation;?><span class="text-danger"></span></label>
+                                    <input value="<?php echo $occupation;?>" name="occupation" class="form-control floating" type="text" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryPassword;?> <span class="text-danger">*</span></label>
+                                    <input placeholder="<?php echo $entryPassword;?>" class="form-control floating" type="password" name="password" id="input-password" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryConfirmPassword;?><span class="text-danger">*</span></label>
+                                    <input placeholder="<?php echo $entryConfirmPassword;?>" class="form-control floating" type="password" name="confirm" id="input-confirm" autocomplete="off" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Birthday<span class="text-danger"></span></label>
-                            <input value="<?php echo $birthday;?>" name="birthday" class="form-control datetimepicker"  type="text" autocomplete="off" placeholder="dd-mm-yyyy">
+                <div class="card-box">
+                    <h3 class="card-title">Contact Informations</h3>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryAddress;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $address_1;?>" name="address_1" class="form-control floating" value="" type="text" autocomplete="off">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>NRIC</label>
-                            <input value="<?php echo $nric;?>" name="nric" class="form-control" type="text" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label>Telephone<span class="text-danger"></span></label>
-                            <input value="<?php echo $phone;?>" name="phone" class="form-control" type="text" autocomplete="off">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Mobile<span class="text-danger"></span></label>
-                            <input value="<?php echo $mobile;?>" name="mobile" class="form-control " type="text" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Fax</label>
-                            <input value="<?php echo $fax;?>" name="fax" class="form-control " type="text" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Occupation<span class="text-danger"></span></label>
-                            <input value="<?php echo $occupation;?>" name="occupation" class="form-control" type="text" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Address<span class="text-danger"></span></label>
-                            <input value="<?php echo $address_1;?>" name="address_1" class="form-control" value="" type="text" autocomplete="off">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Country<span class="text-danger"></span></label>
-                            <select name="country_id" class="form-control">
-                                <?php if(!empty($countries)) {
-                                    foreach ($countries as $country) {?>
-                                        <option value="<?php echo $country->id;?>" <?php echo ($country_id == $country->id) ? "selected" : "";?>><?php echo $country->name;?></option>
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryCountry;?><span class="text-danger"></span></label>
+                                <select name="country_id" class="form-control floating">
+                                    <?php if(!empty($countries)) {
+                                        foreach ($countries as $country) {?>
+                                            <option value="<?php echo $country->id;?>" <?php echo ($country_id == $country->id) ? "selected" : "";?>><?php echo $country->name;?></option>
+                                        <?php } ?>
                                     <?php } ?>
-                                <?php } ?>
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>State/Province<span class="text-danger"></span></label>
-                            <select name="state_id" class="form-control">
-                            </select>
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryState;?><span class="text-danger"></span></label>
+                                <select name="state_id" class="form-control floating"></select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>City<span class="text-danger"></span></label>
-                            <input value="<?php echo $city;?>" name="city" class="form-control" type="text" autocomplete="off">
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryZipcode;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $postcode;?>" name="postcode" class="form-control floating" type="text" autocomplete="off">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label>Zip Code<span class="text-danger"></span></label>
-                            <input value="<?php echo $postcode;?>" name="postcode" class="form-control" type="text" autocomplete="off">
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryCity;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $city;?>" name="city" class="form-control floating" type="text" autocomplete="off">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label class="control-label">Status <span class="text-danger">*</span></label>
-                            <select name="status" class="select floating" id="input-payment-status" autocomplete="off" required>
-                                <option value="0">Inactive</option>
-                                <option value="1" selected>Active</option>
-                            </select>
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryTelephone;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $phone;?>" name="phone" class="form-control floating" type="text" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryMobile;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $mobile;?>" name="mobile" class="form-control floating" type="text" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryFax;?></label>
+                                <input value="<?php echo $fax;?>" name="fax" class="form-control floating" type="text" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-focus">
+                                <label class="control-label"><?php echo $entryStatus;?> <span class="text-danger">*</span></label>
+                                <select name="status" class="select floating" id="input-payment-status" autocomplete="off" required>
+                                    <option value="0">Inactive</option>
+                                    <option value="1" selected>Active</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
-
 
             </div>
         </div>
-    </div>
     </form>
 </div>
 <script>

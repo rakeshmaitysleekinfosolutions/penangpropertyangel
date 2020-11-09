@@ -481,12 +481,31 @@ if(!function_exists('currencyFormat')) {
 
         return $string;
     }
+    if(!function_exists('setLayout')) {
+        function setLayout($layout) {
+            $ci = get_instance();
+            $ci->load->library('template');
+            return $ci->template->content->set_template($layout);
+        }
+    }
     if(!function_exists('render')) {
         function render($view, $data = null) {
             $ci = get_instance();
             $ci->load->library('template');
             $ci->template->content->view($view, $data);
             $ci->template->publish();
+        }
+    }
+
+    if(!function_exists('attach')) {
+        function attach($str, $type = 'js') {
+            $ci = get_instance();
+            $ci->load->library('template');
+            if($type === 'js') {
+                $ci->template->javascript->add($str);
+            } else {
+                $ci->template->stylesheet->add($str);
+            }
         }
     }
 }

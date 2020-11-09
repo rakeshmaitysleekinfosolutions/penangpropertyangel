@@ -1,20 +1,19 @@
 <div class="content container-fluid">
-    <form id="<?php echo $form['id'];?>" name="<?php echo $form['name'];?>" action="<?php echo $route;?>" method="post">
-        <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
+    <form id="<?php echo $form['id'];?>" id="<?php echo $form['name'];?>" action="<?php echo $route;?>" method="post">
         <div class="row">
+
             <div class="col-sm-4 col-xs-3">
-                <h4 class="page-title"><?php echo $title;?></h4>
+                <h4 class="page-title"><?php echo $heading;?></h4>
             </div>
             <div class="col-sm-8 text-right m-b-30">
                 <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save & Update</button>
-                <a href="<?php echo $back;?>" class="btn btn-primary"><i class="fa fa-back"></i> Back</a>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="card-box">
                     <?php if(hasMessage('message')) { ?>
-                        <div class="alert alert-info alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getMessage('message');?>
+                        <div class="alert alert-success alert-dismissible"><i class="fa fa-exclamation-circle"></i>&nbsp;<?php echo getMessage('message');?>
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php } ?>
@@ -56,22 +55,21 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
-                                        <div class="form-group form-focus">
-                                            <label class="control-label"><?php echo $entryUsername;?><span class="text-danger">*</span></label>
-                                            <input value="<?php echo $email;?>" name="email" id="email" class="form-control floating" type="email" required autocomplete="off">
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-box">
-                    <h3 class="card-title">Password Informations</h3>
+                    <h3 class="card-title">Personal Informations</h3>
                     <div class="row">
                         <div class="col-md-12">
-
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryUsername;?><span class="text-danger">*</span></label>
+                                    <input value="<?php echo $email;?>" name="email" id="email" class="form-control floating" type="email" readonly autocomplete="off">
+                                </div>
+                            </div>
                             <div class="col-md-6">
                                 <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entryNric;?></label>
@@ -79,23 +77,11 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryOccupation;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $occupation;?>" name="occupation" class="form-control floating" type="text" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryPassword;?> <span class="text-danger">*</span></label>
-                                    <input placeholder="<?php echo $entryPassword;?>" class="form-control floating" type="password" name="password" id="input-password" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryConfirmPassword;?><span class="text-danger">*</span></label>
-                                    <input placeholder="<?php echo $entryConfirmPassword;?>" class="form-control floating" type="password" name="confirm" id="input-confirm" autocomplete="off">
-                                </div>
-                            </div>
+                                        <div class="form-group form-focus">
+                                            <label class="control-label"><?php echo $entryOccupation;?><span class="text-danger"></span></label>
+                                            <input value="<?php echo $occupation;?>" name="occupation" class="form-control floating" type="text" autocomplete="off">
+                                        </div>
+                                    </div>
                         </div>
                     </div>
                 </div>
@@ -159,11 +145,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group form-focus">
-                                <label class="control-label"><?php echo $entryStatus;?> <span class="text-danger">*</span></label>
-                                <select name="status" class="select floating" id="input-payment-status" autocomplete="off" required>
-                                    <option value="0">Inactive</option>
-                                    <option value="1" selected>Active</option>
-                                </select>
+                                <label class="control-label"><?php echo $entryMobile;?><span class="text-danger"></span></label>
+                                <input value="<?php echo $mobile;?>" name="mobile" class="form-control floating" type="text" autocomplete="off">
                             </div>
                         </div>
                     </div>
@@ -173,15 +156,6 @@
         </div>
     </form>
 </div>
-<script>
-    //var myLabel             = myLabel || {};
-    //myLabel.baseUrl         = '<?php //echo base_url();?>//';
-    //myLabel.users           = '<?php //echo admin_url('agent/onLoadDatatableEventHandler');?>//';
-    //myLabel.updateStatus    = '<?php //echo admin_url('agent/onChangeStatusEventHandler');?>//';
-    //myLabel.delete          = '<?php //echo admin_url('agent/delete');?>//';
-    //myLabel.states          = '<?php //echo admin_url('agent/states');?>//';
-    //myLabel.edit            = '<?php //echo admin_url('agent/edit/');?>//';
-</script>
 <script>
     var myLabel             = myLabel || {};
     myLabel.baseUrl         = '<?php echo base_url();?>';

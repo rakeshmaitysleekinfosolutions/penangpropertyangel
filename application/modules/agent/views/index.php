@@ -11,7 +11,7 @@
             </div>
         <?php } ?>
         <div class="col-sm-4 col-xs-3">
-            <h4 class="page-title"><?php echo $title;?></h4>
+            <h4 class="page-title"><?php echo $heading;?></h4>
         </div>
 
         <div class="col-sm-8 text-right m-b-30">
@@ -20,29 +20,32 @@
         </div>
     </div>
 <div class="row">
-    <div class="col-md-12">
-        <div class="table-responsive">
-            <table class="table table-striped custom-table" id="agentTable">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="width: 2%;">
-                            <label class="css-control css-control-primary css-checkbox py-0">
-                                <input type="checkbox" class="css-control-input" id="checkAll" name="checkAll">
-                                <span class="css-control-indicator"></span>
-                            </label>
-                        </th>
-                        <?php if(count($columns)) {
-                            foreach ($columns as $column) {?>
-                                <th><?php echo $column;?></th>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $title;?></h3>
+        </div>
+        <div class="panel-body">
+            <form action="http://localhost/workspace/opencart3/upload/admin/index.php?route=catalog/category/delete&amp;user_token=uo3NiHspQLuDfbyptaPUZIVlaTvj0i8A" method="post" enctype="multipart/form-data" id="form-category">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="agentTable">
+                        <thead>
+                        <tr>
+                            <td style="width: 1px;" class="text-center"><input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);"></td>
+                            <?php if(count($columns)) {
+                                foreach ($columns as $column) {?>
+                                    <th class="text-left"><?php echo $column;?></th>
+                                <?php } ?>
                             <?php } ?>
-                        <?php } ?>
-                        <th class="text-right">Action</th>
-                    </tr>
-                </thead>
-                
-            </table>
+                            <td class="text-right">Action</td>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </form>
+
         </div>
     </div>
+
 </div>
 </div>
 
