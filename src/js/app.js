@@ -321,7 +321,28 @@ $(document).ready(function() {
         });
     }
 });
+$('.summernote').summernote({
+    height: 200,                 // set editor height
+    minHeight: null,             // set minimum height of editor
+    maxHeight: null,             // set maximum height of editor
+    focus: false                 // set focus to editable area after initializing summernote
+});
+$(document).on('click', '.addImage', function (e) {
+    console.log('addImage');
+    var html = '';
+    html = '<tr id="image-row' + myLabel.imageRow + '">';
+    html += '  <td class="text-left"><a href="" type="image" id="thumb-image' + myLabel.imageRow + '"data-toggle="image" class=""><img src="'+myLabel.placeholder+'" alt="" title="" data-placeholder="'+myLabel.placeholder+'" /></a><input type="hidden" name="images[' + myLabel.imageRow + '][image]" value="" id="input-image' + myLabel.imageRow + '" /></td>';
+    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><select name="images[' + myLabel.imageRow + '][thumbnail]" class="form-control select floating" id="input-thumbnail[' + myLabel.imageRow + '][thumbnail]" >\n' +
+        '                                            <option value="0">false</option>\n' +
+        '                                            <option value="1">true</option>\n' +
+        '                                        </select></div></td>';
+    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><input type="text" name="images[' + myLabel.imageRow + '][sort_order]" value="" class="form-control" id="input-sort_order' + myLabel.imageRow + '" data-placeholder="Sort Order" required></div></td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove;?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+    html += '</tr>';
 
+    $('#images tbody').append(html);
+    myLabel.imageRow++;
+});
 
 /* Dynamic Menu Selction */
 /** Select Dynamic Menu*/
@@ -496,8 +517,9 @@ var $frmAgent = $("#frmAgent"),
     $frmLogin = $("#frmLogin"),
     $frmResetPassword = $("#frmResetPassword"),
     $frmEditProfile = $("#frmEditProfile"),
+    $frmProject = $("#frmProject"),
     validate = ($.fn.validate !== undefined),
-dataTable = ($.fn.dataTable !== undefined);
+    dataTable = ($.fn.dataTable !== undefined);
 // Agent Form Validation
 if ($frmAgent.length > 0 && validate) {
     $frmAgent.validate({
@@ -613,7 +635,35 @@ if ($frmEditProfile.length > 0 && validate) {
         },
     });
 }
-
+// Project Form Validation
+if ($frmProject.length > 0 && validate) {
+    $frmProject.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            fit: {
+                required: true,
+            },
+            fit1: {
+                required: true,
+            },
+            fit2: {
+                required: true,
+            },
+            sequence: {
+                required: true,
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            meta_title: {
+                required: true,
+            },
+        },
+    });
+}
 
 if ($("#agentTable").length > 0 && dataTable) {
     var dataTable = $('#agentTable').DataTable( {
