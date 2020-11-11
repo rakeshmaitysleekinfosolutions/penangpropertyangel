@@ -29,6 +29,7 @@ class Project extends AdminController {
     public function init() {
         $this->data['heading']                  = 'Project Management';
         $this->data['entryName']                = 'Name';
+        $this->data['entrySlug']                = 'Slug';
         $this->data['entrySlider']              = 'Show Slider (Home)';
         $this->data['entrySequence']            = 'Sequence';
         $this->data['entryDate']                = 'Sale Ends (date)';
@@ -81,12 +82,15 @@ class Project extends AdminController {
         }
         // Slug
         if (!empty($this->input->post('slug'))) {
-            $this->data['slug'] = $this->input->post('slug');
+
+            $this->data['slug'] = url_title($this->input->post('slug'),'dash', true);
         } elseif (!empty($this->project)) {
             $this->data['slug'] = $this->project->slug;
         } else {
-            $this->data['slug'] = '';
+            $this->data['slug'] = url_title($this->input->post('name'),'dash', true);
+
         }
+
         // Price
         if (!empty($this->input->post('price'))) {
             $this->data['price'] = $this->input->post('price');
@@ -128,7 +132,7 @@ class Project extends AdminController {
             $this->data['remarks'] = '';
         }
         // Status
-        if (!empty($this->input->post('status'))) {
+        if ($this->input->post('status') != '') {
             $this->data['status'] = $this->input->post('status');
         } elseif (!empty($this->project)) {
             $this->data['status'] = $this->project->status;
@@ -244,7 +248,7 @@ class Project extends AdminController {
         }
         //dd($this->data);
 
-        $this->data['back']         = url('agent');
+        $this->data['back']         = url('project');
         $this->data['placeholder']  = $this->resize('no_image.png', 100, 100);
     }
 
@@ -253,24 +257,22 @@ class Project extends AdminController {
      */
     public function index() {
         $this->init();
-        $this->data['title']    = 'Agent List';
+        $this->data['title']    = 'Project List';
         $this->data['columns'][] = 'NO';
-        $this->data['columns'][] = 'FB';
-        $this->data['columns'][] = 'Username';
+        $this->data['columns'][] = 'Seq';
+        $this->data['columns'][] = 'Date';
         $this->data['columns'][] = 'Name';
-        $this->data['columns'][] = 'Gender';
-        $this->data['columns'][] = 'Birthday';
-        $this->data['columns'][] = 'NRIC';
-        $this->data['columns'][] = 'Tel';
-        $this->data['columns'][] = 'Mobile';
-        $this->data['columns'][] = 'Fax';
-        $this->data['columns'][] = 'Occupation';
-        $this->data['columns'][] = 'Address';
-        $this->data['columns'][] = 'Avatar';
+        $this->data['columns'][] = 'Remarks';
+        $this->data['columns'][] = 'Img';
         $this->data['columns'][] = 'Status';
         $this->data['columns'][] = 'CrtDt';
         $this->data['columns'][] = 'UpdDt';
-        $this->data['addLink'] = url('agent/create');
+        $this->data['columns'][] = 'Sub List';
+        $this->data['columns'][] = 'Add Sub';
+        $this->data['add']      = url('project/create');
+
+        $this->data['addBtn'] = 'Add';
+        $this->data['deleteBtn'] = 'Delete';
         render('index', $this->data);
     }
     /**
@@ -361,6 +363,7 @@ class Project extends AdminController {
                 redirect(url('project'));
             }
             $this->init();
+            //dd($this->data);
             // Project Model
             Project_model::factory()->update([
                 'uuid'      => $this->data['uuid'],
@@ -392,7 +395,7 @@ class Project extends AdminController {
                 'project_id' => $id
             ]);
             // Project Image Model
-            //dd($this->data);
+
 
             if(isset($this->data['images'])) {
                 ProjectImage_model::factory()->delete([
@@ -430,6 +433,9 @@ class Project extends AdminController {
                     Project_model::factory()->delete($productId);
                     ProjectDescription_model::factory()->delete(['project_id' => $productId]);
                     ProjectImage_model::factory()->delete(['project_id' => $productId]);
+
+                    ProjectSub_model::factory()->delete(['project_id' => $productId]);
+                    ProjectSubImage_model::factory()->delete(['project_id' => $productId]);
                 }
                 return $this->output
                     ->set_content_type('application/json')
@@ -442,6 +448,12 @@ class Project extends AdminController {
                 ->set_output(json_encode(array('data' => $this->onLoadDatatableEventHandler(), 'status' => false, 'message' => 'Sorry! we could not delete this record')));
         }
     }
+    public function getImgThumbnail($projectId) {
+        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
+            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
+        }
+        return false;
+    }
     /**
      * @return mixed
      * @throws Exception
@@ -453,15 +465,17 @@ class Project extends AdminController {
                 $this->rows[] = array(
                     'id'			=> $result->id,
                     'name'		    => $result->name,
-                    'price' 		=> $result->price,
                     'sequence' 		=> $result->sequence,
                     'remarks' 		=> $result->remarks,
+                    'img' 		    => ($this->getImgThumbnail($result->id)) ? resize($this->getImgThumbnail($result->id),32,32) : resize('no_image.png', 32,32),
                     'date' 		    => $result->date,
+                    'countSubs'     => count($result->subProjects),
                     'status' 		=> ($result->status && $result->status == 1) ? 1 : 0,
                     'created_at'    => $result->created_at,
                     'updated_at'    => $result->updated_at
                 );
             }
+            //dd($this->rows);
             $i = 0;
             $counter = 1;
             foreach($this->rows as $row) {
@@ -473,11 +487,12 @@ class Project extends AdminController {
 											</label>
 										</td>';
                 $this->data[$i][] = '<td>'.$counter.'</td>';
-                $this->data[$i][] = '<td>'.$row['name'].'</td>';
-                $this->data[$i][] = '<td>'.$row['price'].'</td>';
                 $this->data[$i][] = '<td>'.$row['sequence'].'</td>';
-                $this->data[$i][] = '<td>'.$row['remarks'].'</td>';
                 $this->data[$i][] = '<td>'.$row['date'].'</td>';
+                $this->data[$i][] = '<td>'.$row['name'].'</td>';
+                $this->data[$i][] = '<td>'.$row['remarks'].'</td>';
+                $this->data[$i][] = '<td><img src="'.$row['img'].'"></td>';
+
                 $this->data[$i][] = '<td>
                                         <select data-id="'.$row['id'].'" name="status" class="form-control select floating updateStatus" id="input-payment-status" >
                                             <option value="0" '.$selected.'>Inactive</option>
@@ -486,8 +501,11 @@ class Project extends AdminController {
                                      </td>';
                 $this->data[$i][] = '<td>'.$row['created_at'].'</td>';
                 $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
+
+                $this->data[$i][] = '<td><a href="'.url('projectsub/index/').$row['id'].'/">Sub List('.$row['countSubs'].')</a></td>';
+                $this->data[$i][] = '<td><a href="'.url('projectsub/create/').$row['id'].'/">Add Sub</a></td>';
                 $this->data[$i][] = '<td class="text-right">
-	                            <a href="'.url('agent/edit/').$row['id'].'" id="button-image" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a> 
+	                            <a href="'.url('project/edit/').$row['id'].'/" id="button-image" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a> 
 	                        </td>
                         ';
                 $i++;
@@ -513,7 +531,7 @@ class Project extends AdminController {
         if($this->isAjaxRequest()) {
             $this->request = $this->input->post();
             if(isset($this->request['status']) && isset($this->request['id'])) {
-                Project_model::factory()->updateStatus($this->request['id'], $this->request['status']);
+                Project_model::factory()->update(['status' => $this->request['status']], ['id' => $this->request['id']]);
                 $this->json['status'] = 'Status has been successfully updated';
                 return $this->output
                     ->set_content_type('application/json')

@@ -1,6 +1,5 @@
 <div class="content container-fluid">
     <form id="<?php echo $form['id'];?>" name="<?php echo $form['name'];?>" action="<?php echo $route;?>" method="post">
-        <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
         <div class="row">
             <div class="col-sm-4 col-xs-3">
                 <h4 class="page-title"><?php echo $title;?></h4>
@@ -22,39 +21,23 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-6">
+                                <div class="form-group form-focus select-focus">
+                                    <label class="control-label"><?php echo $entryParent;?><span class="text-danger">*</span></label>
+                                    <select class="select form-control floating" name="project_id" required>
+                                        <option value="">select</option>
+                                        <?php if(count($projects) > 0) {
+                                            foreach ($projects as $project) {?>
+                                                <option value="<?php echo $project->id;?>" <?php echo ($parent_id == $project->id) ? "selected" : "";?>><?php echo $project->name;?></option>
+                                            <?php }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
                                 <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entryName;?><span class="text-danger">*</span></label>
                                     <input value="<?php echo $name;?>" name="name" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entrySlug;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $slug;?>" name="slug" class="form-control floating" type="text" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit;?>" name="fit" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit1;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit1;?>" name="fit1" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit2;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit2;?>" name="fit2" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryPrice;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $price;?>" name="price" class="form-control floating" type="text" autocomplete="off" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -63,21 +46,7 @@
                                     <input value="<?php echo $sequence;?>" name="sequence" class="form-control floating" type="text" autocomplete="off" required>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryDate;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $date;?>" name="date" class="form-control floating datetimepicker"  type="text" placeholder="dd-mm-yyyy" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus select-focus">
-                                    <label class="control-label"><?php echo $entrySlider;?><span class="text-danger">*</span></label>
-                                    <select class="select form-control floating" name="slider">
-                                        <option value="1" <?php echo ($slider == 1) ? "selected" : "" ;?>>Show</option>
-                                        <option value="0" <?php echo ($slider == 0) ? "selected" : "" ;?>>Off</option>
-                                    </select>
-                                </div>
-                            </div>
+
                             <div class="col-md-6">
                                 <div class="form-group form-focus select-focus">
                                     <label class="control-label"><?php echo $entryStatus;?><span class="text-danger">*</span></label>
@@ -99,58 +68,15 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryRemarks;?></label>
+                                <div class="form-groups">
+                                    <label class="control-label"><?php echo $entryRemarks;?><span class="text-danger"></span></label>
                                     <textarea name="remarks" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $remarks;?></textarea>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label class="control-label"><?php echo $entrySmallDescription;?><span class="text-danger"></span></label>
-                                    <textarea name="small_description" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryLongDescription;?><span class="text-danger"></span></label>
-                                    <textarea name="long_description" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $long_description;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entrySnapshot;?><span class="text-danger"></span></label>
-                                    <textarea name="snapshot" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $snapshot;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryFeatures;?><span class="text-danger"></span></label>
-                                    <textarea name="features" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $features;?></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-box">
-                    <h3 class="card-title">Meta Data</h3>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-12">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryMetaTitle;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $meta_title;?>" name="meta_title" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryMetaDescription;?><span class="text-danger"></span></label>
-                                    <textarea name="meta_description" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $meta_description;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryMetaKeywords;?><span class="text-danger"></span></label>
-                                    <textarea name="meta_keywords" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $meta_keywords;?></textarea>
+                                    <label class="control-label"><?php echo $entryDescription;?><span class="text-danger"></span></label>
+                                    <textarea name="description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $description;?></textarea>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +126,7 @@
                                                 </td>
                                                 <td class="text-left"><button type="button" onclick="$('#image-row<?php echo $imageRow;?>').remove();" data-toggle="tooltip" title="Delete" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
                                             </tr>
-                                        <?php $imageRow++; } ?>
+                                            <?php $imageRow++; } ?>
                                         <?php ; }
                                     ?>
                                     </tbody>

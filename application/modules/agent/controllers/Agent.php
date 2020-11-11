@@ -203,7 +203,7 @@ class Agent extends AdminController {
             $this->data['postcode'] = '';
         }
         // Status
-        if (!empty($this->input->post('status'))) {
+        if ($this->input->post('status') != '') {
             $this->data['status'] = $this->input->post('status');
         } elseif (!empty($this->agent)) {
             $this->data['status'] = $this->agent->status;

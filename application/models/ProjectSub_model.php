@@ -1,9 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class Project_model extends BaseModel {
+class ProjectSub_model extends BaseModel {
 
-    protected $table = "projects";
+    protected $table = "projects_subs";
 
     protected $primaryKey = 'id';
 
@@ -26,19 +26,11 @@ class Project_model extends BaseModel {
 
     protected $recordDeletedTrueValue = '0';
 
-
-
     public static function factory($attr = array()) {
-        return new Project_model($attr);
-    }
-    public function description() {
-        return $this->hasOne(ProjectDescription_model::class, 'project_id', 'id');
+        return new ProjectSub_model($attr);
     }
     public function images($projectId) {
-        return ProjectImage_model::factory()->find()->where('project_id', $projectId)->order_by('sort_order','ASC')->get()->result_array();
-    }
-    public function subProjects() {
-        return $this->hasMany(ProjectSub_model::class, 'project_id', 'id');
+        return ProjectSubImage_model::factory()->find()->where('project_sub_id', $projectId)->order_by('sort_order','ASC')->get()->result_array();
     }
 
 }

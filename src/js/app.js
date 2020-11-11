@@ -517,9 +517,10 @@ var $frmAgent = $("#frmAgent"),
     $frmLogin = $("#frmLogin"),
     $frmResetPassword = $("#frmResetPassword"),
     $frmEditProfile = $("#frmEditProfile"),
-    $frmProject = $("#frmProject"),
+
     validate = ($.fn.validate !== undefined),
     dataTable = ($.fn.dataTable !== undefined);
+
 // Agent Form Validation
 if ($frmAgent.length > 0 && validate) {
     $frmAgent.validate({
@@ -635,130 +636,6 @@ if ($frmEditProfile.length > 0 && validate) {
         },
     });
 }
-// Project Form Validation
-if ($frmProject.length > 0 && validate) {
-    $frmProject.validate({
-        rules:{
-            name: {
-                required: true,
-            },
-            fit: {
-                required: true,
-            },
-            fit1: {
-                required: true,
-            },
-            fit2: {
-                required: true,
-            },
-            sequence: {
-                required: true,
-            },
-            price: {
-                required: true,
-                decimal: true
-            },
-            meta_title: {
-                required: true,
-            },
-        },
-    });
-}
-
-if ($("#agentTable").length > 0 && dataTable) {
-    var dataTable = $('#agentTable').DataTable( {
-        "processing": true,
-        "searching" : true,
-        "paging": true,
-        "order" : [],
-        "ajax": {
-            "url": myLabel.agents,
-            "type": 'POST',
-            "dataSrc": "data"
-        },
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': '<div class="spinner"></div>'
-        },
-        "oLanguage": {
-            "sEmptyTable": "Empty Table"
-        },
-        dom: 'lBfrtip',
-        buttons: [
-            'excel', 'csv', 'pdf'
-        ],
-        "columnDefs": [ {
-            "targets": 0,
-            "orderable": false
-        },{
-            visible: false
-        } ],
-        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
-    }).on('change', '.updateStatus', function (e) {
-        var id      = $(this).attr('data-id');
-        var status  = $(this).val();
-        $.ajax({
-            type: "POST",
-            url: myLabel.updateStatus,
-            cache: false,
-            data: {id: id, status: status},
-            success: function (res) {
-                if (res.status) {
-                    dataTable.ajax.reload();
-                }
-            }
-        });
-    }).on('click', '#checkAll', function () {
-        $('#agentTable input[type=checkbox]').prop('checked', this.checked);
-    });
-}
-$(document).on('click', '#delete', function (e) {
-    var selected = [];
-    $('#agentTable .selectCheckbox').each(function () {
-        if ($(this).is(":checked")) {
-            var id = $(this).data('id');
-
-            if (id != undefined || id != 0 || id != '' || id != null) {
-                selected.push(id);
-            }
-        }
-    });
-
-    if (selected.length > 0) {
-        swal({
-            title: "Confirm Delete",
-            text: "Are you want to delete this record?(Yes/No)",
-            type: "info",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true
-        }, function () {
-
-            setTimeout(function () {
-                $.ajax({
-                    type: "POST",
-                    url: myLabel.delete,
-                    data: {selected: selected},
-                    cache: false,
-                    success: function (res) {
-                        if (res.status === true) {
-                            swal(res.message);
-                        } else {
-                            swal(res.message);
-                        }
-
-                        dataTable.ajax.reload();
-                    }
-                });
-            }, 2000);
-
-        });
-    } else {
-        swal("You must select one record");
-    }
-});
-
-
 // Admin Login Form Valiation
 if ($frmLogin.length > 0 && validate) {
     $frmLogin.validate({
@@ -802,3 +679,153 @@ if ($frmLogin.length > 0 && validate) {
 
     });
 }
+
+// Global Fetch Data & Delete Data
+const $dt           = $("#datatable");
+const $deleteBtn    = $("#deleteBtn");
+const $frmProject   = $("#frmProject");
+const $frmChildProject   = $("#frmChildProject");
+// Project Form Validation
+if ($frmProject.length > 0 && validate) {
+    $frmProject.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            fit: {
+                required: true,
+            },
+            fit1: {
+                required: true,
+            },
+            fit2: {
+                required: true,
+            },
+            sequence: {
+                required: true,
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            meta_title: {
+                required: true,
+            },
+        },
+    });
+}
+// Project Form Validation
+if ($frmChildProject.length > 0 && validate) {
+    $frmChildProject.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            project_id: {
+                required: true,
+            },
+            status: {
+                required: true,
+            },
+            sequence: {
+                required: true,
+            },
+        },
+    });
+}
+
+
+// Global Fetch Data & Delete Data
+if ($dt.length > 0 && dataTable) {
+    var dataTable = $dt.DataTable( {
+        "processing": true,
+        "searching" : true,
+        "paging": true,
+        "order" : [],
+        "ajax": {
+            "url": myLabel.fetch,
+            "type": 'POST',
+            "dataSrc": "data"
+        },
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': '<div class="spinner"></div>'
+        },
+        "oLanguage": {
+            "sEmptyTable": "Empty Table"
+        },
+        dom: 'lBfrtip',
+        buttons: [
+            'excel', 'csv', 'pdf'
+        ],
+        "columnDefs": [ {
+            "targets": 0,
+            "orderable": false
+        },{
+            visible: false
+        } ],
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
+    }).on('change', '.updateStatus', function (e) {
+        const id      = $(this).attr('data-id');
+        const status  = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: myLabel.status,
+            cache: false,
+            data: {id: id, status: status},
+            success: function (res) {
+                if (res.status) {
+                    dataTable.ajax.reload();
+                }
+            }
+        });
+    }).on('click', '#checkAll', function () {
+        $('#agentTable input[type=checkbox]').prop('checked', this.checked);
+    });
+}
+$(document).on('click', '#deleteBtn', function (e) {
+    var selected = [];
+    $('#datatable .selectCheckbox').each(function () {
+        if ($(this).is(":checked")) {
+            var id = $(this).val();
+            if (id != undefined || id != 0 || id != '' || id != null) {
+                selected.push(id);
+            }
+        }
+    });
+
+    if (selected.length > 0) {
+        console.log(selected);
+        swal({
+            title: "Confirm Delete",
+            text: "Are you want to delete this record?(Yes/No)",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url: myLabel.delete,
+                    data: {selected: selected},
+                    cache: false,
+                    success: function (res) {
+                        if (res.status === true) {
+                            swal(res.message);
+                        } else {
+                            swal(res.message);
+                        }
+
+                        dataTable.ajax.reload();
+                    }
+                });
+            }, 2000);
+
+        });
+    } else {
+        swal("You must select one record");
+    }
+});
+// Global Fetch Data & Delete Data

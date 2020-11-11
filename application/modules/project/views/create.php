@@ -1,6 +1,5 @@
 <div class="content container-fluid">
     <form id="<?php echo $form['id'];?>" name="<?php echo $form['name'];?>" action="<?php echo $route;?>" method="post">
-        <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
         <div class="row">
             <div class="col-sm-4 col-xs-3">
                 <h4 class="page-title"><?php echo $title;?></h4>
@@ -25,6 +24,12 @@
                                 <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entryName;?><span class="text-danger">*</span></label>
                                     <input value="<?php echo $name;?>" name="name" class="form-control floating" type="text" autocomplete="off" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entrySlug;?><span class="text-danger"></span></label>
+                                    <input value="<?php echo $slug;?>" name="slug" class="form-control floating" type="text" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -131,7 +136,7 @@
                         <div class="col-md-12">
                             <div class="col-md-12">
                                 <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryMetaTitle;?></label>
+                                    <label class="control-label"><?php echo $entryMetaTitle;?><span class="text-danger">*</span></label>
                                     <input value="<?php echo $meta_title;?>" name="meta_title" class="form-control floating" type="text" autocomplete="off" required>
                                 </div>
                             </div>

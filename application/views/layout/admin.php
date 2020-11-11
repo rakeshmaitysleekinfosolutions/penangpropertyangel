@@ -60,13 +60,13 @@
                             <li class="submenu">
                                 <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;ENQUIRY</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="#"><i class="fa fa-double-angle-right"></i>ENQUIRY</a></li>
+                                    <li><a href="#"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>ENQUIRY</span></a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
                                 <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;SELL/LEASE</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="#"><i class="fa fa-double-angle-right"></i>Sale/Lease</a></li>
+                                    <li><a href="#"><i class="fa fa-double-angle-right"></i>SELL/LEASE</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
@@ -84,13 +84,14 @@
 							<li class="submenu">
 								<a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;ITEM</span> <span class="menu-arrow"></span></a>
 								<ul class="list-unstyled" style="display: none;">
-									<li><a href="#"><i class="fa fa-double-angle-right"></i>ITEM</a></li>
+									<li><a href="#"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>ITEM</span></a></li>
+									<li><a href="<?php echo url('project');?>"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>PROJECT</span></a></li>
 								</ul>
 							</li>
                             <li class="submenu">
                                 <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;AGENT</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="<?php echo url('agent');?>"><i class="fa fa-double-angle-right"></i>AGENT</a></li>
+                                    <li><a href="<?php echo url('agent');?>"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>AGENT</span></a></li>
                                 </ul>
                             </li>
 

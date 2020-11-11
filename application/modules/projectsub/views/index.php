@@ -17,6 +17,8 @@
         <div class="col-sm-8 text-right m-b-30">
             <button type="button" class="btn btn-primary" id="deleteBtn"><i class="fa fa-trash"></i> <?php echo $deleteBtn;?></button>
             <a href="<?php echo $add;?>" class="btn btn-primary"><i class="fa fa-plus"></i> <?php echo $addBtn;?></a>
+            <a href="<?php echo $backToPreviousLevel;?>" class="btn btn-primary"><i class="fa fa-arrow-left"></i> <?php echo $btnBackToPreviousLevel;?></a>
+
         </div>
     </div>
     <div class="row">
@@ -48,7 +50,7 @@
 <script>
     var myLabel             = myLabel || {};
     myLabel.baseUrl         = '<?php echo base_url();?>';
-    myLabel.fetch           = '<?php echo url('project/onLoadDatatableEventHandler');?>';
-    myLabel.status          = '<?php echo url('project/onChangeStatusEventHandler');?>';
-    myLabel.delete          = '<?php echo url('project/delete');?>';
+    myLabel.fetch           = '<?php echo url('projectsub/onLoadDatatableEventHandler/'.$parent_id);?>';
+    myLabel.status          = '<?php echo url('projectsub/onChangeStatusEventHandler');?>';
+    myLabel.delete          = '<?php echo url('projectsub/delete');?>';
 </script>
