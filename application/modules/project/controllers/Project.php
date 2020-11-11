@@ -82,13 +82,11 @@ class Project extends AdminController {
         }
         // Slug
         if (!empty($this->input->post('slug'))) {
-
             $this->data['slug'] = url_title($this->input->post('slug'),'dash', true);
         } elseif (!empty($this->project)) {
             $this->data['slug'] = $this->project->slug;
         } else {
             $this->data['slug'] = url_title($this->input->post('name'),'dash', true);
-
         }
 
         // Price

@@ -685,6 +685,7 @@ const $dt           = $("#datatable");
 const $deleteBtn    = $("#deleteBtn");
 const $frmProject   = $("#frmProject");
 const $frmChildProject   = $("#frmChildProject");
+const $frmCategory   = $("#frmCategory");
 // Project Form Validation
 if ($frmProject.length > 0 && validate) {
     $frmProject.validate({
@@ -730,10 +731,32 @@ if ($frmChildProject.length > 0 && validate) {
             sequence: {
                 required: true,
             },
+            sort_order: {
+                required: true,
+                integer: true
+            },
         },
     });
 }
-
+// Category Form Validation
+if ($frmCategory.length > 0 && validate) {
+    $frmCategory.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            project_id: {
+                required: true,
+            },
+            status: {
+                required: true,
+            },
+            sequence: {
+                required: true,
+            },
+        },
+    });
+}
 
 // Global Fetch Data & Delete Data
 if ($dt.length > 0 && dataTable) {

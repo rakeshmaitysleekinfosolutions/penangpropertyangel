@@ -85,6 +85,7 @@
 								<a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;ITEM</span> <span class="menu-arrow"></span></a>
 								<ul class="list-unstyled" style="display: none;">
 									<li><a href="#"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>ITEM</span></a></li>
+									<li><a href="<?php echo url('category');?>"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>CATEGORY</span></a></li>
 									<li><a href="<?php echo url('project');?>"><i class="fa fa-angle-double-right" aria-hidden="true"></i><span>PROJECT</span></a></li>
 								</ul>
 							</li>

@@ -16054,6 +16054,7 @@ var $dt = $("#datatable");
 var $deleteBtn = $("#deleteBtn");
 var $frmProject = $("#frmProject");
 var $frmChildProject = $("#frmChildProject");
+var $frmCategory = $("#frmCategory");
 // Project Form Validation
 if ($frmProject.length > 0 && validate) {
     $frmProject.validate({
@@ -16086,6 +16087,29 @@ if ($frmProject.length > 0 && validate) {
 // Project Form Validation
 if ($frmChildProject.length > 0 && validate) {
     $frmChildProject.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            project_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sequence: {
+                required: true
+            },
+            sort_order: {
+                required: true,
+                integer: true
+            }
+        }
+    });
+}
+// Category Form Validation
+if ($frmCategory.length > 0 && validate) {
+    $frmCategory.validate({
         rules: {
             name: {
                 required: true
