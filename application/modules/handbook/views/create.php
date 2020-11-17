@@ -17,7 +17,7 @@
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                         </div>
                     <?php } ?>
-                    <h3 class="card-title">Project Details</h3>
+                    <h3 class="card-title">Handbook Details</h3>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-6">
@@ -34,47 +34,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit;?>" name="fit" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit1;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit1;?>" name="fit1" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryFit2;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $fit2;?>" name="fit2" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryPrice;?><span class="text-danger">*</span></label>
-                                    <input value="<?php echo $price;?>" name="price" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entrySequence;?><span class="text-danger">*</span></label>
                                     <input value="<?php echo $sequence;?>" name="sequence" class="form-control floating" type="text" autocomplete="off" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus">
-                                    <label class="control-label"><?php echo $entryDate;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $date;?>" name="date" class="form-control floating datetimepicker"  type="text" placeholder="dd-mm-yyyy" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group form-focus select-focus">
-                                    <label class="control-label"><?php echo $entrySlider;?><span class="text-danger">*</span></label>
-                                    <select class="select form-control floating" name="slider">
-                                        <option value="1" <?php echo ($slider == 1) ? "selected" : "" ;?>>Show</option>
-                                        <option value="0" <?php echo ($slider == 0) ? "selected" : "" ;?>>Off</option>
-                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -106,25 +67,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label"><?php echo $entrySmallDescription;?><span class="text-danger"></span></label>
-                                    <textarea name="small_description" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryLongDescription;?><span class="text-danger"></span></label>
-                                    <textarea name="long_description" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $long_description;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entrySnapshot;?><span class="text-danger"></span></label>
-                                    <textarea name="snapshot" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $snapshot;?></textarea>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label"><?php echo $entryFeatures;?><span class="text-danger"></span></label>
-                                    <textarea name="features" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $features;?></textarea>
+                                    <textarea name="small_description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
                                 </div>
                             </div>
                         </div>

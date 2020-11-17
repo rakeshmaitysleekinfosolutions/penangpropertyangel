@@ -337,7 +337,7 @@ $(document).on('click', '.addImage', function (e) {
         '                                            <option value="1">true</option>\n' +
         '                                        </select></div></td>';
     html += '  <td class="text-left"><div class="form-group form-focus select-focus"><input type="text" name="images[' + myLabel.imageRow + '][sort_order]" value="" class="form-control" id="input-sort_order' + myLabel.imageRow + '" data-placeholder="Sort Order" required></div></td>';
-    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove;?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
     html += '</tr>';
 
     $('#images tbody').append(html);
@@ -510,7 +510,50 @@ $('select[name="country_id"]').on('change', function() {
         }
     });
 });
+$('select[name="state_id"]').on('change', function() {
+    var state_id = $('select[name="state_id"]').find(":selected").val();
+    $.ajax({
+        url: myLabel.childStates,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            state_id: state_id
+        },
+        beforeSend: function() {
+            $('select[name="state_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+        },
+        complete: function() {
+            $('.fa-spin').remove();
+        },
+        success: function(json) {
+            // }
+            var html = '';
+           // html = '<option value="">select option</option>';
+
+            if (json['states'] && json['states'] != '') {
+                for (var i = 0; i < json['states'].length; i++) {
+                    html += '<option value="' + json['states'][i]['id'] + '"';
+                    //console.log(json['states'][i]['id']);
+                    if (json['states'][i]['id'] == myLabel.state_id) {
+
+                        html += ' selected="selected"';
+                    }
+
+                    html += '>' + json['states'][i]['name'] + '</option>';
+                }
+            } else {
+                html += '<option value="0" selected="selected">Empty</option>';
+            }
+
+            $('select[name="childstate_id"]').html(html);
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
 $('select[name="country_id"]').trigger('change');
+$('select[name="state_id"]').trigger('change');
 
 // Agent Form Validation
 var $frmAgent = $("#frmAgent"),
@@ -527,11 +570,9 @@ if ($frmAgent.length > 0 && validate) {
         rules:{
             firstname: {
                 required: true,
-                lettersonly: true
             },
             lastname: {
                 required: true,
-                lettersonly: true
             },
             email: {
                 required: true,
@@ -547,10 +588,10 @@ if ($frmAgent.length > 0 && validate) {
                 equalTo: "#input-password"
             },
             phone: {
-                integer: true
+                integer: false
             },
             mobile: {
-                integer: true
+                integer: false
             },
             postcode: {
                 nowhitespace: true,
@@ -614,11 +655,9 @@ if ($frmEditProfile.length > 0 && validate) {
         rules:{
             firstname: {
                 required: true,
-                lettersonly: true
             },
             lastname: {
                 required: true,
-                lettersonly: true
             },
             email: {
                 email: true
@@ -627,7 +666,7 @@ if ($frmEditProfile.length > 0 && validate) {
                 integer: true
             },
             mobile: {
-                integer: true
+                integer: false
             },
             postcode: {
                 nowhitespace: true,
@@ -686,6 +725,9 @@ const $deleteBtn    = $("#deleteBtn");
 const $frmProject   = $("#frmProject");
 const $frmChildProject   = $("#frmChildProject");
 const $frmCategory   = $("#frmCategory");
+const $frmChildState   = $("#frmChildState");
+const $frmItem   = $("#frmItem");
+const $frmHandbook   = $("#frmHandbook");
 // Project Form Validation
 if ($frmProject.length > 0 && validate) {
     $frmProject.validate({
@@ -757,7 +799,73 @@ if ($frmCategory.length > 0 && validate) {
         },
     });
 }
-
+// Child State Form Validation
+if ($frmChildState.length > 0 && validate) {
+    $frmChildState.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            country_id: {
+                required: true,
+            },
+            state_id: {
+                required: true,
+            },
+            status: {
+                required: true,
+            },
+            sort_order: {
+                required: true,
+            },
+        },
+    });
+}
+// Item Form Validation
+if ($frmItem.length > 0 && validate) {
+    $frmItem.validate({
+        rules:{
+            projects_id: {
+                required: true,
+            },
+            title: {
+                required: true,
+            },
+            category_id: {
+                required: true,
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            sort_order: {
+                required: true,
+            },
+            meta_title: {
+                required: true,
+            },
+        },
+    });
+}
+// Handbook Form validation
+if ($frmHandbook.length > 0 && validate) {
+    $frmHandbook.validate({
+        rules:{
+            name: {
+                required: true,
+            },
+            project_id: {
+                required: true,
+            },
+            status: {
+                required: true,
+            },
+            sequence: {
+                required: true,
+            },
+        },
+    });
+}
 // Global Fetch Data & Delete Data
 if ($dt.length > 0 && dataTable) {
     var dataTable = $dt.DataTable( {

@@ -15709,7 +15709,7 @@ $(document).on('click', '.addImage', function (e) {
     html += '  <td class="text-left"><a href="" type="image" id="thumb-image' + myLabel.imageRow + '"data-toggle="image" class=""><img src="' + myLabel.placeholder + '" alt="" title="" data-placeholder="' + myLabel.placeholder + '" /></a><input type="hidden" name="images[' + myLabel.imageRow + '][image]" value="" id="input-image' + myLabel.imageRow + '" /></td>';
     html += '  <td class="text-left"><div class="form-group form-focus select-focus"><select name="images[' + myLabel.imageRow + '][thumbnail]" class="form-control select floating" id="input-thumbnail[' + myLabel.imageRow + '][thumbnail]" >\n' + '                                            <option value="0">false</option>\n' + '                                            <option value="1">true</option>\n' + '                                        </select></div></td>';
     html += '  <td class="text-left"><div class="form-group form-focus select-focus"><input type="text" name="images[' + myLabel.imageRow + '][sort_order]" value="" class="form-control" id="input-sort_order' + myLabel.imageRow + '" data-placeholder="Sort Order" required></div></td>';
-    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="<?php echo $button_remove;?>" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
     html += '</tr>';
 
     $('#images tbody').append(html);
@@ -15881,7 +15881,50 @@ $('select[name="country_id"]').on('change', function () {
         }
     });
 });
+$('select[name="state_id"]').on('change', function () {
+    var state_id = $('select[name="state_id"]').find(":selected").val();
+    $.ajax({
+        url: myLabel.childStates,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            state_id: state_id
+        },
+        beforeSend: function beforeSend() {
+            $('select[name="state_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+        },
+        complete: function complete() {
+            $('.fa-spin').remove();
+        },
+        success: function success(json) {
+            // }
+            var html = '';
+            // html = '<option value="">select option</option>';
+
+            if (json['states'] && json['states'] != '') {
+                for (var i = 0; i < json['states'].length; i++) {
+                    html += '<option value="' + json['states'][i]['id'] + '"';
+                    //console.log(json['states'][i]['id']);
+                    if (json['states'][i]['id'] == myLabel.state_id) {
+
+                        html += ' selected="selected"';
+                    }
+
+                    html += '>' + json['states'][i]['name'] + '</option>';
+                }
+            } else {
+                html += '<option value="0" selected="selected">Empty</option>';
+            }
+
+            $('select[name="childstate_id"]').html(html);
+        },
+        error: function error(xhr, ajaxOptions, thrownError) {
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
 $('select[name="country_id"]').trigger('change');
+$('select[name="state_id"]').trigger('change');
 
 // Agent Form Validation
 var $frmAgent = $("#frmAgent"),
@@ -15896,12 +15939,10 @@ if ($frmAgent.length > 0 && validate) {
     $frmAgent.validate({
         rules: {
             firstname: {
-                required: true,
-                lettersonly: true
+                required: true
             },
             lastname: {
-                required: true,
-                lettersonly: true
+                required: true
             },
             email: {
                 required: true,
@@ -15917,10 +15958,10 @@ if ($frmAgent.length > 0 && validate) {
                 equalTo: "#input-password"
             },
             phone: {
-                integer: true
+                integer: false
             },
             mobile: {
-                integer: true
+                integer: false
             },
             postcode: {
                 nowhitespace: true,
@@ -15983,12 +16024,10 @@ if ($frmEditProfile.length > 0 && validate) {
     $frmEditProfile.validate({
         rules: {
             firstname: {
-                required: true,
-                lettersonly: true
+                required: true
             },
             lastname: {
-                required: true,
-                lettersonly: true
+                required: true
             },
             email: {
                 email: true
@@ -15997,7 +16036,7 @@ if ($frmEditProfile.length > 0 && validate) {
                 integer: true
             },
             mobile: {
-                integer: true
+                integer: false
             },
             postcode: {
                 nowhitespace: true,
@@ -16055,6 +16094,9 @@ var $deleteBtn = $("#deleteBtn");
 var $frmProject = $("#frmProject");
 var $frmChildProject = $("#frmChildProject");
 var $frmCategory = $("#frmCategory");
+var $frmChildState = $("#frmChildState");
+var $frmItem = $("#frmItem");
+var $frmHandbook = $("#frmHandbook");
 // Project Form Validation
 if ($frmProject.length > 0 && validate) {
     $frmProject.validate({
@@ -16126,7 +16168,73 @@ if ($frmCategory.length > 0 && validate) {
         }
     });
 }
-
+// Child State Form Validation
+if ($frmChildState.length > 0 && validate) {
+    $frmChildState.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            country_id: {
+                required: true
+            },
+            state_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sort_order: {
+                required: true
+            }
+        }
+    });
+}
+// Item Form Validation
+if ($frmItem.length > 0 && validate) {
+    $frmItem.validate({
+        rules: {
+            projects_id: {
+                required: true
+            },
+            title: {
+                required: true
+            },
+            category_id: {
+                required: true
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            sort_order: {
+                required: true
+            },
+            meta_title: {
+                required: true
+            }
+        }
+    });
+}
+// Handbook Form validation
+if ($frmHandbook.length > 0 && validate) {
+    $frmHandbook.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            project_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sequence: {
+                required: true
+            }
+        }
+    });
+}
 // Global Fetch Data & Delete Data
 if ($dt.length > 0 && dataTable) {
     var dataTable = $dt.DataTable({
@@ -41243,7 +41351,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	$.validator.addMethod("url2", function (value, element) {
 		return this.optional(element) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)*(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
 	}, $.validator.messages.url);
-
 	/**
   * Return true, if the value is a valid vehicle identification number (VIN).
   *

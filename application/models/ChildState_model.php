@@ -1,9 +1,9 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class State_model extends BaseModel {
-    
-    protected $table = "states";
+class ChildState_model extends BaseModel {
+
+    protected $table = "childstates";
 
     protected $primaryKey = 'id';
 
@@ -26,16 +26,14 @@ class State_model extends BaseModel {
 
     protected $recordDeletedTrueValue = '0';
 
-    
+
+
     public static function factory($attr = array()) {
-        return new State_model($attr);
+        return new ChildState_model($attr);
     }
 
-    public function childStates() {
-        return $this->hasMany(ChildState_model::class, 'state_id', 'id')->where('status',1)->get()->result_object();
-    }
 
-    
-   
-    
+    public function state() {
+        return $this->hasOne(State_model::class, 'id', 'state_id');
+    }
 }

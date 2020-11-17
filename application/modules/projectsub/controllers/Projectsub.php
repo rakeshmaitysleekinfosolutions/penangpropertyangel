@@ -107,7 +107,11 @@ class Projectsub extends AdminController {
         if (!empty($this->input->post('images'))) {
             $projectImages = $this->input->post('images');
         } elseif (!empty($this->project)) {
-            $projectImages = $this->project->images($this->project->id);
+            if($this->isPost()) {
+                $projectImages = $this->input->post('images');
+            } else {
+                $projectImages = $this->project->images($this->project->id);
+            }
         } else {
             $projectImages = array();
         }

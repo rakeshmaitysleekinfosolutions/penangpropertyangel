@@ -1,15 +1,15 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 use Carbon\Carbon;
-class Category extends AdminController {
+class Childstate extends AdminController {
 
     /**
      * @var object
      */
-    private $category;
+    private $childState;
 
     /**
-     * category constructor.
+     * Childstate constructor.
      */
     public function __construct() {
         parent::__construct();
@@ -21,115 +21,67 @@ class Category extends AdminController {
      * @throws Exception
      */
     public function init() {
-        $this->data['heading']                  = 'Category Management';
+        $this->data['heading']                  = 'Child State Management';
+        $this->data['entryState']               = 'State/Province';
+        $this->data['entryCountry']             = 'Country';
         $this->data['entryName']                = 'Name';
         $this->data['entrySortOrder']           = 'Sort Order';
-        $this->data['entrySlug']                = 'Slug';
         $this->data['entryStatus']              = 'Status';
         $this->data['entryRemarks']             = 'Remarks';
-        $this->data['entryDescription']         = 'Description';
-        $this->data['entrySequence']            = 'Sequence';
-        $this->data['entryMetaTitle']            = 'Meta Title';
-        $this->data['entryMetaDescription']      = 'Meta Description';
-        $this->data['entryMetaKeywords']         = 'Meta Keywords';
         $this->data['btnSave']                  = 'Save & Update';
         $this->data['btnBack']                  = 'Back';
-        $this->data['backToPreviousLevel']      = url('category');
+        $this->data['backToPreviousLevel']      = url('childstate');
 
         $this->data['form']             = array(
-            'id'    => 'frmCategory',
-            'name'  => 'frmCategory',
+            'id'    => 'frmChildState',
+            'name'  => 'frmChildState',
         );
+
+        $this->data['country_id'] = 129;
+        if (!empty($this->input->post('state_id'))) {
+            $this->data['state_id'] = $this->input->post('state_id');
+        } elseif (!empty($this->childState)) {
+            $this->data['state_id'] = $this->childState->state_id;
+        } else {
+            $this->data['state_id'] = '';
+        }
         // Name
         if (!empty($this->input->post('name'))) {
             $this->data['name'] = $this->input->post('name');
-        } elseif (!empty($this->category)) {
-            $this->data['name'] = $this->category->name;
+        } elseif (!empty($this->childState)) {
+            $this->data['name'] = $this->childState->name;
         } else {
             $this->data['name'] = '';
         }
-        // Slug
-        if (!empty($this->input->post('slug'))) {
-            $this->data['slug'] = url_title($this->input->post('slug'),'dash', true);
-        } elseif (!empty($this->category)) {
-            $this->data['slug'] = $this->category->slug;
-        } else {
-            $this->data['slug'] = url_title($this->input->post('name'),'dash', true);
-        }
-        // Name
-        if (!empty($this->input->post('sequence'))) {
-            $this->data['sequence'] = $this->input->post('sequence');
-        } elseif (!empty($this->category)) {
-            $this->data['sequence'] = $this->category->sequence;
-        } else {
-            $this->data['sequence'] = 0;
-        }
+       
         // remarks
         if (!empty($this->input->post('remarks'))) {
             $this->data['remarks'] = $this->input->post('remarks');
-        } elseif (!empty($this->category)) {
-            $this->data['remarks'] = $this->category->remarks;
+        } elseif (!empty($this->childState)) {
+            $this->data['remarks'] = $this->childState->remarks;
         } else {
             $this->data['remarks'] = '';
         }
         // Status
         if ($this->input->post('status') != '') {
             $this->data['status'] = $this->input->post('status');
-        } elseif (!empty($this->category)) {
-            $this->data['status'] = $this->category->status;
+        } elseif (!empty($this->childState)) {
+            $this->data['status'] = $this->childState->status;
         } else {
             $this->data['status'] = 1;
         }
         // Meta keyword
         if (!empty($this->input->post('sort_order'))) {
             $this->data['sort_order'] = $this->input->post('sort_order');
-        } elseif (!empty($this->category)) {
-            $this->data['sort_order'] = $this->category->sort_order;
+        } elseif (!empty($this->childState)) {
+            $this->data['sort_order'] = $this->childState->sort_order;
         } else {
             $this->data['sort_order'] = '';
         }
-        if (!empty($this->input->post('image'))) {
-            $this->data['image'] = $this->input->post('image');
-        } elseif (!empty($this->category)) {
-            $this->data['image'] = $this->category->image;
-        } else {
-            $this->data['image'] = '';
-        }
-
-        if (!empty($this->input->post('image')) && is_file(DIR_IMAGE . $this->input->post('image'))) {
-            $this->data['thumb'] = $this->resize($this->input->post('image'), 100, 100);
-        } elseif (!empty($this->category) && is_file(DIR_IMAGE . $this->category->image)) {
-            $this->data['thumb'] = $this->resize($this->category->image, 100, 100);
-        } else {
-            $this->data['thumb'] = $this->resize('no_image.png', 100, 100);
-        }
-// Meta Title
-        if (!empty($this->input->post('meta_title'))) {
-            $this->data['meta_title'] = $this->input->post('meta_title');
-        } elseif (!empty($this->category)) {
-            $this->data['meta_title'] = $this->category->meta_title;
-        } else {
-            $this->data['meta_title'] = '';
-        }
-        // Meta Description
-        if (!empty($this->input->post('meta_description'))) {
-            $this->data['meta_description'] = $this->input->post('meta_description');
-        } elseif (!empty($this->category)) {
-            $this->data['meta_description'] = $this->category->meta_description;
-        } else {
-            $this->data['meta_description'] = '';
-        }
-        // Meta keyword
-        if (!empty($this->input->post('meta_keywords'))) {
-            $this->data['meta_keywords'] = $this->input->post('meta_keywords');
-        } elseif (!empty($this->category)) {
-            $this->data['meta_keywords'] = $this->category->meta_keywords;
-        } else {
-            $this->data['meta_keywords'] = '';
-        }
-        $this->data['back']         = url('category/');
+       
+        $this->data['back']         = url('childstate/');
         $this->data['placeholder']  = $this->resize('no_image.png', 100, 100);
-        $this->data['categorys'] = Category_model::factory()->findAll();
+        $this->data['countries']    = Country_model::factory()->findAll(['id' => 129]);
     }
 
     /**
@@ -137,17 +89,16 @@ class Category extends AdminController {
      */
     public function index() {
         $this->init();
-        $this->data['title']     = 'category List';
+        $this->data['title']    = 'Child State List';
         $this->data['columns'][] = 'NO';
-        $this->data['columns'][] = 'Seq';
+        $this->data['columns'][] = 'State';
         $this->data['columns'][] = 'Name';
         $this->data['columns'][] = 'Remarks';
-        $this->data['columns'][] = 'Img';
         $this->data['columns'][] = 'Status';
         $this->data['columns'][] = 'Sort Order';
         $this->data['columns'][] = 'CrtDt';
         $this->data['columns'][] = 'UpdDt';
-        $this->data['add']       = url('category/create/');
+        $this->data['add']       = url('childstate/create/');
 
         $this->data['addBtn'] = 'Add';
         $this->data['deleteBtn'] = 'Delete';
@@ -159,8 +110,8 @@ class Category extends AdminController {
      */
     public function create() {
         $this->init();
-        $this->data['title'] = 'Add category';
-        $this->data['route'] = url('category/store/');
+        $this->data['title'] = 'Add Childstate';
+        $this->data['route'] = url('childstate/store/');
         render('create', $this->data);
     }
 
@@ -170,21 +121,15 @@ class Category extends AdminController {
     public function store() {
         try {
             $this->init();
-            // category Model
-            Category_model::factory()->insert([
+            ChildState_model::factory()->insert([
+                'state_id'          => $this->data['state_id'],
                 'name'              => $this->data['name'],
-                'slug'              => $this->data['slug'],
                 'sort_order'        => $this->data['sort_order'],
                 'remarks'           => $this->data['remarks'],
-                'sequence'          => $this->data['sequence'],
                 'status'            => $this->data['status'],
-                'image'             => $this->data['image'],
-                'meta_title'        => $this->data['meta_title'],
-                'meta_keywords'     => $this->data['meta_keywords'],
-                'meta_description'  => $this->data['meta_description'],
             ]);
-            setMessage('message', "Success: You have modified category! ");
-            redirect(url('category/create/'.$this->data['category_id']));
+            setMessage('message', "Success: You have modified Childstate! ");
+            redirect(url('childstate/create/'));
         } catch (Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
@@ -195,14 +140,14 @@ class Category extends AdminController {
      * @throws Exception
      */
     public function edit($id) {
-        $this->category = Category_model::factory()->findOne($id);
-        if(!$this->category) {
-            setMessage('message', 'Info: category does not exists!');
-            redirect(url('category'));
+        $this->childState = ChildState_model::factory()->findOne($id);
+        if(!$this->childState) {
+            setMessage('message', 'Info: Childstate does not exists!');
+            redirect(url('Childstate'));
         }
         $this->init();
-        $this->data['title']    = 'Edit category';
-        $this->data['route'] = url('category/update/'.$id);
+        $this->data['title']    = 'Edit Childstate';
+        $this->data['route'] = url('childstate/update/'.$id);
         render('edit', $this->data);
     }
 
@@ -211,30 +156,23 @@ class Category extends AdminController {
      */
     public function update($id) {
         try {
-            $this->category = Category_model::factory()->findOne($id);
-            if(!$this->category) {
-                setMessage('message', 'Info: category does not exists!');
-                redirect(url('category'));
+            $this->childState = ChildState_model::factory()->findOne($id);
+            if(!$this->childState) {
+                setMessage('message', 'Info: Childstate does not exists!');
+                redirect(url('Childstate'));
             }
             $this->init();
-            //dd($this->data);
-            // category Model
-            Category_model::factory()->update([
-                'image'             => $this->data['image'],
+            ChildState_model::factory()->update([
+                'state_id'          => $this->data['state_id'],
                 'name'              => $this->data['name'],
                 'sort_order'        => $this->data['sort_order'],
-                'slug'              => $this->data['slug'],
                 'remarks'           => $this->data['remarks'],
-                'sequence'          => $this->data['sequence'],
                 'status'            => $this->data['status'],
-                'meta_title'        => $this->data['meta_title'],
-                'meta_keywords'     => $this->data['meta_keywords'],
-                'meta_description'  => $this->data['meta_description'],
             ],[
                 'id' => $id
             ]);
-            setMessage('message', "Success: You have modified category! ");
-            redirect(url('category/edit/'.$id).'/');
+            setMessage('message', "Success: You have modified Childstate! ");
+            redirect(url('childstate/edit/'.$id).'/');
         } catch (Exception $e) {
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
@@ -255,7 +193,7 @@ class Category extends AdminController {
             }
             if($this->selected) {
                 foreach ($this->selected as $id) {
-                    Category_model::factory()->delete($id);
+                    ChildState_model::factory()->delete($id);
                 }
                 return $this->output
                     ->set_content_type('application/json')
@@ -273,16 +211,15 @@ class Category extends AdminController {
      * @throws Exception
      */
     public function onLoadDataTableEventHandler() {
-        $this->results = Category_model::factory()->findAll([],null,'sort_order','asc');
+        $this->results = ChildState_model::factory()->findAll([],null,'sort_order','asc');
         if($this->results) {
             foreach($this->results as $result) {
                 $this->rows[] = array(
                     'id'			=> $result->id,
+                    'state'		    => $result->state->name,
                     'name'		    => $result->name,
-                    'sequence' 		=> $result->sequence,
                     'remarks' 		=> $result->remarks,
                     'sort_order' 		=> $result->sort_order,
-                    'img' 		    => resize($result->image,32,32),
                     'status' 		=> ($result->status && $result->status == 1) ? 1 : 0,
                     'created_at'    => $result->created_at,
                     'updated_at'    => $result->updated_at
@@ -300,11 +237,9 @@ class Category extends AdminController {
 											</label>
 										</td>';
                 $this->data[$i][] = '<td>'.$counter.'</td>';
-                $this->data[$i][] = '<td>'.$row['sequence'].'</td>';
+                $this->data[$i][] = '<td>'.$row['state'].'</td>';
                 $this->data[$i][] = '<td>'.$row['name'].'</td>';
                 $this->data[$i][] = '<td>'.$row['remarks'].'</td>';
-                $this->data[$i][] = '<td><img src="'.$row['img'].'"></td>';
-
                 $this->data[$i][] = '<td>
                                         <select data-id="'.$row['id'].'" name="status" class="form-control select floating updateStatus" id="input-payment-status" >
                                             <option value="0" '.$selected.'>Inactive</option>
@@ -316,7 +251,7 @@ class Category extends AdminController {
                 $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
 
                 $this->data[$i][] = '<td class="text-right">
-	                            <a href="'.url('category/edit/').$row['id'].'/" id="button-image" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a> 
+	                            <a href="'.url('childstate/edit/').$row['id'].'/" id="button-image" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="Edit"><i class="fa fa-pencil"></i></a> 
 	                        </td>
                         ';
                 $i++;
@@ -343,7 +278,7 @@ class Category extends AdminController {
         if($this->isAjaxRequest()) {
             $this->request = $this->input->post();
             if(isset($this->request['status']) && isset($this->request['id'])) {
-                Category_model::factory()->update(['status' => $this->request['status']], ['id' => $this->request['id']]);
+                ChildState_model::factory()->update(['status' => $this->request['status']], ['id' => $this->request['id']]);
                 $this->json['status'] = 'Status has been successfully updated';
                 return $this->output
                     ->set_content_type('application/json')
