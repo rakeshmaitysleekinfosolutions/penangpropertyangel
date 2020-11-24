@@ -1,0 +1,714 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~owl.carousel/dist/assets/owl.carousel.min.css';
+@import '~owl.carousel/dist/assets/owl.theme.default.css';
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+a{
+    text-decoration: none;
+}
+/*-----------------------header & footer---------------------*/
+.navbar-expand-md{
+    padding: 0 120px;
+    height: 45px;
+}
+.navbar-brand{
+    margin-right: 40px;
+    background: #fff !important;
+    height: 110px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding-top: 30px;
+}
+.navbar-expand-md ul li a{
+    font-size: 14px;
+    color: #ffffff !important;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    border-right: 1px solid #fff;
+    padding: 0 10px;
+}
+.con_none {
+    margin-right: 80px;
+}
+.con_none_a{
+    border: none !important;
+}
+.icon li a{
+    border: none !important;
+}
+.icon li a i{
+    font-size: 22px;
+    padding: 0 10px;
+}
+.dropdown-menu{
+    background: #343A40 !important;
+}
+.dropdown-item{
+    padding: 10px 0;
+    border-bottom: 1px solid #fff !important;
+}
+.dropdown-item:hover{
+    background: none;
+}
+.dropdown-toggle::after{
+    display: none;
+}
+footer{
+    padding: 10px 0 0;
+    background: #303030;
+}
+footer ul li{
+    list-style: none;
+}
+footer ul li a{
+    font-size: 15px;
+    line-height: 36px;
+    color: #ffffff;
+    font-weight: 300;
+    font-family: "Poppins";
+}
+footer ul li a:hover{
+    text-decoration: none;
+    color: #fff;
+}
+.footer_1{
+    padding-left: 70px;
+}
+.footer_2{
+    padding-left: 110px;
+    padding-top: 20px;
+}
+.copyright{
+    background: #CDCDCD;
+    font-size: 12px;
+}
+.power{
+    padding-left: 380px;
+}
+.copyright p{
+    margin-bottom: 0px;
+}
+/*-------------------------index page css-----------------------*/
+.banner{
+    margin-top: 45px;
+}
+.carousel-item img{
+    width: 100%;
+    height: 500px;
+}
+.carousel-caption{
+    width: 380px;
+    height: 300px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px 20px;
+    position: absolute;
+    top: 50%;
+    left: 80%;
+    transform: translate(-80%, -50%);
+}
+.carousel-item{
+    position: relative;
+}
+.carousel-caption h3{
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.neighborhood{
+    background: transparent;
+    color: #fff !important;
+    border: none;
+    border-bottom: 1px solid #fff;
+    font-size: 12px;
+    padding: 10px;
+}
+.bed{
+    background: transparent;
+    color: #fff !important;
+    border: none;
+    border-bottom: 1px solid #fff;
+    font-size: 12px;
+    padding: 10px;
+    width: 140px;
+}
+.bath{
+    background: transparent;
+    color: #fff !important;
+    border: none;
+    border-bottom: 1px solid #fff;
+    font-size: 12px;
+    padding: 10px;
+    width: 140px;
+}
+.add{
+    background: transparent;
+    color: #fff !important;
+    border: none;
+    border-bottom: 1px solid #fff;
+    font-size: 12px;
+    border-radius: none;
+    padding: 10px;
+    margin-top: 10px;
+}
+.ui-content label{
+    font-size: 12px;
+}
+.search{
+    background: transparent;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    color: #fff;
+    margin-top: 15px;
+    margin-left: 230px;
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+::placeholder{
+    color: #fff !important;
+    font-size: 12px;
+}
+.price{
+    width: 135px;
+}
+.right_icon{
+    position: absolute;
+    top: 28%;
+    right: 5%;
+    z-index: 999;
+}
+.right_icon li{
+    list-style: none;
+    padding: 10px;
+    transition: .6s;
+    position: relative;
+    background: #fff;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+.right_icon li i{
+    font-size: 18px;
+}
+/*.right_icon li:hover{
+	padding: 10px 40px;
+}*/
+.right_icon::after{
+    position: absolute;
+    content: '';
+    width: 1px;
+    height: 240px;
+    background: #fff;
+    top: 6%;
+    right: 48%;
+    z-index: -1;
+}
+
+/*---------------------------featured css---------------------*/
+.featured{
+    margin-top: 20px;
+}
+.details{
+    padding: 10px 12px;
+}
+.details h3{
+    font-size: 35px;
+    color: #303030;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    padding: 100px 0 0 17px;
+    line-height: 23px;
+}
+.details h5{
+    font-size: 26px;
+    color: #b0b0b0;
+    font-weight: 400;
+    font-family: "Poppins";
+    padding-left: 36px;
+}
+.details a{
+    font-size: 14px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    padding: 8px 30px;
+    background: transparent;
+    border: 1px solid #000;
+    border-radius: 30px;
+    display: inline-block;
+    margin: 24px 0 0 33px;
+    position: relative;
+}
+.details a:hover{
+    text-decoration: none;
+}
+.details a::before{
+    position: absolute;
+    content: '';
+    width: 59px;
+    height: 1px;
+    background: #000;
+    top: 50%;
+    left: -19%;
+}
+.featured_image{
+    position: relative;
+    margin-top: 12px;
+}
+.featured_image img{
+    width: 100%;
+    filter: grayscale(100%);
+    display: block;
+}
+.featured_image ul li{
+    list-style: none;
+    display: inline-flex;
+}
+.dolor{
+    margin-left: 25px;
+    margin-right: 313px;
+    font-size: 22px;
+}
+.dolor_1{
+    margin-left: 25px;
+    margin-right: 180px;
+    font-size: 22px;
+}
+.featured_image ul{
+    position: absolute;
+    top: 90%;
+}
+.featured_image img:hover{
+    filter: grayscale(0%);
+}
+
+.overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    overflow: hidden;
+    width: 100%;
+    height: 0;
+    transition: .5s ease;
+}
+
+.featured_image:hover .overlay {
+    height: 10%;
+
+}
+.text ul{
+    display: inline-flex;
+}
+.text ul li{
+    list-style: none;
+    margin-left: 12px;
+    margin-right: 250px;
+
+}
+.text {
+    color: #000;
+    font-size: 15px;
+    position: absolute;
+    top: 0%;
+}
+.view{
+    background: #ccc;
+    width: 245px;
+    height: 45px;
+    padding: 6px 65px;
+}
+.view a{
+    color: #000 !important;
+}
+.view a:hover{
+    text-decoration: none;
+}
+.text_1 ul{
+    display: inline-flex;
+}
+.text_1 ul li{
+    list-style: none;
+    margin-left: 12px;
+    margin-right: 125px;
+
+}
+.text_1 {
+    color: #000;
+    font-size: 15px;
+    position: absolute;
+    top: 0%;
+}
+/*---------------------------------.handbook---------------------------*/
+.handbook{
+    padding: 40px 0;
+}
+.handbook h2{
+    font-size: 40px;
+    color: #303030;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 30px;
+}
+.book{
+    position: relative;
+    padding: 10px;
+}
+.book h3{
+    position: absolute;
+    font-size: 30px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #fff !important;
+    z-index: 999;
+    text-align: center;
+}
+.hand_1{
+    background-image: url(../image/2a.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_1 .transbox {
+    background-color: #000;
+    opacity: 0.8;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_1 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_2 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_3 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_4 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_5 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_6 .transbox:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.hand_2{
+    background-image: url(../image/2b.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_2 .transbox {
+    background-color: #000;
+    opacity: 0.5;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_3{
+    background-image: url(../image/2c.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_3 .transbox {
+    background-color: #000;
+    opacity: 0.8;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_4{
+    background-image: url(../image/2d.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_4 .transbox {
+    background-color: #000;
+    opacity: 0.5;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_5{
+    background-image: url(../image/2e.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_5 .transbox {
+    background-color: #000;
+    opacity: 0.8;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_6{
+    background-image: url(../image/2f.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.hand_6 .transbox {
+    background-color: #000;
+    opacity: 0.5;
+    width: 100%;
+    min-height: 290px;
+}
+..owl-carousel .owl-stage-outer{
+    position: relative;
+}
+.owl-theme .owl-nav {
+    position: absolute;
+    top: 37%;
+    font-size: 25px;
+    color: #BDBDBD;
+}
+.owl-theme .owl-nav .owl-prev{
+    margin-left: -60px;
+}
+.owl-theme .owl-nav .owl-next{
+    margin-left: 1195px;
+}
+.index_more{
+    font-size: 20px;
+    background: #CDCDCD;
+    padding: 15px 55px;
+    margin: 30px 0 0 450px;
+    color: #000;
+    display: inline-flex;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 60px;
+}
+
+/*------------------modal---------------*/
+.register .modal-body h2{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+/*.register{
+	position: relative;
+}*/
+.register .modal-dialog{
+    position: absolute;
+    top: 15%;
+    left: 30%;
+    transform: translate(-15%,-30%);
+}
+.register .modal-body .form-control::focus{
+    outline: none;
+}
+.register .modal-body .form-control{
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    border-radius: 0px;
+}
+.register .modal-content{
+    background: rgba(0,0,0,.7);
+    color: #fff;
+    width: 150%;
+}
+.register .modal-body .send{
+    text-align: center;
+    margin-left: 220px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 14px;
+    padding: 8px 20px;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.register .modal-body .send:hover{
+    background: #fff;
+    color: #000;
+}
+
+/*------------------------------Buy Page css---------------------------------*/
+.buy{
+    padding: 40px 0;
+}
+.buy h2{
+    font-size: 40px;
+    color: #0f1b2d;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 20px;
+}
+.buy_category{
+    position: relative;
+    padding: 10px;
+}
+.buy_category h3{
+    position: absolute;
+    font-size: 22px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #fff !important;
+    z-index: 999;
+    text-align: center;
+}
+.buy_1{
+    background-image: url(../image/c.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_2{
+    background-image: url(../image/2d.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_3{
+    background-image: url(../image/2c.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_4{
+    background-image: url(../image/2a.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_5{
+    background-image: url(../image/2e.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_6{
+    background-image: url(../image/2f.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_7{
+    background-image: url(../image/c.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_8{
+    background-image: url(../image/a.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.buy_9{
+    background-image: url(../image/d.jpg);
+    background-size: cover;
+    width: 100%;
+    min-height: 290px;
+}
+.trans_box{
+    background-color: #000;
+    opacity: 0.7;
+    width: 100%;
+    min-height: 290px;
+}
+.trans_box:hover{
+    background-color: #000;
+    opacity: 0.1;
+    color: #fff !important;
+}
+.buy_view{
+    font-size: 16px;
+    background: #303030;
+    padding: 15px 45px;
+    margin: 30px 0 0 435px;
+    color: #fff;
+    display: inline-flex;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    margin-bottom: 20px;
+}
+.buy_view:hover{
+    color: #fff !important;
+    text-decoration: none;
+}
+
+
+/*--------------------------------Agent page css-----------------------*/
+.agent{
+    padding: 30px 0;
+    background-image: url(../image/1f.jpg);
+    background-size: cover;
+}
+.agent h2{
+    font-size: 40px;
+    color: #0f1b2d;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 20px;
+}
+.agent_div{
+    border: 3px solid #000;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 35px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transition: transform .5s;
+}
+.agent_div:hover{
+    -ms-transform: scale(1.1); /* IE 9 */
+    -webkit-transform: scale(1.1); /* Safari 3-8 */
+    transform: scale(1.1);
+}
+.agent_div img{
+    width: 70%;
+    border: 1px solid #000;
+    border-radius: 50%;
+    margin: 55px 15px;
+}
+.agent_details{
+    margin-top: 30px;
+    margin-left: -30px;
+}
+.agent_details h3{
+    font-size: 20px;
+    color: #111c39;
+    font-weight: 600;
+    font-family: "Poppins";
+}
+.agent_details h5{
+    font-size: 12px;
+    color: #111c39;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.click_agent{
+    font-size: 14px;
+    color: #000;
+    font-weight: 500;
+}
+.click_agent:hover{
+    color: #000;
+    text-decoration: none;
+}

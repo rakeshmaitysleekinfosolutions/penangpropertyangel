@@ -24,9 +24,11 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $title;?></h3>
-                <form action="<?php echo $exportToXlsRoute;?>" method="post">
-                    <button type="submit" class="btn btn-primary" id="exportXlsBtn"><i class="fa fa-file-excel-o" aria-hidden="true"></i> <?php echo $exportXlsBtn;?></button>
-                </form>
+                <?php if(!$disabled) {?>
+                    <form action="<?php echo $exportToXlsRoute;?>" method="post">
+                        <button type="submit" class="btn btn-primary" id="exportXlsBtn"><i class="fa fa-file-excel-o" aria-hidden="true"></i> <?php echo $exportXlsBtn;?></button>
+                    </form>
+                <?php } ?>
             </div>
             <div class="panel-body">
                     <div class="table-responsive">

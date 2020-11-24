@@ -8,10 +8,11 @@ window._ = require('lodash');
 
 try {
     window.Popper = require('popper.js').default;
-    window.$ = window.jQuery = require('jquery');
-    window.toastr = require('toastr');
+    window.$ = global.$ = window.jQuery = require('jquery');
+   // window.toastr = require('toastr');
     require('bootstrap-sass');
     console.log('before');
+
 } catch (e) {}
 
 /**

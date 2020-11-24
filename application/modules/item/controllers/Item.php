@@ -370,6 +370,13 @@ class Item extends AdminController {
             }
         }
         $this->data['agents']  = Agent_model::factory()->findAll($userIds,null,'id', 'asc');
+
+        $this->results = Item_model::factory()->findAll();
+        if(count($this->results)) {
+            $this->data['disabled'] = false;
+        } else {
+            $this->data['disabled'] = true;
+        }
     }
 
     /**
@@ -772,7 +779,7 @@ class Item extends AdminController {
             }
         }
         $timestamp = time();
-        $filename = $timestamp . '.xls';
+        $filename = $timestamp . '.csv';
         SimpleXLSXGen::fromArray( $this->rows )->addSheet( $this->rows, $timestamp)->downloadAs($filename);
     }
 }

@@ -72,13 +72,13 @@
                             <li class="submenu">
                                 <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;INSPECTION</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="#"><i class="fa fa-double-angle-right"></i>INSPECTION ARRANGED</a></li>
+                                    <li><a href="<?php echo url('inspection');?>"><i class="fa fa-double-angle-right"></i>INSPECTION ARRANGED</a></li>
                                 </ul>
                             </li>
                             <li class="submenu">
-                                <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;FOREIGNER'S</span> <span class="menu-arrow"></span></a>
+                                <a href="#" ><i class="fa fa-user fw"></i><span>&nbsp;PGPA HANDBOOK</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled" style="display: none;">
-                                    <li><a href="<?php echo url('handbook');?>"><i class="fa fa-double-angle-right"></i>FOREIGNER'S HANDBOOK</a></li>
+                                    <li><a href="<?php echo url('handbook');?>"><i class="fa fa-double-angle-right"></i>PGPA HANDBOOK</a></li>
                                 </ul>
                             </li>
 							<li class="submenu">

@@ -1,3 +1,5 @@
+
+
 require('./bootstrap');
 require('./additional-methods');
 require('./jquery.validate');
@@ -13,6 +15,8 @@ import 'summernote';
 import 'jquery-ui/ui/widgets/datepicker.js';
 import 'bootstrap-datepicker';
 
+
+import 'timepicker';
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -21,8 +25,11 @@ $.ajaxSetup({
 $(function () {
     if($('.datetimepicker').length > 0 ){
         $('.datetimepicker').datepicker({
-            format: 'dd-mm-yyyy'
+            format: 'mm/dd/yyyy'
         });
+    }
+    if($('.timepicker').length > 0 ){
+        $('.timepicker').timepicker({});
     }
 });
 /**
@@ -960,3 +967,4 @@ $(document).on('click', '#deleteBtn', function (e) {
     }
 });
 // Global Fetch Data & Delete Data
+
