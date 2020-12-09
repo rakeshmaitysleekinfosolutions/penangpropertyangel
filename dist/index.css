@@ -281,6 +281,7 @@ footer ul li a:hover{
 }
 
 /*---------------------------featured css---------------------*/
+/*---------------------------featured css---------------------*/
 .featured{
     margin-top: 20px;
 }
@@ -335,8 +336,16 @@ footer ul li a:hover{
 .featured_image img{
     width: 100%;
     -webkit-filter: grayscale(100%);
-            filter: grayscale(100%);
+    filter: grayscale(100%);
     display: block;
+    min-width: 616px;
+}
+.featured-next .featured_image img{
+    width: 100%;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    display: block;
+    min-width: 393px;
 }
 .featured_image ul li{
     list-style: none;
@@ -345,12 +354,13 @@ footer ul li a:hover{
     display: inline-flex;
 }
 .dolor{
-    margin-left: 25px;
-    margin-right: 313px;
+    margin-left: 50px;
+    margin-right: 280px;
     font-size: 22px;
+    color: #fff;
 }
-.dolor_1{
-    margin-left: 25px;
+.featured-next .dolor{
+    margin-left: 50px;
     margin-right: 180px;
     font-size: 22px;
 }
@@ -360,7 +370,7 @@ footer ul li a:hover{
 }
 .featured_image img:hover{
     -webkit-filter: grayscale(0%);
-            filter: grayscale(0%);
+    filter: grayscale(0%);
 }
 
 .overlay {
@@ -370,7 +380,7 @@ footer ul li a:hover{
     right: 0;
     background-color: #fff;
     overflow: hidden;
-    width: 100%;
+    width: 95%;
     height: 0;
     -webkit-transition: .5s ease;
     transition: .5s ease;
@@ -387,8 +397,10 @@ footer ul li a:hover{
 }
 .text ul li{
     list-style: none;
-    margin-left: 12px;
-    margin-right: 250px;
+    margin-left: 45px;
+    margin-right: 0px;
+    width: 248px;
+    font-size: 13px;
 
 }
 .text {
@@ -399,9 +411,8 @@ footer ul li a:hover{
 }
 .view{
     background: #ccc;
-    width: 245px;
     height: 45px;
-    padding: 6px 65px;
+    padding: 10px 35px;
 }
 .view a{
     color: #000 !important;
@@ -409,18 +420,18 @@ footer ul li a:hover{
 .view a:hover{
     text-decoration: none;
 }
-.text_1 ul{
+.featured-next .text ul{
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
     display: inline-flex;
 }
-.text_1 ul li{
+.featured-next .text ul li{
     list-style: none;
-    margin-left: 12px;
-    margin-right: 125px;
+    margin-left: 35px;
+    margin-right: -15px;
 
 }
-.text_1 {
+.featured-next .text {
     color: #000;
     font-size: 15px;
     position: absolute;
@@ -564,12 +575,12 @@ footer ul li a:hover{
     font-size: 25px;
     color: #BDBDBD;
 }
-.owl-theme .owl-nav .owl-prev{
-    margin-left: -60px;
-}
-.owl-theme .owl-nav .owl-next{
-    margin-left: 1195px;
-}
+/*.owl-theme .owl-nav .owl-prev{*/
+/*    margin-left: -60px;*/
+/*}*/
+/*.owl-theme .owl-nav .owl-next{*/
+/*    margin-left: 1195px;*/
+/*}*/
 .index_more{
     font-size: 20px;
     background: #CDCDCD;
@@ -805,4 +816,346 @@ footer ul li a:hover{
 .click_agent:hover{
     color: #000;
     text-decoration: none;
+}
+/*-----------------------feature page css---------------------*/
+.top_para p{
+    padding: 70px 70px 0px 70px;
+    font-size: 15px;
+    color: #030303;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.fade_slider{
+    padding: 20px 50px;
+
+}
+.fade_slide_div{
+    border: 1px solid #000;
+    padding: 25px;
+}
+.image_fade img{
+    width: 100%;
+}
+.image_fade{
+    position: relative;
+}
+.image_fade h5{
+    position: absolute;
+    top: -6px;
+    left: 91%;
+    font-size: 12px;
+    background: #000;
+    z-index: 999;
+    color: #fff;
+    padding: 5px 10px;
+    font-weight: 400;
+}
+.fade_div h3{
+    font-size: 19px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Poppins";
+    padding: 20px;
+    width: 100%;
+}
+.list_price ul li{
+    list-style: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    padding-left: 45px;
+}
+.li_first{
+    margin-right: 750px;
+    font-size: 14px;
+    font-size: 400;
+}
+.li_first span{
+    font-size: 24px;
+    font-weight: 600;
+    margin-right: 12px;
+}
+.list_price{
+    position: relative;
+}
+.list_price::before{
+    position: absolute;
+    content: "";
+    width: 1360px;
+    height: 1px;
+    background: #000;
+    top: 0%;
+    left: 0%;
+}
+.list_price::after{
+    position: absolute;
+    content: "";
+    width: 1360px;
+    height: 1px;
+    background: #000;
+    top: 75%;
+    left: 0%;
+}
+.fade_div p{
+    font-size: 14px;
+    line-height: 25px;
+    color: #111112;
+    font-weight: 300;
+    font-family: "Poppins";
+    padding: 10px;
+    margin-bottom: 0px;
+}
+.button_feature{
+    padding: 20px 20px 20px 45px;
+}
+.button_feature .btn{
+    margin: 7px 7px;
+    padding: 10px 50px;
+}
+.button_feature .btn:hover{
+    background: #000;
+    color: #fff;
+}
+.feature_slider{
+    padding: 20px 50px;
+}
+.f_slider_start{
+    border: 1px solid #000;
+    padding: 25px;
+}
+.f_slider_start ..owl-carousel .owl-item img{
+    height: 500px;
+}
+.fea_div{
+    border: 1px solid #000;
+    padding: 25px;
+}
+.f_slider_start .owl-next span{
+    margin-left: 115px;
+    font-size: 50px;
+}
+.f_slider_start .owl-prev span{
+    margin-left: 66px;
+    font-size: 50px;
+}
+.fea_div p{
+    margin-top: 30px;
+    font-size: 15px;
+}
+.fea_div .carousel-inner img {
+    width: 100%;
+    height: 100%;
+}
+.feature_details{
+    padding: 20px 37px;
+}
+.snap_shot{
+    padding: 40px 30px 20px;
+    background: #ccc;
+    color: #000;
+    min-height: 505px;
+}
+.snap_shot h4{
+    font-size: 30px;
+    color: #1f1c1c;
+    font-weight: 400;
+    font-family: "Poppins";
+    position: relative;
+    margin-bottom: 35px;
+}
+.snap_shot h4::after{
+    position: absolute;
+    content: "";
+    top: 150%;
+    left: 0%;
+    width: 550px;
+    height: 1px;
+    background: #666;
+}
+.snap_shot ul li{
+    list-style: none;
+    padding: 10px;
+    font-size: 18px;
+    line-height: 25px;
+    color: #1f1c1c;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.fea_ture{
+    padding: 40px 30px 20px;
+    background: #ccc;
+    color: #000;
+    min-height: 505px;
+}
+.fea_ture h4{
+    font-size: 30px;
+    color: #1f1c1c;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 35px;
+    position: relative;
+}
+.fea_ture h4::after{
+    position: absolute;
+    content: "";
+    top: 150%;
+    left: 0%;
+    width: 550px;
+    height: 1px;
+    background: #666;
+}
+.fea_ture ul li{
+    list-style: none;
+    padding: 10px;
+    font-size: 18px;
+    line-height: 25px;
+    color: #1f1c1c;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+
+/*-----------------------compare page css---------------------*/
+.top_para h2{
+    padding: 70px 70px 0px 70px;
+    font-size: 35px;
+    color: #303030;
+    font-weight: 700;
+    font-family: "Poppins";
+}
+.top_para h4{
+    padding: 0px 70px;
+    font-size: 25px;
+    color: #303030;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+}
+.compare-div{
+    padding: 20px 50px 50px;
+}
+.campare_detail_div img{
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.campare_detail_div select{
+    width: 100%;
+    font-size: 12px;
+    height: 32px;
+    padding: 0 10px;
+}
+.campare_detail_div h4{
+    padding-bottom: 310px;
+    font-size: 20px;
+    color: #303030;
+    font-weight: 600;
+    font-family: "Poppins";
+}
+.campare_detail_div h4 i{
+    font-size: 30px;
+    color: #303030;
+}
+.campare_detail_div ul li{
+    list-style: none;
+    font-size: 16px;
+    color: #303030;
+    font-weight: 400;
+    font-family: "Poppins";
+    line-height: 40px;
+}
+.campare_detail_div ul li i{
+    font-size: 20px;
+    color: #303030;
+    margin-right: 12px;
+    min-width: 30px;
+}
+.campare_detail_div h5{
+    font-size: 22px;
+    color: #303030;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 0px;
+    position: relative;
+}
+.campare_detail_div h3{
+    font-size: 25px;
+    color: #303030;
+    font-weight: 500;
+    font-family: "Poppins";
+}
+.campare_detail_div .light_btn{
+    padding: 2px 20px;
+    border: none;
+    background: #ccc;
+    font-size: 14px;
+}
+.campare_detail_div .dark_btn{
+    padding: 2px 20px;
+    border: none;
+    background: #000;
+    font-size: 14px;
+    color: #fff;
+}
+.campare_detail_div h5::before{
+    position: absolute;
+    content: "";
+    top: 0%;
+    left: -5%;
+    background: #ccc;
+    width: 1px;
+    height: 478px;
+}
+.campare_detail_div .view{
+    padding: 10px 25px;
+    background: #000;
+    color: #fff;
+    font-size: 14px;
+}
+.campare_detail_div .view:hover{
+    text-decoration: none;
+    color: #fff;
+}
+/*--------------------------cell property css---------------------*/
+.cell_property{
+    padding: 20px 50px;
+}
+.cell_details{
+    border: 1px solid #000;
+    padding: 25px;
+}
+
+/* Updated by rakesh*/
+.fade_div{
+    position: relative;
+}
+.fade_div .carousel-item img{
+    width: 100%;
+    height: 500px;
+}
+.fade_div .carousel-caption h3{
+    font-size: 14px;
+    color: #fff !important;
+    font-weight: 400;
+    padding: 2px 10px;
+}
+.fade_div .carousel-caption{
+    position: absolute;
+    width: 175px;
+    height: 60px;
+    background: #000;
+    top: 0%;
+    left: 100%;
+    -webkit-transform: translate(-100%, 0%);
+            transform: translate(-100%, 0%);
+}
+.button_feature .btn{
+    margin: 7px 7px;
+    padding: 10px 50px;
+    background: #F0F0F0;
+}
+.owl-theme .owl-nav .owl-prev{
+    margin-left: -23px;
+}
+.owl-theme .owl-nav .owl-next{
+    margin-left: 1373px;
 }

@@ -2,10 +2,14 @@
 
 class App extends AppController {
 
+    private $project;
     public function __construct()
     {
         parent::__construct();
         $this->setLayout('layout/app');
+        //Currency_model::factory()->refresh(true, 'MYR');
+        setSession('currency', $this->currency->getCurrency('MYR'));
+        $this->init();
     }
 
     public function init() {
@@ -18,9 +22,78 @@ class App extends AppController {
             'name' => 'frmLogin'
         );
     }
+    public function getImgThumbnail($projectId) {
+        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
+            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
+        }
+        return false;
+    }
     public function index() {
-        $this->init();
+        $projects = Project_model::factory()->findAll(['status' => 1], 5,'name', 'ASC');
+        if($projects) {
+            foreach ($projects as $project) {
+                $this->data['projects'][] = array(
+                    'name'  => $project->name,
+                    'url'   => url('p/'.$project->slug),
+                    'img'   => resize($this->getImgThumbnail($project->id),603,392),
+                    'price' => currencyFormat($project->price, getSession('currency')['code']),
+                    'fit'   => currencyFormat($project->fit, getSession('currency')['code']),
+                    'fit1'  =>currencyFormat($project->fit1, getSession('currency')['code'],'',true, false, false),
+                    'fit2'  => currencyFormat($project->fit2, getSession('currency')['code'],'',true, false, false),
+                );
+            }
+        }
+       // dd($this->data);
         render('index', $this->data);
+    }
+
+    /**
+     * @desc View Project
+     * @param $slug
+     */
+    public function view($slug) {
+        $project = Project_model::factory()->findOne(['slug' => $slug]);
+        if(!$project) {
+            redirect(url('/'));
+        }
+        $this->data['project'] = array(
+            'id'      => $project->id,
+            'name'      => $project->name,
+            'images'    => $project->images($project->id),
+            'price'     => currencyFormat($project->price, getSession('currency')['code']),
+            'fit'       => currencyFormat($project->fit, getSession('currency')['code']),
+            'fit1'      => currencyFormat($project->fit1, getSession('currency')['code'],'',true, false, false),
+            'fit2'      => currencyFormat($project->fit2, getSession('currency')['code'],'',true, false, false),
+            'description'  => $project->description->long_description,
+            'snapshot'  => $project->description->snapshot,
+            'features'  => $project->description->features,
+            'subProjects'  => $project->subProjects,
+        );
+        $images = array();
+        $this->data['sliderImages'] = array();
+        $images  = $project->images($project->id);
+        if(count($images) > 0) {
+            foreach ($images as $image) {
+                $this->data['sliderImages'][] = resize($image['image'],1024,768);
+            }
+        }
+        //dd( $this->data['sliderImages']);
+        render('view', $this->data);
+    }
+
+    public function fetchSubProject() {
+        if($this->isAjaxRequest()) {
+            $project = ProjectSub_model::factory()->findOne($this->input->post('sub_project_id'));
+            $this->data['project'] = $project;
+            $this->json['success'] = true;
+           // dd($this->setOutput($this->load->view('partials/f_slider', $this->data)));
+            //$this->json['body'] =
+            return $this->response->setOutput($this->load->view('partials/f_slider', $this->data));
+//            return $this->output
+//                ->set_content_type('application/json')
+//                ->set_status_header(200)
+//                ->set_output(json_encode($this->json));
+        }
     }
     public function register() {
         if($this->isAjaxRequest() && $this->isPost()) {
@@ -133,5 +206,65 @@ class App extends AppController {
         unsetSession('userName');
         unsetSession('userLastLogin');
         redirect('/');
+    }
+
+    public function agents() {
+        $users = GroupAgent_model::factory()->find()->where('group_id', 2)->get()->result();
+        $userIds = array();
+        if(count($users) > 0) {
+            foreach ($users as $user) {
+                $userIds[] = $user->agent_id;
+            }
+        }
+        $agents = Agent_model::factory()->findAll(['id' => $userIds, 'status' => 1],null,'id', 'asc');
+        $this->data['agents'] = array();
+        if($agents) {
+            foreach ($agents as $agent) {
+                $this->data['agents'][] = array(
+                    'name'  => $agent->firstname.' '.$agent->lastname,
+                    'email' => $agent->email,
+                    'phone' => $agent->phone,
+                    'img'   => resize($agent->image,151,77),
+                );
+            }
+        }
+        //dd($this->data);
+        render('agents/index', $this->data);
+    }
+    public function buy() {
+        $categories = Category_model::factory()->findAll(['status' => 1],null,'sort_order', 'asc');
+        $this->data['categories'] = array();
+        if($categories) {
+            foreach ($categories as $category) {
+                $this->data['categories'][] = array(
+                    'name'  => $category->name,
+                    'slug'  => $category->slug,
+                    'img'   => resize($category->image,100,100),
+                );
+            }
+        }
+        render('buy/index', $this->data);
+    }
+    public function rent() {
+        $categories = Category_model::factory()->findAll(['status' => 1],null,'sort_order', 'asc');
+        $this->data['categories'] = array();
+        if($categories) {
+            foreach ($categories as $category) {
+                $this->data['categories'][] = array(
+                    'name'  => $category->name,
+                    'slug'  => $category->slug,
+                    'img'   => resize($category->image,100,100),
+                );
+            }
+        }
+        render('rent/index', $this->data);
+    }
+    public function compare() {
+        $projects = Project_model::factory()->findAll(['status' => 1], 5,'name', 'ASC');
+        $this->data['projects'] = array();
+        if($projects) {
+            $this->data['projects'] = $projects;
+        }
+        render('compare', $this->data);
     }
 }

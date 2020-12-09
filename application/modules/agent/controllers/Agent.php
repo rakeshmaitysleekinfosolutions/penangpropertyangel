@@ -215,7 +215,7 @@ class Agent extends AdminController {
         } elseif (!empty($this->agent)) {
             $this->data['image'] = $this->agent->image;
         } else {
-            $this->data['image'] = '';
+            $this->data['image'] = 'no_image.png';
         }
 
         if (!empty($this->input->post('image')) && is_file(DIR_IMAGE . $this->input->post('image'))) {
@@ -421,7 +421,7 @@ class Agent extends AdminController {
                     'phone' 		=> $result->phone,
                     'mobile' 		=> $result->mobile,
                     'occupation' 	=> $result->occupation,
-                    'address' 	    => $result->address->address_1,
+                    'address' 	    => (isset($result->address->address_1)) ? $result->address->address_1:'',
                     'image' 	    => $result->image,
                     'nric' 	        => $result->nric,
                     'fax' 	        => $result->fax,

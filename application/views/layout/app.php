@@ -19,7 +19,7 @@
 <!----------------------Header ------------------------->
 <header>
     <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-        <a class="navbar-brand" href="index.html"><img src="<?php echo url('image/logo_1.png');?>" alt=""></a>
+        <a class="navbar-brand" href="<?php echo url('/');?>"><img src="<?php echo url('image/logo_1.png');?>" alt=""></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -29,13 +29,13 @@
                     <a class="nav-link" href="#">FEATURES</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="buy.html">BUY</a>
+                    <a class="nav-link" href="<?php echo url('buy/');?>">BUY</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">RENT</a>
+                    <a class="nav-link" href="<?php echo url('rent/');?>">RENT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="agent.html">AGENTS</a>
+                    <a class="nav-link" href="<?php echo url('agents');?>">AGENTS</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">SELL/LEASE</a>
@@ -123,6 +123,74 @@
         </div>
     </div>
 </section>
+<!-- The Modal -->
+<div class="modal register" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+
+            <!-- Modal body -->
+            <div class="modal-body" id="my-container">
+                <div class="container signup-form">
+                    <h2>REGISTRATION NOW</h2>
+                    <form name="<?php echo $registerForm['name'];?>" id="<?php echo $registerForm['name'];?>" class="was-validated" action="<?php echo $registerForm['action'];?>" method="post">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="firstname" placeholder="Enter Firstname" name="firstname" autocomplete="off" required>
+                            <!--                            <div class="valid-feedback">Valid.</div>-->
+                            <!--                            <div class="invalid-feedback">Please fill out this field.</div>-->
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="input-lastname" placeholder="Enter Lastname" name="lastname" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="input-email" placeholder="Email Address" name="email" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="input-password" placeholder="Enter password" name="password" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="input-confirm" placeholder="Repeat password" name="confirm" autocomplete="off" required>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="input-agree" type="checkbox" name="agree" required>
+                                I agree.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn send">Register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- The Modal -->
+<div class="modal register" id="myModal_1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="loginFormContainer">
+                <div class="container loginForm">
+                    <h2>SIGN IN</h2>
+                    <form name="<?php echo $loginForm['name'];?>" id="<?php echo $loginForm['name'];?>" class="was-validated" action="<?php echo $loginForm['action'];?>" method="post">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="input-login-email" placeholder="Enter username" name="email" autocomplete="off" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="input-login-password" placeholder="Enter password" name="password" autocomplete="off" required>
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="input-remember" type="checkbox" name="remember" <?php if(isset($_COOKIE["remember_me"])) { ?> checked <?php } ?>>
+                                Remember Me.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn send">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="<?php echo base_url();?>dist/index.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <?php echo $this->template->javascript; ?>

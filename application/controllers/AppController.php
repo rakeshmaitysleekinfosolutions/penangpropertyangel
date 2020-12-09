@@ -58,5 +58,10 @@ class AppController extends BaseController {
     }
 
     */
-
+    public function getImgThumbnail($projectId) {
+        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
+            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
+        }
+        return false;
+    }
 }

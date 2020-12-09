@@ -23,6 +23,7 @@ class AdminController extends BaseController {
     public function __construct() {
         parent::__construct();
         $this->setLayout('layout/admin');
+        //Currency_model::factory()->refresh(true, 'MYR');
 
     }
     public function setId($id) {

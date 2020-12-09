@@ -60,321 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 42);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var bind = __webpack_require__(5);
-var isBuffer = __webpack_require__(19);
-
-/*global toString:true*/
-
-// utils is a library of generic helper functions non-specific to axios
-
-var toString = Object.prototype.toString;
-
-/**
- * Determine if a value is an Array
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Array, otherwise false
- */
-function isArray(val) {
-  return toString.call(val) === '[object Array]';
-}
-
-/**
- * Determine if a value is an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an ArrayBuffer, otherwise false
- */
-function isArrayBuffer(val) {
-  return toString.call(val) === '[object ArrayBuffer]';
-}
-
-/**
- * Determine if a value is a FormData
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an FormData, otherwise false
- */
-function isFormData(val) {
-  return (typeof FormData !== 'undefined') && (val instanceof FormData);
-}
-
-/**
- * Determine if a value is a view on an ArrayBuffer
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
- */
-function isArrayBufferView(val) {
-  var result;
-  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
-    result = ArrayBuffer.isView(val);
-  } else {
-    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
-  }
-  return result;
-}
-
-/**
- * Determine if a value is a String
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a String, otherwise false
- */
-function isString(val) {
-  return typeof val === 'string';
-}
-
-/**
- * Determine if a value is a Number
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Number, otherwise false
- */
-function isNumber(val) {
-  return typeof val === 'number';
-}
-
-/**
- * Determine if a value is undefined
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if the value is undefined, otherwise false
- */
-function isUndefined(val) {
-  return typeof val === 'undefined';
-}
-
-/**
- * Determine if a value is an Object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is an Object, otherwise false
- */
-function isObject(val) {
-  return val !== null && typeof val === 'object';
-}
-
-/**
- * Determine if a value is a Date
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Date, otherwise false
- */
-function isDate(val) {
-  return toString.call(val) === '[object Date]';
-}
-
-/**
- * Determine if a value is a File
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a File, otherwise false
- */
-function isFile(val) {
-  return toString.call(val) === '[object File]';
-}
-
-/**
- * Determine if a value is a Blob
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Blob, otherwise false
- */
-function isBlob(val) {
-  return toString.call(val) === '[object Blob]';
-}
-
-/**
- * Determine if a value is a Function
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Function, otherwise false
- */
-function isFunction(val) {
-  return toString.call(val) === '[object Function]';
-}
-
-/**
- * Determine if a value is a Stream
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a Stream, otherwise false
- */
-function isStream(val) {
-  return isObject(val) && isFunction(val.pipe);
-}
-
-/**
- * Determine if a value is a URLSearchParams object
- *
- * @param {Object} val The value to test
- * @returns {boolean} True if value is a URLSearchParams object, otherwise false
- */
-function isURLSearchParams(val) {
-  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
-}
-
-/**
- * Trim excess whitespace off the beginning and end of a string
- *
- * @param {String} str The String to trim
- * @returns {String} The String freed of excess whitespace
- */
-function trim(str) {
-  return str.replace(/^\s*/, '').replace(/\s*$/, '');
-}
-
-/**
- * Determine if we're running in a standard browser environment
- *
- * This allows axios to run in a web worker, and react-native.
- * Both environments support XMLHttpRequest, but not fully standard globals.
- *
- * web workers:
- *  typeof window -> undefined
- *  typeof document -> undefined
- *
- * react-native:
- *  navigator.product -> 'ReactNative'
- */
-function isStandardBrowserEnv() {
-  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
-    return false;
-  }
-  return (
-    typeof window !== 'undefined' &&
-    typeof document !== 'undefined'
-  );
-}
-
-/**
- * Iterate over an Array or an Object invoking a function for each item.
- *
- * If `obj` is an Array callback will be called passing
- * the value, index, and complete array for each item.
- *
- * If 'obj' is an Object callback will be called passing
- * the value, key, and complete object for each property.
- *
- * @param {Object|Array} obj The object to iterate
- * @param {Function} fn The callback to invoke for each item
- */
-function forEach(obj, fn) {
-  // Don't bother if no value provided
-  if (obj === null || typeof obj === 'undefined') {
-    return;
-  }
-
-  // Force an array if not already something iterable
-  if (typeof obj !== 'object' && !isArray(obj)) {
-    /*eslint no-param-reassign:0*/
-    obj = [obj];
-  }
-
-  if (isArray(obj)) {
-    // Iterate over array values
-    for (var i = 0, l = obj.length; i < l; i++) {
-      fn.call(null, obj[i], i, obj);
-    }
-  } else {
-    // Iterate over object keys
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        fn.call(null, obj[key], key, obj);
-      }
-    }
-  }
-}
-
-/**
- * Accepts varargs expecting each argument to be an object, then
- * immutably merges the properties of each object and returns result.
- *
- * When multiple objects contain the same key the later object in
- * the arguments list will take precedence.
- *
- * Example:
- *
- * ```js
- * var result = merge({foo: 123}, {foo: 456});
- * console.log(result.foo); // outputs 456
- * ```
- *
- * @param {Object} obj1 Object to merge
- * @returns {Object} Result of all merge properties
- */
-function merge(/* obj1, obj2, obj3, ... */) {
-  var result = {};
-  function assignValue(val, key) {
-    if (typeof result[key] === 'object' && typeof val === 'object') {
-      result[key] = merge(result[key], val);
-    } else {
-      result[key] = val;
-    }
-  }
-
-  for (var i = 0, l = arguments.length; i < l; i++) {
-    forEach(arguments[i], assignValue);
-  }
-  return result;
-}
-
-/**
- * Extends object a by mutably adding to it the properties of object b.
- *
- * @param {Object} a The object to be extended
- * @param {Object} b The object to copy properties from
- * @param {Object} thisArg The object to bind function to
- * @return {Object} The resulting value of object a
- */
-function extend(a, b, thisArg) {
-  forEach(b, function assignValue(val, key) {
-    if (thisArg && typeof val === 'function') {
-      a[key] = bind(val, thisArg);
-    } else {
-      a[key] = val;
-    }
-  });
-  return a;
-}
-
-module.exports = {
-  isArray: isArray,
-  isArrayBuffer: isArrayBuffer,
-  isBuffer: isBuffer,
-  isFormData: isFormData,
-  isArrayBufferView: isArrayBufferView,
-  isString: isString,
-  isNumber: isNumber,
-  isObject: isObject,
-  isUndefined: isUndefined,
-  isDate: isDate,
-  isFile: isFile,
-  isBlob: isBlob,
-  isFunction: isFunction,
-  isStream: isStream,
-  isURLSearchParams: isURLSearchParams,
-  isStandardBrowserEnv: isStandardBrowserEnv,
-  forEach: forEach,
-  merge: merge,
-  extend: extend,
-  trim: trim
-};
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -11253,6 +10943,316 @@ return jQuery;
 
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var bind = __webpack_require__(10);
+var isBuffer = __webpack_require__(24);
+
+/*global toString:true*/
+
+// utils is a library of generic helper functions non-specific to axios
+
+var toString = Object.prototype.toString;
+
+/**
+ * Determine if a value is an Array
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Array, otherwise false
+ */
+function isArray(val) {
+  return toString.call(val) === '[object Array]';
+}
+
+/**
+ * Determine if a value is an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an ArrayBuffer, otherwise false
+ */
+function isArrayBuffer(val) {
+  return toString.call(val) === '[object ArrayBuffer]';
+}
+
+/**
+ * Determine if a value is a FormData
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an FormData, otherwise false
+ */
+function isFormData(val) {
+  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
+/**
+ * Determine if a value is a view on an ArrayBuffer
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a view on an ArrayBuffer, otherwise false
+ */
+function isArrayBufferView(val) {
+  var result;
+  if ((typeof ArrayBuffer !== 'undefined') && (ArrayBuffer.isView)) {
+    result = ArrayBuffer.isView(val);
+  } else {
+    result = (val) && (val.buffer) && (val.buffer instanceof ArrayBuffer);
+  }
+  return result;
+}
+
+/**
+ * Determine if a value is a String
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a String, otherwise false
+ */
+function isString(val) {
+  return typeof val === 'string';
+}
+
+/**
+ * Determine if a value is a Number
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Number, otherwise false
+ */
+function isNumber(val) {
+  return typeof val === 'number';
+}
+
+/**
+ * Determine if a value is undefined
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if the value is undefined, otherwise false
+ */
+function isUndefined(val) {
+  return typeof val === 'undefined';
+}
+
+/**
+ * Determine if a value is an Object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is an Object, otherwise false
+ */
+function isObject(val) {
+  return val !== null && typeof val === 'object';
+}
+
+/**
+ * Determine if a value is a Date
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Date, otherwise false
+ */
+function isDate(val) {
+  return toString.call(val) === '[object Date]';
+}
+
+/**
+ * Determine if a value is a File
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a File, otherwise false
+ */
+function isFile(val) {
+  return toString.call(val) === '[object File]';
+}
+
+/**
+ * Determine if a value is a Blob
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Blob, otherwise false
+ */
+function isBlob(val) {
+  return toString.call(val) === '[object Blob]';
+}
+
+/**
+ * Determine if a value is a Function
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Function, otherwise false
+ */
+function isFunction(val) {
+  return toString.call(val) === '[object Function]';
+}
+
+/**
+ * Determine if a value is a Stream
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a Stream, otherwise false
+ */
+function isStream(val) {
+  return isObject(val) && isFunction(val.pipe);
+}
+
+/**
+ * Determine if a value is a URLSearchParams object
+ *
+ * @param {Object} val The value to test
+ * @returns {boolean} True if value is a URLSearchParams object, otherwise false
+ */
+function isURLSearchParams(val) {
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+}
+
+/**
+ * Trim excess whitespace off the beginning and end of a string
+ *
+ * @param {String} str The String to trim
+ * @returns {String} The String freed of excess whitespace
+ */
+function trim(str) {
+  return str.replace(/^\s*/, '').replace(/\s*$/, '');
+}
+
+/**
+ * Determine if we're running in a standard browser environment
+ *
+ * This allows axios to run in a web worker, and react-native.
+ * Both environments support XMLHttpRequest, but not fully standard globals.
+ *
+ * web workers:
+ *  typeof window -> undefined
+ *  typeof document -> undefined
+ *
+ * react-native:
+ *  navigator.product -> 'ReactNative'
+ */
+function isStandardBrowserEnv() {
+  if (typeof navigator !== 'undefined' && navigator.product === 'ReactNative') {
+    return false;
+  }
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined'
+  );
+}
+
+/**
+ * Iterate over an Array or an Object invoking a function for each item.
+ *
+ * If `obj` is an Array callback will be called passing
+ * the value, index, and complete array for each item.
+ *
+ * If 'obj' is an Object callback will be called passing
+ * the value, key, and complete object for each property.
+ *
+ * @param {Object|Array} obj The object to iterate
+ * @param {Function} fn The callback to invoke for each item
+ */
+function forEach(obj, fn) {
+  // Don't bother if no value provided
+  if (obj === null || typeof obj === 'undefined') {
+    return;
+  }
+
+  // Force an array if not already something iterable
+  if (typeof obj !== 'object' && !isArray(obj)) {
+    /*eslint no-param-reassign:0*/
+    obj = [obj];
+  }
+
+  if (isArray(obj)) {
+    // Iterate over array values
+    for (var i = 0, l = obj.length; i < l; i++) {
+      fn.call(null, obj[i], i, obj);
+    }
+  } else {
+    // Iterate over object keys
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        fn.call(null, obj[key], key, obj);
+      }
+    }
+  }
+}
+
+/**
+ * Accepts varargs expecting each argument to be an object, then
+ * immutably merges the properties of each object and returns result.
+ *
+ * When multiple objects contain the same key the later object in
+ * the arguments list will take precedence.
+ *
+ * Example:
+ *
+ * ```js
+ * var result = merge({foo: 123}, {foo: 456});
+ * console.log(result.foo); // outputs 456
+ * ```
+ *
+ * @param {Object} obj1 Object to merge
+ * @returns {Object} Result of all merge properties
+ */
+function merge(/* obj1, obj2, obj3, ... */) {
+  var result = {};
+  function assignValue(val, key) {
+    if (typeof result[key] === 'object' && typeof val === 'object') {
+      result[key] = merge(result[key], val);
+    } else {
+      result[key] = val;
+    }
+  }
+
+  for (var i = 0, l = arguments.length; i < l; i++) {
+    forEach(arguments[i], assignValue);
+  }
+  return result;
+}
+
+/**
+ * Extends object a by mutably adding to it the properties of object b.
+ *
+ * @param {Object} a The object to be extended
+ * @param {Object} b The object to copy properties from
+ * @param {Object} thisArg The object to bind function to
+ * @return {Object} The resulting value of object a
+ */
+function extend(a, b, thisArg) {
+  forEach(b, function assignValue(val, key) {
+    if (thisArg && typeof val === 'function') {
+      a[key] = bind(val, thisArg);
+    } else {
+      a[key] = val;
+    }
+  });
+  return a;
+}
+
+module.exports = {
+  isArray: isArray,
+  isArrayBuffer: isArrayBuffer,
+  isBuffer: isBuffer,
+  isFormData: isFormData,
+  isArrayBufferView: isArrayBufferView,
+  isString: isString,
+  isNumber: isNumber,
+  isObject: isObject,
+  isUndefined: isUndefined,
+  isDate: isDate,
+  isFile: isFile,
+  isBlob: isBlob,
+  isFunction: isFunction,
+  isStream: isStream,
+  isURLSearchParams: isURLSearchParams,
+  isStandardBrowserEnv: isStandardBrowserEnv,
+  forEach: forEach,
+  merge: merge,
+  extend: extend,
+  trim: trim
+};
+
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports) {
 
@@ -11283,402 +11283,6 @@ module.exports = g;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(22);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(6);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(6);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(21)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function bind(fn, thisArg) {
-  return function wrap() {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; i++) {
-      args[i] = arguments[i];
-    }
-    return fn.apply(thisArg, args);
-  };
-};
-
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var utils = __webpack_require__(0);
-var settle = __webpack_require__(23);
-var buildURL = __webpack_require__(25);
-var parseHeaders = __webpack_require__(26);
-var isURLSameOrigin = __webpack_require__(27);
-var createError = __webpack_require__(7);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(28);
-
-module.exports = function xhrAdapter(config) {
-  return new Promise(function dispatchXhrRequest(resolve, reject) {
-    var requestData = config.data;
-    var requestHeaders = config.headers;
-
-    if (utils.isFormData(requestData)) {
-      delete requestHeaders['Content-Type']; // Let the browser set it
-    }
-
-    var request = new XMLHttpRequest();
-    var loadEvent = 'onreadystatechange';
-    var xDomain = false;
-
-    // For IE 8/9 CORS support
-    // Only supports POST and GET calls and doesn't returns the response headers.
-    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
-    if ("development" !== 'test' &&
-        typeof window !== 'undefined' &&
-        window.XDomainRequest && !('withCredentials' in request) &&
-        !isURLSameOrigin(config.url)) {
-      request = new window.XDomainRequest();
-      loadEvent = 'onload';
-      xDomain = true;
-      request.onprogress = function handleProgress() {};
-      request.ontimeout = function handleTimeout() {};
-    }
-
-    // HTTP basic authentication
-    if (config.auth) {
-      var username = config.auth.username || '';
-      var password = config.auth.password || '';
-      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
-    }
-
-    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
-
-    // Set the request timeout in MS
-    request.timeout = config.timeout;
-
-    // Listen for ready state
-    request[loadEvent] = function handleLoad() {
-      if (!request || (request.readyState !== 4 && !xDomain)) {
-        return;
-      }
-
-      // The request errored out and we didn't get a response, this will be
-      // handled by onerror instead
-      // With one exception: request that using file: protocol, most browsers
-      // will return status as 0 even though it's a successful request
-      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
-        return;
-      }
-
-      // Prepare the response
-      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
-      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
-      var response = {
-        data: responseData,
-        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
-        status: request.status === 1223 ? 204 : request.status,
-        statusText: request.status === 1223 ? 'No Content' : request.statusText,
-        headers: responseHeaders,
-        config: config,
-        request: request
-      };
-
-      settle(resolve, reject, response);
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle low level network errors
-    request.onerror = function handleError() {
-      // Real errors are hidden from us by the browser
-      // onerror should only fire if it's a network error
-      reject(createError('Network Error', config, null, request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Handle timeout
-    request.ontimeout = function handleTimeout() {
-      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
-        request));
-
-      // Clean up request
-      request = null;
-    };
-
-    // Add xsrf header
-    // This is only done if running in a standard browser environment.
-    // Specifically not if we're in a web worker, or react-native.
-    if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(29);
-
-      // Add xsrf header
-      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
-          cookies.read(config.xsrfCookieName) :
-          undefined;
-
-      if (xsrfValue) {
-        requestHeaders[config.xsrfHeaderName] = xsrfValue;
-      }
-    }
-
-    // Add headers to the request
-    if ('setRequestHeader' in request) {
-      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
-        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
-          // Remove Content-Type if data is undefined
-          delete requestHeaders[key];
-        } else {
-          // Otherwise add header to the request
-          request.setRequestHeader(key, val);
-        }
-      });
-    }
-
-    // Add withCredentials to request if needed
-    if (config.withCredentials) {
-      request.withCredentials = true;
-    }
-
-    // Add responseType to request if needed
-    if (config.responseType) {
-      try {
-        request.responseType = config.responseType;
-      } catch (e) {
-        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
-        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
-        if (config.responseType !== 'json') {
-          throw e;
-        }
-      }
-    }
-
-    // Handle progress if needed
-    if (typeof config.onDownloadProgress === 'function') {
-      request.addEventListener('progress', config.onDownloadProgress);
-    }
-
-    // Not all browsers support upload events
-    if (typeof config.onUploadProgress === 'function' && request.upload) {
-      request.upload.addEventListener('progress', config.onUploadProgress);
-    }
-
-    if (config.cancelToken) {
-      // Handle cancellation
-      config.cancelToken.promise.then(function onCanceled(cancel) {
-        if (!request) {
-          return;
-        }
-
-        request.abort();
-        reject(cancel);
-        // Clean up request
-        request = null;
-      });
-    }
-
-    if (requestData === undefined) {
-      requestData = null;
-    }
-
-    // Send the request
-    request.send(requestData);
-  });
-};
-
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var enhanceError = __webpack_require__(24);
-
-/**
- * Create an Error with the specified message, config, error code, request and response.
- *
- * @param {string} message The error message.
- * @param {Object} config The config.
- * @param {string} [code] The error code (for example, 'ECONNABORTED').
- * @param {Object} [request] The request.
- * @param {Object} [response] The response.
- * @returns {Error} The created error.
- */
-module.exports = function createError(message, config, code, request, response) {
-  var error = new Error(message);
-  return enhanceError(error, config, code, request, response);
-};
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function isCancel(value) {
-  return !!(value && value.__CANCEL__);
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * A `Cancel` is an object that is thrown when an operation is canceled.
- *
- * @class
- * @param {string=} message The message.
- */
-function Cancel(message) {
-  this.message = message;
-}
-
-Cancel.prototype.toString = function toString() {
-  return 'Cancel' + (this.message ? ': ' + this.message : '');
-};
-
-Cancel.prototype.__CANCEL__ = true;
-
-module.exports = Cancel;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /*!
@@ -11691,7 +11295,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
  */
 (function (factory) {
 	if (true) {
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -13231,10 +12835,7520 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* WEBPACK VAR INJECTION */(function(global) {/**!
+ * @fileOverview Kickass library to create and place poppers near their reference elements.
+ * @version 1.16.1
+ * @license
+ * Copyright (c) 2016 Federico Zivolo and contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof navigator !== 'undefined';
+
+var timeoutDuration = function () {
+  var longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
+  for (var i = 0; i < longerTimeoutBrowsers.length; i += 1) {
+    if (isBrowser && navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
+      return 1;
+    }
+  }
+  return 0;
+}();
+
+function microtaskDebounce(fn) {
+  var called = false;
+  return function () {
+    if (called) {
+      return;
+    }
+    called = true;
+    window.Promise.resolve().then(function () {
+      called = false;
+      fn();
+    });
+  };
+}
+
+function taskDebounce(fn) {
+  var scheduled = false;
+  return function () {
+    if (!scheduled) {
+      scheduled = true;
+      setTimeout(function () {
+        scheduled = false;
+        fn();
+      }, timeoutDuration);
+    }
+  };
+}
+
+var supportsMicroTasks = isBrowser && window.Promise;
+
+/**
+* Create a debounced version of a method, that's asynchronously deferred
+* but called in the minimum time possible.
+*
+* @method
+* @memberof Popper.Utils
+* @argument {Function} fn
+* @returns {Function}
+*/
+var debounce = supportsMicroTasks ? microtaskDebounce : taskDebounce;
+
+/**
+ * Check if the given variable is a function
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Any} functionToCheck - variable to check
+ * @returns {Boolean} answer to: is a function?
+ */
+function isFunction(functionToCheck) {
+  var getType = {};
+  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+}
+
+/**
+ * Get CSS computed property of the given element
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Eement} element
+ * @argument {String} property
+ */
+function getStyleComputedProperty(element, property) {
+  if (element.nodeType !== 1) {
+    return [];
+  }
+  // NOTE: 1 DOM access here
+  var window = element.ownerDocument.defaultView;
+  var css = window.getComputedStyle(element, null);
+  return property ? css[property] : css;
+}
+
+/**
+ * Returns the parentNode or the host of the element
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @returns {Element} parent
+ */
+function getParentNode(element) {
+  if (element.nodeName === 'HTML') {
+    return element;
+  }
+  return element.parentNode || element.host;
+}
+
+/**
+ * Returns the scrolling parent of the given element
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @returns {Element} scroll parent
+ */
+function getScrollParent(element) {
+  // Return body, `getScroll` will take care to get the correct `scrollTop` from it
+  if (!element) {
+    return document.body;
+  }
+
+  switch (element.nodeName) {
+    case 'HTML':
+    case 'BODY':
+      return element.ownerDocument.body;
+    case '#document':
+      return element.body;
+  }
+
+  // Firefox want us to check `-x` and `-y` variations as well
+
+  var _getStyleComputedProp = getStyleComputedProperty(element),
+      overflow = _getStyleComputedProp.overflow,
+      overflowX = _getStyleComputedProp.overflowX,
+      overflowY = _getStyleComputedProp.overflowY;
+
+  if (/(auto|scroll|overlay)/.test(overflow + overflowY + overflowX)) {
+    return element;
+  }
+
+  return getScrollParent(getParentNode(element));
+}
+
+/**
+ * Returns the reference node of the reference object, or the reference object itself.
+ * @method
+ * @memberof Popper.Utils
+ * @param {Element|Object} reference - the reference element (the popper will be relative to this)
+ * @returns {Element} parent
+ */
+function getReferenceNode(reference) {
+  return reference && reference.referenceNode ? reference.referenceNode : reference;
+}
+
+var isIE11 = isBrowser && !!(window.MSInputMethodContext && document.documentMode);
+var isIE10 = isBrowser && /MSIE 10/.test(navigator.userAgent);
+
+/**
+ * Determines if the browser is Internet Explorer
+ * @method
+ * @memberof Popper.Utils
+ * @param {Number} version to check
+ * @returns {Boolean} isIE
+ */
+function isIE(version) {
+  if (version === 11) {
+    return isIE11;
+  }
+  if (version === 10) {
+    return isIE10;
+  }
+  return isIE11 || isIE10;
+}
+
+/**
+ * Returns the offset parent of the given element
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @returns {Element} offset parent
+ */
+function getOffsetParent(element) {
+  if (!element) {
+    return document.documentElement;
+  }
+
+  var noOffsetParent = isIE(10) ? document.body : null;
+
+  // NOTE: 1 DOM access here
+  var offsetParent = element.offsetParent || null;
+  // Skip hidden elements which don't have an offsetParent
+  while (offsetParent === noOffsetParent && element.nextElementSibling) {
+    offsetParent = (element = element.nextElementSibling).offsetParent;
+  }
+
+  var nodeName = offsetParent && offsetParent.nodeName;
+
+  if (!nodeName || nodeName === 'BODY' || nodeName === 'HTML') {
+    return element ? element.ownerDocument.documentElement : document.documentElement;
+  }
+
+  // .offsetParent will return the closest TH, TD or TABLE in case
+  // no offsetParent is present, I hate this job...
+  if (['TH', 'TD', 'TABLE'].indexOf(offsetParent.nodeName) !== -1 && getStyleComputedProperty(offsetParent, 'position') === 'static') {
+    return getOffsetParent(offsetParent);
+  }
+
+  return offsetParent;
+}
+
+function isOffsetContainer(element) {
+  var nodeName = element.nodeName;
+
+  if (nodeName === 'BODY') {
+    return false;
+  }
+  return nodeName === 'HTML' || getOffsetParent(element.firstElementChild) === element;
+}
+
+/**
+ * Finds the root node (document, shadowDOM root) of the given element
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} node
+ * @returns {Element} root node
+ */
+function getRoot(node) {
+  if (node.parentNode !== null) {
+    return getRoot(node.parentNode);
+  }
+
+  return node;
+}
+
+/**
+ * Finds the offset parent common to the two provided nodes
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element1
+ * @argument {Element} element2
+ * @returns {Element} common offset parent
+ */
+function findCommonOffsetParent(element1, element2) {
+  // This check is needed to avoid errors in case one of the elements isn't defined for any reason
+  if (!element1 || !element1.nodeType || !element2 || !element2.nodeType) {
+    return document.documentElement;
+  }
+
+  // Here we make sure to give as "start" the element that comes first in the DOM
+  var order = element1.compareDocumentPosition(element2) & Node.DOCUMENT_POSITION_FOLLOWING;
+  var start = order ? element1 : element2;
+  var end = order ? element2 : element1;
+
+  // Get common ancestor container
+  var range = document.createRange();
+  range.setStart(start, 0);
+  range.setEnd(end, 0);
+  var commonAncestorContainer = range.commonAncestorContainer;
+
+  // Both nodes are inside #document
+
+  if (element1 !== commonAncestorContainer && element2 !== commonAncestorContainer || start.contains(end)) {
+    if (isOffsetContainer(commonAncestorContainer)) {
+      return commonAncestorContainer;
+    }
+
+    return getOffsetParent(commonAncestorContainer);
+  }
+
+  // one of the nodes is inside shadowDOM, find which one
+  var element1root = getRoot(element1);
+  if (element1root.host) {
+    return findCommonOffsetParent(element1root.host, element2);
+  } else {
+    return findCommonOffsetParent(element1, getRoot(element2).host);
+  }
+}
+
+/**
+ * Gets the scroll value of the given element in the given side (top and left)
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @argument {String} side `top` or `left`
+ * @returns {number} amount of scrolled pixels
+ */
+function getScroll(element) {
+  var side = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'top';
+
+  var upperSide = side === 'top' ? 'scrollTop' : 'scrollLeft';
+  var nodeName = element.nodeName;
+
+  if (nodeName === 'BODY' || nodeName === 'HTML') {
+    var html = element.ownerDocument.documentElement;
+    var scrollingElement = element.ownerDocument.scrollingElement || html;
+    return scrollingElement[upperSide];
+  }
+
+  return element[upperSide];
+}
+
+/*
+ * Sum or subtract the element scroll values (left and top) from a given rect object
+ * @method
+ * @memberof Popper.Utils
+ * @param {Object} rect - Rect object you want to change
+ * @param {HTMLElement} element - The element from the function reads the scroll values
+ * @param {Boolean} subtract - set to true if you want to subtract the scroll values
+ * @return {Object} rect - The modifier rect object
+ */
+function includeScroll(rect, element) {
+  var subtract = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+  var scrollTop = getScroll(element, 'top');
+  var scrollLeft = getScroll(element, 'left');
+  var modifier = subtract ? -1 : 1;
+  rect.top += scrollTop * modifier;
+  rect.bottom += scrollTop * modifier;
+  rect.left += scrollLeft * modifier;
+  rect.right += scrollLeft * modifier;
+  return rect;
+}
+
+/*
+ * Helper to detect borders of a given element
+ * @method
+ * @memberof Popper.Utils
+ * @param {CSSStyleDeclaration} styles
+ * Result of `getStyleComputedProperty` on the given element
+ * @param {String} axis - `x` or `y`
+ * @return {number} borders - The borders size of the given axis
+ */
+
+function getBordersSize(styles, axis) {
+  var sideA = axis === 'x' ? 'Left' : 'Top';
+  var sideB = sideA === 'Left' ? 'Right' : 'Bottom';
+
+  return parseFloat(styles['border' + sideA + 'Width']) + parseFloat(styles['border' + sideB + 'Width']);
+}
+
+function getSize(axis, body, html, computedStyle) {
+  return Math.max(body['offset' + axis], body['scroll' + axis], html['client' + axis], html['offset' + axis], html['scroll' + axis], isIE(10) ? parseInt(html['offset' + axis]) + parseInt(computedStyle['margin' + (axis === 'Height' ? 'Top' : 'Left')]) + parseInt(computedStyle['margin' + (axis === 'Height' ? 'Bottom' : 'Right')]) : 0);
+}
+
+function getWindowSizes(document) {
+  var body = document.body;
+  var html = document.documentElement;
+  var computedStyle = isIE(10) && getComputedStyle(html);
+
+  return {
+    height: getSize('Height', body, html, computedStyle),
+    width: getSize('Width', body, html, computedStyle)
+  };
+}
+
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
+}();
+
+
+
+
+
+var defineProperty = function (obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+};
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
+/**
+ * Given element offsets, generate an output similar to getBoundingClientRect
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Object} offsets
+ * @returns {Object} ClientRect like output
+ */
+function getClientRect(offsets) {
+  return _extends({}, offsets, {
+    right: offsets.left + offsets.width,
+    bottom: offsets.top + offsets.height
+  });
+}
+
+/**
+ * Get bounding client rect of given element
+ * @method
+ * @memberof Popper.Utils
+ * @param {HTMLElement} element
+ * @return {Object} client rect
+ */
+function getBoundingClientRect(element) {
+  var rect = {};
+
+  // IE10 10 FIX: Please, don't ask, the element isn't
+  // considered in DOM in some circumstances...
+  // This isn't reproducible in IE10 compatibility mode of IE11
+  try {
+    if (isIE(10)) {
+      rect = element.getBoundingClientRect();
+      var scrollTop = getScroll(element, 'top');
+      var scrollLeft = getScroll(element, 'left');
+      rect.top += scrollTop;
+      rect.left += scrollLeft;
+      rect.bottom += scrollTop;
+      rect.right += scrollLeft;
+    } else {
+      rect = element.getBoundingClientRect();
+    }
+  } catch (e) {}
+
+  var result = {
+    left: rect.left,
+    top: rect.top,
+    width: rect.right - rect.left,
+    height: rect.bottom - rect.top
+  };
+
+  // subtract scrollbar size from sizes
+  var sizes = element.nodeName === 'HTML' ? getWindowSizes(element.ownerDocument) : {};
+  var width = sizes.width || element.clientWidth || result.width;
+  var height = sizes.height || element.clientHeight || result.height;
+
+  var horizScrollbar = element.offsetWidth - width;
+  var vertScrollbar = element.offsetHeight - height;
+
+  // if an hypothetical scrollbar is detected, we must be sure it's not a `border`
+  // we make this check conditional for performance reasons
+  if (horizScrollbar || vertScrollbar) {
+    var styles = getStyleComputedProperty(element);
+    horizScrollbar -= getBordersSize(styles, 'x');
+    vertScrollbar -= getBordersSize(styles, 'y');
+
+    result.width -= horizScrollbar;
+    result.height -= vertScrollbar;
+  }
+
+  return getClientRect(result);
+}
+
+function getOffsetRectRelativeToArbitraryNode(children, parent) {
+  var fixedPosition = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+  var isIE10 = isIE(10);
+  var isHTML = parent.nodeName === 'HTML';
+  var childrenRect = getBoundingClientRect(children);
+  var parentRect = getBoundingClientRect(parent);
+  var scrollParent = getScrollParent(children);
+
+  var styles = getStyleComputedProperty(parent);
+  var borderTopWidth = parseFloat(styles.borderTopWidth);
+  var borderLeftWidth = parseFloat(styles.borderLeftWidth);
+
+  // In cases where the parent is fixed, we must ignore negative scroll in offset calc
+  if (fixedPosition && isHTML) {
+    parentRect.top = Math.max(parentRect.top, 0);
+    parentRect.left = Math.max(parentRect.left, 0);
+  }
+  var offsets = getClientRect({
+    top: childrenRect.top - parentRect.top - borderTopWidth,
+    left: childrenRect.left - parentRect.left - borderLeftWidth,
+    width: childrenRect.width,
+    height: childrenRect.height
+  });
+  offsets.marginTop = 0;
+  offsets.marginLeft = 0;
+
+  // Subtract margins of documentElement in case it's being used as parent
+  // we do this only on HTML because it's the only element that behaves
+  // differently when margins are applied to it. The margins are included in
+  // the box of the documentElement, in the other cases not.
+  if (!isIE10 && isHTML) {
+    var marginTop = parseFloat(styles.marginTop);
+    var marginLeft = parseFloat(styles.marginLeft);
+
+    offsets.top -= borderTopWidth - marginTop;
+    offsets.bottom -= borderTopWidth - marginTop;
+    offsets.left -= borderLeftWidth - marginLeft;
+    offsets.right -= borderLeftWidth - marginLeft;
+
+    // Attach marginTop and marginLeft because in some circumstances we may need them
+    offsets.marginTop = marginTop;
+    offsets.marginLeft = marginLeft;
+  }
+
+  if (isIE10 && !fixedPosition ? parent.contains(scrollParent) : parent === scrollParent && scrollParent.nodeName !== 'BODY') {
+    offsets = includeScroll(offsets, parent);
+  }
+
+  return offsets;
+}
+
+function getViewportOffsetRectRelativeToArtbitraryNode(element) {
+  var excludeScroll = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  var html = element.ownerDocument.documentElement;
+  var relativeOffset = getOffsetRectRelativeToArbitraryNode(element, html);
+  var width = Math.max(html.clientWidth, window.innerWidth || 0);
+  var height = Math.max(html.clientHeight, window.innerHeight || 0);
+
+  var scrollTop = !excludeScroll ? getScroll(html) : 0;
+  var scrollLeft = !excludeScroll ? getScroll(html, 'left') : 0;
+
+  var offset = {
+    top: scrollTop - relativeOffset.top + relativeOffset.marginTop,
+    left: scrollLeft - relativeOffset.left + relativeOffset.marginLeft,
+    width: width,
+    height: height
+  };
+
+  return getClientRect(offset);
+}
+
+/**
+ * Check if the given element is fixed or is inside a fixed parent
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @argument {Element} customContainer
+ * @returns {Boolean} answer to "isFixed?"
+ */
+function isFixed(element) {
+  var nodeName = element.nodeName;
+  if (nodeName === 'BODY' || nodeName === 'HTML') {
+    return false;
+  }
+  if (getStyleComputedProperty(element, 'position') === 'fixed') {
+    return true;
+  }
+  var parentNode = getParentNode(element);
+  if (!parentNode) {
+    return false;
+  }
+  return isFixed(parentNode);
+}
+
+/**
+ * Finds the first parent of an element that has a transformed property defined
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @returns {Element} first transformed parent or documentElement
+ */
+
+function getFixedPositionOffsetParent(element) {
+  // This check is needed to avoid errors in case one of the elements isn't defined for any reason
+  if (!element || !element.parentElement || isIE()) {
+    return document.documentElement;
+  }
+  var el = element.parentElement;
+  while (el && getStyleComputedProperty(el, 'transform') === 'none') {
+    el = el.parentElement;
+  }
+  return el || document.documentElement;
+}
+
+/**
+ * Computed the boundaries limits and return them
+ * @method
+ * @memberof Popper.Utils
+ * @param {HTMLElement} popper
+ * @param {HTMLElement} reference
+ * @param {number} padding
+ * @param {HTMLElement} boundariesElement - Element used to define the boundaries
+ * @param {Boolean} fixedPosition - Is in fixed position mode
+ * @returns {Object} Coordinates of the boundaries
+ */
+function getBoundaries(popper, reference, padding, boundariesElement) {
+  var fixedPosition = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
+  // NOTE: 1 DOM access here
+
+  var boundaries = { top: 0, left: 0 };
+  var offsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
+
+  // Handle viewport case
+  if (boundariesElement === 'viewport') {
+    boundaries = getViewportOffsetRectRelativeToArtbitraryNode(offsetParent, fixedPosition);
+  } else {
+    // Handle other cases based on DOM element used as boundaries
+    var boundariesNode = void 0;
+    if (boundariesElement === 'scrollParent') {
+      boundariesNode = getScrollParent(getParentNode(reference));
+      if (boundariesNode.nodeName === 'BODY') {
+        boundariesNode = popper.ownerDocument.documentElement;
+      }
+    } else if (boundariesElement === 'window') {
+      boundariesNode = popper.ownerDocument.documentElement;
+    } else {
+      boundariesNode = boundariesElement;
+    }
+
+    var offsets = getOffsetRectRelativeToArbitraryNode(boundariesNode, offsetParent, fixedPosition);
+
+    // In case of HTML, we need a different computation
+    if (boundariesNode.nodeName === 'HTML' && !isFixed(offsetParent)) {
+      var _getWindowSizes = getWindowSizes(popper.ownerDocument),
+          height = _getWindowSizes.height,
+          width = _getWindowSizes.width;
+
+      boundaries.top += offsets.top - offsets.marginTop;
+      boundaries.bottom = height + offsets.top;
+      boundaries.left += offsets.left - offsets.marginLeft;
+      boundaries.right = width + offsets.left;
+    } else {
+      // for all the other DOM elements, this one is good
+      boundaries = offsets;
+    }
+  }
+
+  // Add paddings
+  padding = padding || 0;
+  var isPaddingNumber = typeof padding === 'number';
+  boundaries.left += isPaddingNumber ? padding : padding.left || 0;
+  boundaries.top += isPaddingNumber ? padding : padding.top || 0;
+  boundaries.right -= isPaddingNumber ? padding : padding.right || 0;
+  boundaries.bottom -= isPaddingNumber ? padding : padding.bottom || 0;
+
+  return boundaries;
+}
+
+function getArea(_ref) {
+  var width = _ref.width,
+      height = _ref.height;
+
+  return width * height;
+}
+
+/**
+ * Utility used to transform the `auto` placement to the placement with more
+ * available space.
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function computeAutoPlacement(placement, refRect, popper, reference, boundariesElement) {
+  var padding = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
+
+  if (placement.indexOf('auto') === -1) {
+    return placement;
+  }
+
+  var boundaries = getBoundaries(popper, reference, padding, boundariesElement);
+
+  var rects = {
+    top: {
+      width: boundaries.width,
+      height: refRect.top - boundaries.top
+    },
+    right: {
+      width: boundaries.right - refRect.right,
+      height: boundaries.height
+    },
+    bottom: {
+      width: boundaries.width,
+      height: boundaries.bottom - refRect.bottom
+    },
+    left: {
+      width: refRect.left - boundaries.left,
+      height: boundaries.height
+    }
+  };
+
+  var sortedAreas = Object.keys(rects).map(function (key) {
+    return _extends({
+      key: key
+    }, rects[key], {
+      area: getArea(rects[key])
+    });
+  }).sort(function (a, b) {
+    return b.area - a.area;
+  });
+
+  var filteredAreas = sortedAreas.filter(function (_ref2) {
+    var width = _ref2.width,
+        height = _ref2.height;
+    return width >= popper.clientWidth && height >= popper.clientHeight;
+  });
+
+  var computedPlacement = filteredAreas.length > 0 ? filteredAreas[0].key : sortedAreas[0].key;
+
+  var variation = placement.split('-')[1];
+
+  return computedPlacement + (variation ? '-' + variation : '');
+}
+
+/**
+ * Get offsets to the reference element
+ * @method
+ * @memberof Popper.Utils
+ * @param {Object} state
+ * @param {Element} popper - the popper element
+ * @param {Element} reference - the reference element (the popper will be relative to this)
+ * @param {Element} fixedPosition - is in fixed position mode
+ * @returns {Object} An object containing the offsets which will be applied to the popper
+ */
+function getReferenceOffsets(state, popper, reference) {
+  var fixedPosition = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+  var commonOffsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
+  return getOffsetRectRelativeToArbitraryNode(reference, commonOffsetParent, fixedPosition);
+}
+
+/**
+ * Get the outer sizes of the given element (offset size + margins)
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element
+ * @returns {Object} object containing width and height properties
+ */
+function getOuterSizes(element) {
+  var window = element.ownerDocument.defaultView;
+  var styles = window.getComputedStyle(element);
+  var x = parseFloat(styles.marginTop || 0) + parseFloat(styles.marginBottom || 0);
+  var y = parseFloat(styles.marginLeft || 0) + parseFloat(styles.marginRight || 0);
+  var result = {
+    width: element.offsetWidth + y,
+    height: element.offsetHeight + x
+  };
+  return result;
+}
+
+/**
+ * Get the opposite placement of the given one
+ * @method
+ * @memberof Popper.Utils
+ * @argument {String} placement
+ * @returns {String} flipped placement
+ */
+function getOppositePlacement(placement) {
+  var hash = { left: 'right', right: 'left', bottom: 'top', top: 'bottom' };
+  return placement.replace(/left|right|bottom|top/g, function (matched) {
+    return hash[matched];
+  });
+}
+
+/**
+ * Get offsets to the popper
+ * @method
+ * @memberof Popper.Utils
+ * @param {Object} position - CSS position the Popper will get applied
+ * @param {HTMLElement} popper - the popper element
+ * @param {Object} referenceOffsets - the reference offsets (the popper will be relative to this)
+ * @param {String} placement - one of the valid placement options
+ * @returns {Object} popperOffsets - An object containing the offsets which will be applied to the popper
+ */
+function getPopperOffsets(popper, referenceOffsets, placement) {
+  placement = placement.split('-')[0];
+
+  // Get popper node sizes
+  var popperRect = getOuterSizes(popper);
+
+  // Add position, width and height to our offsets object
+  var popperOffsets = {
+    width: popperRect.width,
+    height: popperRect.height
+  };
+
+  // depending by the popper placement we have to compute its offsets slightly differently
+  var isHoriz = ['right', 'left'].indexOf(placement) !== -1;
+  var mainSide = isHoriz ? 'top' : 'left';
+  var secondarySide = isHoriz ? 'left' : 'top';
+  var measurement = isHoriz ? 'height' : 'width';
+  var secondaryMeasurement = !isHoriz ? 'height' : 'width';
+
+  popperOffsets[mainSide] = referenceOffsets[mainSide] + referenceOffsets[measurement] / 2 - popperRect[measurement] / 2;
+  if (placement === secondarySide) {
+    popperOffsets[secondarySide] = referenceOffsets[secondarySide] - popperRect[secondaryMeasurement];
+  } else {
+    popperOffsets[secondarySide] = referenceOffsets[getOppositePlacement(secondarySide)];
+  }
+
+  return popperOffsets;
+}
+
+/**
+ * Mimics the `find` method of Array
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Array} arr
+ * @argument prop
+ * @argument value
+ * @returns index or -1
+ */
+function find(arr, check) {
+  // use native find if supported
+  if (Array.prototype.find) {
+    return arr.find(check);
+  }
+
+  // use `filter` to obtain the same behavior of `find`
+  return arr.filter(check)[0];
+}
+
+/**
+ * Return the index of the matching object
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Array} arr
+ * @argument prop
+ * @argument value
+ * @returns index or -1
+ */
+function findIndex(arr, prop, value) {
+  // use native findIndex if supported
+  if (Array.prototype.findIndex) {
+    return arr.findIndex(function (cur) {
+      return cur[prop] === value;
+    });
+  }
+
+  // use `find` + `indexOf` if `findIndex` isn't supported
+  var match = find(arr, function (obj) {
+    return obj[prop] === value;
+  });
+  return arr.indexOf(match);
+}
+
+/**
+ * Loop trough the list of modifiers and run them in order,
+ * each of them will then edit the data object.
+ * @method
+ * @memberof Popper.Utils
+ * @param {dataObject} data
+ * @param {Array} modifiers
+ * @param {String} ends - Optional modifier name used as stopper
+ * @returns {dataObject}
+ */
+function runModifiers(modifiers, data, ends) {
+  var modifiersToRun = ends === undefined ? modifiers : modifiers.slice(0, findIndex(modifiers, 'name', ends));
+
+  modifiersToRun.forEach(function (modifier) {
+    if (modifier['function']) {
+      // eslint-disable-line dot-notation
+      console.warn('`modifier.function` is deprecated, use `modifier.fn`!');
+    }
+    var fn = modifier['function'] || modifier.fn; // eslint-disable-line dot-notation
+    if (modifier.enabled && isFunction(fn)) {
+      // Add properties to offsets to make them a complete clientRect object
+      // we do this before each modifier to make sure the previous one doesn't
+      // mess with these values
+      data.offsets.popper = getClientRect(data.offsets.popper);
+      data.offsets.reference = getClientRect(data.offsets.reference);
+
+      data = fn(data, modifier);
+    }
+  });
+
+  return data;
+}
+
+/**
+ * Updates the position of the popper, computing the new offsets and applying
+ * the new style.<br />
+ * Prefer `scheduleUpdate` over `update` because of performance reasons.
+ * @method
+ * @memberof Popper
+ */
+function update() {
+  // if popper is destroyed, don't perform any further update
+  if (this.state.isDestroyed) {
+    return;
+  }
+
+  var data = {
+    instance: this,
+    styles: {},
+    arrowStyles: {},
+    attributes: {},
+    flipped: false,
+    offsets: {}
+  };
+
+  // compute reference element offsets
+  data.offsets.reference = getReferenceOffsets(this.state, this.popper, this.reference, this.options.positionFixed);
+
+  // compute auto placement, store placement inside the data object,
+  // modifiers will be able to edit `placement` if needed
+  // and refer to originalPlacement to know the original value
+  data.placement = computeAutoPlacement(this.options.placement, data.offsets.reference, this.popper, this.reference, this.options.modifiers.flip.boundariesElement, this.options.modifiers.flip.padding);
+
+  // store the computed placement inside `originalPlacement`
+  data.originalPlacement = data.placement;
+
+  data.positionFixed = this.options.positionFixed;
+
+  // compute the popper offsets
+  data.offsets.popper = getPopperOffsets(this.popper, data.offsets.reference, data.placement);
+
+  data.offsets.popper.position = this.options.positionFixed ? 'fixed' : 'absolute';
+
+  // run the modifiers
+  data = runModifiers(this.modifiers, data);
+
+  // the first `update` will call `onCreate` callback
+  // the other ones will call `onUpdate` callback
+  if (!this.state.isCreated) {
+    this.state.isCreated = true;
+    this.options.onCreate(data);
+  } else {
+    this.options.onUpdate(data);
+  }
+}
+
+/**
+ * Helper used to know if the given modifier is enabled.
+ * @method
+ * @memberof Popper.Utils
+ * @returns {Boolean}
+ */
+function isModifierEnabled(modifiers, modifierName) {
+  return modifiers.some(function (_ref) {
+    var name = _ref.name,
+        enabled = _ref.enabled;
+    return enabled && name === modifierName;
+  });
+}
+
+/**
+ * Get the prefixed supported property name
+ * @method
+ * @memberof Popper.Utils
+ * @argument {String} property (camelCase)
+ * @returns {String} prefixed property (camelCase or PascalCase, depending on the vendor prefix)
+ */
+function getSupportedPropertyName(property) {
+  var prefixes = [false, 'ms', 'Webkit', 'Moz', 'O'];
+  var upperProp = property.charAt(0).toUpperCase() + property.slice(1);
+
+  for (var i = 0; i < prefixes.length; i++) {
+    var prefix = prefixes[i];
+    var toCheck = prefix ? '' + prefix + upperProp : property;
+    if (typeof document.body.style[toCheck] !== 'undefined') {
+      return toCheck;
+    }
+  }
+  return null;
+}
+
+/**
+ * Destroys the popper.
+ * @method
+ * @memberof Popper
+ */
+function destroy() {
+  this.state.isDestroyed = true;
+
+  // touch DOM only if `applyStyle` modifier is enabled
+  if (isModifierEnabled(this.modifiers, 'applyStyle')) {
+    this.popper.removeAttribute('x-placement');
+    this.popper.style.position = '';
+    this.popper.style.top = '';
+    this.popper.style.left = '';
+    this.popper.style.right = '';
+    this.popper.style.bottom = '';
+    this.popper.style.willChange = '';
+    this.popper.style[getSupportedPropertyName('transform')] = '';
+  }
+
+  this.disableEventListeners();
+
+  // remove the popper if user explicitly asked for the deletion on destroy
+  // do not use `remove` because IE11 doesn't support it
+  if (this.options.removeOnDestroy) {
+    this.popper.parentNode.removeChild(this.popper);
+  }
+  return this;
+}
+
+/**
+ * Get the window associated with the element
+ * @argument {Element} element
+ * @returns {Window}
+ */
+function getWindow(element) {
+  var ownerDocument = element.ownerDocument;
+  return ownerDocument ? ownerDocument.defaultView : window;
+}
+
+function attachToScrollParents(scrollParent, event, callback, scrollParents) {
+  var isBody = scrollParent.nodeName === 'BODY';
+  var target = isBody ? scrollParent.ownerDocument.defaultView : scrollParent;
+  target.addEventListener(event, callback, { passive: true });
+
+  if (!isBody) {
+    attachToScrollParents(getScrollParent(target.parentNode), event, callback, scrollParents);
+  }
+  scrollParents.push(target);
+}
+
+/**
+ * Setup needed event listeners used to update the popper position
+ * @method
+ * @memberof Popper.Utils
+ * @private
+ */
+function setupEventListeners(reference, options, state, updateBound) {
+  // Resize event listener on window
+  state.updateBound = updateBound;
+  getWindow(reference).addEventListener('resize', state.updateBound, { passive: true });
+
+  // Scroll event listener on scroll parents
+  var scrollElement = getScrollParent(reference);
+  attachToScrollParents(scrollElement, 'scroll', state.updateBound, state.scrollParents);
+  state.scrollElement = scrollElement;
+  state.eventsEnabled = true;
+
+  return state;
+}
+
+/**
+ * It will add resize/scroll events and start recalculating
+ * position of the popper element when they are triggered.
+ * @method
+ * @memberof Popper
+ */
+function enableEventListeners() {
+  if (!this.state.eventsEnabled) {
+    this.state = setupEventListeners(this.reference, this.options, this.state, this.scheduleUpdate);
+  }
+}
+
+/**
+ * Remove event listeners used to update the popper position
+ * @method
+ * @memberof Popper.Utils
+ * @private
+ */
+function removeEventListeners(reference, state) {
+  // Remove resize event listener on window
+  getWindow(reference).removeEventListener('resize', state.updateBound);
+
+  // Remove scroll event listener on scroll parents
+  state.scrollParents.forEach(function (target) {
+    target.removeEventListener('scroll', state.updateBound);
+  });
+
+  // Reset state
+  state.updateBound = null;
+  state.scrollParents = [];
+  state.scrollElement = null;
+  state.eventsEnabled = false;
+  return state;
+}
+
+/**
+ * It will remove resize/scroll events and won't recalculate popper position
+ * when they are triggered. It also won't trigger `onUpdate` callback anymore,
+ * unless you call `update` method manually.
+ * @method
+ * @memberof Popper
+ */
+function disableEventListeners() {
+  if (this.state.eventsEnabled) {
+    cancelAnimationFrame(this.scheduleUpdate);
+    this.state = removeEventListeners(this.reference, this.state);
+  }
+}
+
+/**
+ * Tells if a given input is a number
+ * @method
+ * @memberof Popper.Utils
+ * @param {*} input to check
+ * @return {Boolean}
+ */
+function isNumeric(n) {
+  return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+/**
+ * Set the style to the given popper
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element - Element to apply the style to
+ * @argument {Object} styles
+ * Object with a list of properties and values which will be applied to the element
+ */
+function setStyles(element, styles) {
+  Object.keys(styles).forEach(function (prop) {
+    var unit = '';
+    // add unit if the value is numeric and is one of the following
+    if (['width', 'height', 'top', 'right', 'bottom', 'left'].indexOf(prop) !== -1 && isNumeric(styles[prop])) {
+      unit = 'px';
+    }
+    element.style[prop] = styles[prop] + unit;
+  });
+}
+
+/**
+ * Set the attributes to the given popper
+ * @method
+ * @memberof Popper.Utils
+ * @argument {Element} element - Element to apply the attributes to
+ * @argument {Object} styles
+ * Object with a list of properties and values which will be applied to the element
+ */
+function setAttributes(element, attributes) {
+  Object.keys(attributes).forEach(function (prop) {
+    var value = attributes[prop];
+    if (value !== false) {
+      element.setAttribute(prop, attributes[prop]);
+    } else {
+      element.removeAttribute(prop);
+    }
+  });
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Object} data.styles - List of style properties - values to apply to popper element
+ * @argument {Object} data.attributes - List of attribute properties - values to apply to popper element
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The same data object
+ */
+function applyStyle(data) {
+  // any property present in `data.styles` will be applied to the popper,
+  // in this way we can make the 3rd party modifiers add custom styles to it
+  // Be aware, modifiers could override the properties defined in the previous
+  // lines of this modifier!
+  setStyles(data.instance.popper, data.styles);
+
+  // any property present in `data.attributes` will be applied to the popper,
+  // they will be set as HTML attributes of the element
+  setAttributes(data.instance.popper, data.attributes);
+
+  // if arrowElement is defined and arrowStyles has some properties
+  if (data.arrowElement && Object.keys(data.arrowStyles).length) {
+    setStyles(data.arrowElement, data.arrowStyles);
+  }
+
+  return data;
+}
+
+/**
+ * Set the x-placement attribute before everything else because it could be used
+ * to add margins to the popper margins needs to be calculated to get the
+ * correct popper offsets.
+ * @method
+ * @memberof Popper.modifiers
+ * @param {HTMLElement} reference - The reference element used to position the popper
+ * @param {HTMLElement} popper - The HTML element used as popper
+ * @param {Object} options - Popper.js options
+ */
+function applyStyleOnLoad(reference, popper, options, modifierOptions, state) {
+  // compute reference element offsets
+  var referenceOffsets = getReferenceOffsets(state, popper, reference, options.positionFixed);
+
+  // compute auto placement, store placement inside the data object,
+  // modifiers will be able to edit `placement` if needed
+  // and refer to originalPlacement to know the original value
+  var placement = computeAutoPlacement(options.placement, referenceOffsets, popper, reference, options.modifiers.flip.boundariesElement, options.modifiers.flip.padding);
+
+  popper.setAttribute('x-placement', placement);
+
+  // Apply `position` to popper before anything else because
+  // without the position applied we can't guarantee correct computations
+  setStyles(popper, { position: options.positionFixed ? 'fixed' : 'absolute' });
+
+  return options;
+}
+
+/**
+ * @function
+ * @memberof Popper.Utils
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Boolean} shouldRound - If the offsets should be rounded at all
+ * @returns {Object} The popper's position offsets rounded
+ *
+ * The tale of pixel-perfect positioning. It's still not 100% perfect, but as
+ * good as it can be within reason.
+ * Discussion here: https://github.com/FezVrasta/popper.js/pull/715
+ *
+ * Low DPI screens cause a popper to be blurry if not using full pixels (Safari
+ * as well on High DPI screens).
+ *
+ * Firefox prefers no rounding for positioning and does not have blurriness on
+ * high DPI screens.
+ *
+ * Only horizontal placement and left/right values need to be considered.
+ */
+function getRoundedOffsets(data, shouldRound) {
+  var _data$offsets = data.offsets,
+      popper = _data$offsets.popper,
+      reference = _data$offsets.reference;
+  var round = Math.round,
+      floor = Math.floor;
+
+  var noRound = function noRound(v) {
+    return v;
+  };
+
+  var referenceWidth = round(reference.width);
+  var popperWidth = round(popper.width);
+
+  var isVertical = ['left', 'right'].indexOf(data.placement) !== -1;
+  var isVariation = data.placement.indexOf('-') !== -1;
+  var sameWidthParity = referenceWidth % 2 === popperWidth % 2;
+  var bothOddWidth = referenceWidth % 2 === 1 && popperWidth % 2 === 1;
+
+  var horizontalToInteger = !shouldRound ? noRound : isVertical || isVariation || sameWidthParity ? round : floor;
+  var verticalToInteger = !shouldRound ? noRound : round;
+
+  return {
+    left: horizontalToInteger(bothOddWidth && !isVariation && shouldRound ? popper.left - 1 : popper.left),
+    top: verticalToInteger(popper.top),
+    bottom: verticalToInteger(popper.bottom),
+    right: horizontalToInteger(popper.right)
+  };
+}
+
+var isFirefox = isBrowser && /Firefox/i.test(navigator.userAgent);
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function computeStyle(data, options) {
+  var x = options.x,
+      y = options.y;
+  var popper = data.offsets.popper;
+
+  // Remove this legacy support in Popper.js v2
+
+  var legacyGpuAccelerationOption = find(data.instance.modifiers, function (modifier) {
+    return modifier.name === 'applyStyle';
+  }).gpuAcceleration;
+  if (legacyGpuAccelerationOption !== undefined) {
+    console.warn('WARNING: `gpuAcceleration` option moved to `computeStyle` modifier and will not be supported in future versions of Popper.js!');
+  }
+  var gpuAcceleration = legacyGpuAccelerationOption !== undefined ? legacyGpuAccelerationOption : options.gpuAcceleration;
+
+  var offsetParent = getOffsetParent(data.instance.popper);
+  var offsetParentRect = getBoundingClientRect(offsetParent);
+
+  // Styles
+  var styles = {
+    position: popper.position
+  };
+
+  var offsets = getRoundedOffsets(data, window.devicePixelRatio < 2 || !isFirefox);
+
+  var sideA = x === 'bottom' ? 'top' : 'bottom';
+  var sideB = y === 'right' ? 'left' : 'right';
+
+  // if gpuAcceleration is set to `true` and transform is supported,
+  //  we use `translate3d` to apply the position to the popper we
+  // automatically use the supported prefixed version if needed
+  var prefixedProperty = getSupportedPropertyName('transform');
+
+  // now, let's make a step back and look at this code closely (wtf?)
+  // If the content of the popper grows once it's been positioned, it
+  // may happen that the popper gets misplaced because of the new content
+  // overflowing its reference element
+  // To avoid this problem, we provide two options (x and y), which allow
+  // the consumer to define the offset origin.
+  // If we position a popper on top of a reference element, we can set
+  // `x` to `top` to make the popper grow towards its top instead of
+  // its bottom.
+  var left = void 0,
+      top = void 0;
+  if (sideA === 'bottom') {
+    // when offsetParent is <html> the positioning is relative to the bottom of the screen (excluding the scrollbar)
+    // and not the bottom of the html element
+    if (offsetParent.nodeName === 'HTML') {
+      top = -offsetParent.clientHeight + offsets.bottom;
+    } else {
+      top = -offsetParentRect.height + offsets.bottom;
+    }
+  } else {
+    top = offsets.top;
+  }
+  if (sideB === 'right') {
+    if (offsetParent.nodeName === 'HTML') {
+      left = -offsetParent.clientWidth + offsets.right;
+    } else {
+      left = -offsetParentRect.width + offsets.right;
+    }
+  } else {
+    left = offsets.left;
+  }
+  if (gpuAcceleration && prefixedProperty) {
+    styles[prefixedProperty] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
+    styles[sideA] = 0;
+    styles[sideB] = 0;
+    styles.willChange = 'transform';
+  } else {
+    // othwerise, we use the standard `top`, `left`, `bottom` and `right` properties
+    var invertTop = sideA === 'bottom' ? -1 : 1;
+    var invertLeft = sideB === 'right' ? -1 : 1;
+    styles[sideA] = top * invertTop;
+    styles[sideB] = left * invertLeft;
+    styles.willChange = sideA + ', ' + sideB;
+  }
+
+  // Attributes
+  var attributes = {
+    'x-placement': data.placement
+  };
+
+  // Update `data` attributes, styles and arrowStyles
+  data.attributes = _extends({}, attributes, data.attributes);
+  data.styles = _extends({}, styles, data.styles);
+  data.arrowStyles = _extends({}, data.offsets.arrow, data.arrowStyles);
+
+  return data;
+}
+
+/**
+ * Helper used to know if the given modifier depends from another one.<br />
+ * It checks if the needed modifier is listed and enabled.
+ * @method
+ * @memberof Popper.Utils
+ * @param {Array} modifiers - list of modifiers
+ * @param {String} requestingName - name of requesting modifier
+ * @param {String} requestedName - name of requested modifier
+ * @returns {Boolean}
+ */
+function isModifierRequired(modifiers, requestingName, requestedName) {
+  var requesting = find(modifiers, function (_ref) {
+    var name = _ref.name;
+    return name === requestingName;
+  });
+
+  var isRequired = !!requesting && modifiers.some(function (modifier) {
+    return modifier.name === requestedName && modifier.enabled && modifier.order < requesting.order;
+  });
+
+  if (!isRequired) {
+    var _requesting = '`' + requestingName + '`';
+    var requested = '`' + requestedName + '`';
+    console.warn(requested + ' modifier is required by ' + _requesting + ' modifier in order to work, be sure to include it before ' + _requesting + '!');
+  }
+  return isRequired;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function arrow(data, options) {
+  var _data$offsets$arrow;
+
+  // arrow depends on keepTogether in order to work
+  if (!isModifierRequired(data.instance.modifiers, 'arrow', 'keepTogether')) {
+    return data;
+  }
+
+  var arrowElement = options.element;
+
+  // if arrowElement is a string, suppose it's a CSS selector
+  if (typeof arrowElement === 'string') {
+    arrowElement = data.instance.popper.querySelector(arrowElement);
+
+    // if arrowElement is not found, don't run the modifier
+    if (!arrowElement) {
+      return data;
+    }
+  } else {
+    // if the arrowElement isn't a query selector we must check that the
+    // provided DOM node is child of its popper node
+    if (!data.instance.popper.contains(arrowElement)) {
+      console.warn('WARNING: `arrow.element` must be child of its popper element!');
+      return data;
+    }
+  }
+
+  var placement = data.placement.split('-')[0];
+  var _data$offsets = data.offsets,
+      popper = _data$offsets.popper,
+      reference = _data$offsets.reference;
+
+  var isVertical = ['left', 'right'].indexOf(placement) !== -1;
+
+  var len = isVertical ? 'height' : 'width';
+  var sideCapitalized = isVertical ? 'Top' : 'Left';
+  var side = sideCapitalized.toLowerCase();
+  var altSide = isVertical ? 'left' : 'top';
+  var opSide = isVertical ? 'bottom' : 'right';
+  var arrowElementSize = getOuterSizes(arrowElement)[len];
+
+  //
+  // extends keepTogether behavior making sure the popper and its
+  // reference have enough pixels in conjunction
+  //
+
+  // top/left side
+  if (reference[opSide] - arrowElementSize < popper[side]) {
+    data.offsets.popper[side] -= popper[side] - (reference[opSide] - arrowElementSize);
+  }
+  // bottom/right side
+  if (reference[side] + arrowElementSize > popper[opSide]) {
+    data.offsets.popper[side] += reference[side] + arrowElementSize - popper[opSide];
+  }
+  data.offsets.popper = getClientRect(data.offsets.popper);
+
+  // compute center of the popper
+  var center = reference[side] + reference[len] / 2 - arrowElementSize / 2;
+
+  // Compute the sideValue using the updated popper offsets
+  // take popper margin in account because we don't have this info available
+  var css = getStyleComputedProperty(data.instance.popper);
+  var popperMarginSide = parseFloat(css['margin' + sideCapitalized]);
+  var popperBorderSide = parseFloat(css['border' + sideCapitalized + 'Width']);
+  var sideValue = center - data.offsets.popper[side] - popperMarginSide - popperBorderSide;
+
+  // prevent arrowElement from being placed not contiguously to its popper
+  sideValue = Math.max(Math.min(popper[len] - arrowElementSize, sideValue), 0);
+
+  data.arrowElement = arrowElement;
+  data.offsets.arrow = (_data$offsets$arrow = {}, defineProperty(_data$offsets$arrow, side, Math.round(sideValue)), defineProperty(_data$offsets$arrow, altSide, ''), _data$offsets$arrow);
+
+  return data;
+}
+
+/**
+ * Get the opposite placement variation of the given one
+ * @method
+ * @memberof Popper.Utils
+ * @argument {String} placement variation
+ * @returns {String} flipped placement variation
+ */
+function getOppositeVariation(variation) {
+  if (variation === 'end') {
+    return 'start';
+  } else if (variation === 'start') {
+    return 'end';
+  }
+  return variation;
+}
+
+/**
+ * List of accepted placements to use as values of the `placement` option.<br />
+ * Valid placements are:
+ * - `auto`
+ * - `top`
+ * - `right`
+ * - `bottom`
+ * - `left`
+ *
+ * Each placement can have a variation from this list:
+ * - `-start`
+ * - `-end`
+ *
+ * Variations are interpreted easily if you think of them as the left to right
+ * written languages. Horizontally (`top` and `bottom`), `start` is left and `end`
+ * is right.<br />
+ * Vertically (`left` and `right`), `start` is top and `end` is bottom.
+ *
+ * Some valid examples are:
+ * - `top-end` (on top of reference, right aligned)
+ * - `right-start` (on right of reference, top aligned)
+ * - `bottom` (on bottom, centered)
+ * - `auto-end` (on the side with more space available, alignment depends by placement)
+ *
+ * @static
+ * @type {Array}
+ * @enum {String}
+ * @readonly
+ * @method placements
+ * @memberof Popper
+ */
+var placements = ['auto-start', 'auto', 'auto-end', 'top-start', 'top', 'top-end', 'right-start', 'right', 'right-end', 'bottom-end', 'bottom', 'bottom-start', 'left-end', 'left', 'left-start'];
+
+// Get rid of `auto` `auto-start` and `auto-end`
+var validPlacements = placements.slice(3);
+
+/**
+ * Given an initial placement, returns all the subsequent placements
+ * clockwise (or counter-clockwise).
+ *
+ * @method
+ * @memberof Popper.Utils
+ * @argument {String} placement - A valid placement (it accepts variations)
+ * @argument {Boolean} counter - Set to true to walk the placements counterclockwise
+ * @returns {Array} placements including their variations
+ */
+function clockwise(placement) {
+  var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  var index = validPlacements.indexOf(placement);
+  var arr = validPlacements.slice(index + 1).concat(validPlacements.slice(0, index));
+  return counter ? arr.reverse() : arr;
+}
+
+var BEHAVIORS = {
+  FLIP: 'flip',
+  CLOCKWISE: 'clockwise',
+  COUNTERCLOCKWISE: 'counterclockwise'
+};
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function flip(data, options) {
+  // if `inner` modifier is enabled, we can't use the `flip` modifier
+  if (isModifierEnabled(data.instance.modifiers, 'inner')) {
+    return data;
+  }
+
+  if (data.flipped && data.placement === data.originalPlacement) {
+    // seems like flip is trying to loop, probably there's not enough space on any of the flippable sides
+    return data;
+  }
+
+  var boundaries = getBoundaries(data.instance.popper, data.instance.reference, options.padding, options.boundariesElement, data.positionFixed);
+
+  var placement = data.placement.split('-')[0];
+  var placementOpposite = getOppositePlacement(placement);
+  var variation = data.placement.split('-')[1] || '';
+
+  var flipOrder = [];
+
+  switch (options.behavior) {
+    case BEHAVIORS.FLIP:
+      flipOrder = [placement, placementOpposite];
+      break;
+    case BEHAVIORS.CLOCKWISE:
+      flipOrder = clockwise(placement);
+      break;
+    case BEHAVIORS.COUNTERCLOCKWISE:
+      flipOrder = clockwise(placement, true);
+      break;
+    default:
+      flipOrder = options.behavior;
+  }
+
+  flipOrder.forEach(function (step, index) {
+    if (placement !== step || flipOrder.length === index + 1) {
+      return data;
+    }
+
+    placement = data.placement.split('-')[0];
+    placementOpposite = getOppositePlacement(placement);
+
+    var popperOffsets = data.offsets.popper;
+    var refOffsets = data.offsets.reference;
+
+    // using floor because the reference offsets may contain decimals we are not going to consider here
+    var floor = Math.floor;
+    var overlapsRef = placement === 'left' && floor(popperOffsets.right) > floor(refOffsets.left) || placement === 'right' && floor(popperOffsets.left) < floor(refOffsets.right) || placement === 'top' && floor(popperOffsets.bottom) > floor(refOffsets.top) || placement === 'bottom' && floor(popperOffsets.top) < floor(refOffsets.bottom);
+
+    var overflowsLeft = floor(popperOffsets.left) < floor(boundaries.left);
+    var overflowsRight = floor(popperOffsets.right) > floor(boundaries.right);
+    var overflowsTop = floor(popperOffsets.top) < floor(boundaries.top);
+    var overflowsBottom = floor(popperOffsets.bottom) > floor(boundaries.bottom);
+
+    var overflowsBoundaries = placement === 'left' && overflowsLeft || placement === 'right' && overflowsRight || placement === 'top' && overflowsTop || placement === 'bottom' && overflowsBottom;
+
+    // flip the variation if required
+    var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
+
+    // flips variation if reference element overflows boundaries
+    var flippedVariationByRef = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
+
+    // flips variation if popper content overflows boundaries
+    var flippedVariationByContent = !!options.flipVariationsByContent && (isVertical && variation === 'start' && overflowsRight || isVertical && variation === 'end' && overflowsLeft || !isVertical && variation === 'start' && overflowsBottom || !isVertical && variation === 'end' && overflowsTop);
+
+    var flippedVariation = flippedVariationByRef || flippedVariationByContent;
+
+    if (overlapsRef || overflowsBoundaries || flippedVariation) {
+      // this boolean to detect any flip loop
+      data.flipped = true;
+
+      if (overlapsRef || overflowsBoundaries) {
+        placement = flipOrder[index + 1];
+      }
+
+      if (flippedVariation) {
+        variation = getOppositeVariation(variation);
+      }
+
+      data.placement = placement + (variation ? '-' + variation : '');
+
+      // this object contains `position`, we want to preserve it along with
+      // any additional property we may add in the future
+      data.offsets.popper = _extends({}, data.offsets.popper, getPopperOffsets(data.instance.popper, data.offsets.reference, data.placement));
+
+      data = runModifiers(data.instance.modifiers, data, 'flip');
+    }
+  });
+  return data;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function keepTogether(data) {
+  var _data$offsets = data.offsets,
+      popper = _data$offsets.popper,
+      reference = _data$offsets.reference;
+
+  var placement = data.placement.split('-')[0];
+  var floor = Math.floor;
+  var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
+  var side = isVertical ? 'right' : 'bottom';
+  var opSide = isVertical ? 'left' : 'top';
+  var measurement = isVertical ? 'width' : 'height';
+
+  if (popper[side] < floor(reference[opSide])) {
+    data.offsets.popper[opSide] = floor(reference[opSide]) - popper[measurement];
+  }
+  if (popper[opSide] > floor(reference[side])) {
+    data.offsets.popper[opSide] = floor(reference[side]);
+  }
+
+  return data;
+}
+
+/**
+ * Converts a string containing value + unit into a px value number
+ * @function
+ * @memberof {modifiers~offset}
+ * @private
+ * @argument {String} str - Value + unit string
+ * @argument {String} measurement - `height` or `width`
+ * @argument {Object} popperOffsets
+ * @argument {Object} referenceOffsets
+ * @returns {Number|String}
+ * Value in pixels, or original string if no values were extracted
+ */
+function toValue(str, measurement, popperOffsets, referenceOffsets) {
+  // separate value from unit
+  var split = str.match(/((?:\-|\+)?\d*\.?\d*)(.*)/);
+  var value = +split[1];
+  var unit = split[2];
+
+  // If it's not a number it's an operator, I guess
+  if (!value) {
+    return str;
+  }
+
+  if (unit.indexOf('%') === 0) {
+    var element = void 0;
+    switch (unit) {
+      case '%p':
+        element = popperOffsets;
+        break;
+      case '%':
+      case '%r':
+      default:
+        element = referenceOffsets;
+    }
+
+    var rect = getClientRect(element);
+    return rect[measurement] / 100 * value;
+  } else if (unit === 'vh' || unit === 'vw') {
+    // if is a vh or vw, we calculate the size based on the viewport
+    var size = void 0;
+    if (unit === 'vh') {
+      size = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    } else {
+      size = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    }
+    return size / 100 * value;
+  } else {
+    // if is an explicit pixel unit, we get rid of the unit and keep the value
+    // if is an implicit unit, it's px, and we return just the value
+    return value;
+  }
+}
+
+/**
+ * Parse an `offset` string to extrapolate `x` and `y` numeric offsets.
+ * @function
+ * @memberof {modifiers~offset}
+ * @private
+ * @argument {String} offset
+ * @argument {Object} popperOffsets
+ * @argument {Object} referenceOffsets
+ * @argument {String} basePlacement
+ * @returns {Array} a two cells array with x and y offsets in numbers
+ */
+function parseOffset(offset, popperOffsets, referenceOffsets, basePlacement) {
+  var offsets = [0, 0];
+
+  // Use height if placement is left or right and index is 0 otherwise use width
+  // in this way the first offset will use an axis and the second one
+  // will use the other one
+  var useHeight = ['right', 'left'].indexOf(basePlacement) !== -1;
+
+  // Split the offset string to obtain a list of values and operands
+  // The regex addresses values with the plus or minus sign in front (+10, -20, etc)
+  var fragments = offset.split(/(\+|\-)/).map(function (frag) {
+    return frag.trim();
+  });
+
+  // Detect if the offset string contains a pair of values or a single one
+  // they could be separated by comma or space
+  var divider = fragments.indexOf(find(fragments, function (frag) {
+    return frag.search(/,|\s/) !== -1;
+  }));
+
+  if (fragments[divider] && fragments[divider].indexOf(',') === -1) {
+    console.warn('Offsets separated by white space(s) are deprecated, use a comma (,) instead.');
+  }
+
+  // If divider is found, we divide the list of values and operands to divide
+  // them by ofset X and Y.
+  var splitRegex = /\s*,\s*|\s+/;
+  var ops = divider !== -1 ? [fragments.slice(0, divider).concat([fragments[divider].split(splitRegex)[0]]), [fragments[divider].split(splitRegex)[1]].concat(fragments.slice(divider + 1))] : [fragments];
+
+  // Convert the values with units to absolute pixels to allow our computations
+  ops = ops.map(function (op, index) {
+    // Most of the units rely on the orientation of the popper
+    var measurement = (index === 1 ? !useHeight : useHeight) ? 'height' : 'width';
+    var mergeWithPrevious = false;
+    return op
+    // This aggregates any `+` or `-` sign that aren't considered operators
+    // e.g.: 10 + +5 => [10, +, +5]
+    .reduce(function (a, b) {
+      if (a[a.length - 1] === '' && ['+', '-'].indexOf(b) !== -1) {
+        a[a.length - 1] = b;
+        mergeWithPrevious = true;
+        return a;
+      } else if (mergeWithPrevious) {
+        a[a.length - 1] += b;
+        mergeWithPrevious = false;
+        return a;
+      } else {
+        return a.concat(b);
+      }
+    }, [])
+    // Here we convert the string values into number values (in px)
+    .map(function (str) {
+      return toValue(str, measurement, popperOffsets, referenceOffsets);
+    });
+  });
+
+  // Loop trough the offsets arrays and execute the operations
+  ops.forEach(function (op, index) {
+    op.forEach(function (frag, index2) {
+      if (isNumeric(frag)) {
+        offsets[index] += frag * (op[index2 - 1] === '-' ? -1 : 1);
+      }
+    });
+  });
+  return offsets;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @argument {Number|String} options.offset=0
+ * The offset value as described in the modifier description
+ * @returns {Object} The data object, properly modified
+ */
+function offset(data, _ref) {
+  var offset = _ref.offset;
+  var placement = data.placement,
+      _data$offsets = data.offsets,
+      popper = _data$offsets.popper,
+      reference = _data$offsets.reference;
+
+  var basePlacement = placement.split('-')[0];
+
+  var offsets = void 0;
+  if (isNumeric(+offset)) {
+    offsets = [+offset, 0];
+  } else {
+    offsets = parseOffset(offset, popper, reference, basePlacement);
+  }
+
+  if (basePlacement === 'left') {
+    popper.top += offsets[0];
+    popper.left -= offsets[1];
+  } else if (basePlacement === 'right') {
+    popper.top += offsets[0];
+    popper.left += offsets[1];
+  } else if (basePlacement === 'top') {
+    popper.left += offsets[0];
+    popper.top -= offsets[1];
+  } else if (basePlacement === 'bottom') {
+    popper.left += offsets[0];
+    popper.top += offsets[1];
+  }
+
+  data.popper = popper;
+  return data;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function preventOverflow(data, options) {
+  var boundariesElement = options.boundariesElement || getOffsetParent(data.instance.popper);
+
+  // If offsetParent is the reference element, we really want to
+  // go one step up and use the next offsetParent as reference to
+  // avoid to make this modifier completely useless and look like broken
+  if (data.instance.reference === boundariesElement) {
+    boundariesElement = getOffsetParent(boundariesElement);
+  }
+
+  // NOTE: DOM access here
+  // resets the popper's position so that the document size can be calculated excluding
+  // the size of the popper element itself
+  var transformProp = getSupportedPropertyName('transform');
+  var popperStyles = data.instance.popper.style; // assignment to help minification
+  var top = popperStyles.top,
+      left = popperStyles.left,
+      transform = popperStyles[transformProp];
+
+  popperStyles.top = '';
+  popperStyles.left = '';
+  popperStyles[transformProp] = '';
+
+  var boundaries = getBoundaries(data.instance.popper, data.instance.reference, options.padding, boundariesElement, data.positionFixed);
+
+  // NOTE: DOM access here
+  // restores the original style properties after the offsets have been computed
+  popperStyles.top = top;
+  popperStyles.left = left;
+  popperStyles[transformProp] = transform;
+
+  options.boundaries = boundaries;
+
+  var order = options.priority;
+  var popper = data.offsets.popper;
+
+  var check = {
+    primary: function primary(placement) {
+      var value = popper[placement];
+      if (popper[placement] < boundaries[placement] && !options.escapeWithReference) {
+        value = Math.max(popper[placement], boundaries[placement]);
+      }
+      return defineProperty({}, placement, value);
+    },
+    secondary: function secondary(placement) {
+      var mainSide = placement === 'right' ? 'left' : 'top';
+      var value = popper[mainSide];
+      if (popper[placement] > boundaries[placement] && !options.escapeWithReference) {
+        value = Math.min(popper[mainSide], boundaries[placement] - (placement === 'right' ? popper.width : popper.height));
+      }
+      return defineProperty({}, mainSide, value);
+    }
+  };
+
+  order.forEach(function (placement) {
+    var side = ['left', 'top'].indexOf(placement) !== -1 ? 'primary' : 'secondary';
+    popper = _extends({}, popper, check[side](placement));
+  });
+
+  data.offsets.popper = popper;
+
+  return data;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function shift(data) {
+  var placement = data.placement;
+  var basePlacement = placement.split('-')[0];
+  var shiftvariation = placement.split('-')[1];
+
+  // if shift shiftvariation is specified, run the modifier
+  if (shiftvariation) {
+    var _data$offsets = data.offsets,
+        reference = _data$offsets.reference,
+        popper = _data$offsets.popper;
+
+    var isVertical = ['bottom', 'top'].indexOf(basePlacement) !== -1;
+    var side = isVertical ? 'left' : 'top';
+    var measurement = isVertical ? 'width' : 'height';
+
+    var shiftOffsets = {
+      start: defineProperty({}, side, reference[side]),
+      end: defineProperty({}, side, reference[side] + reference[measurement] - popper[measurement])
+    };
+
+    data.offsets.popper = _extends({}, popper, shiftOffsets[shiftvariation]);
+  }
+
+  return data;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by update method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function hide(data) {
+  if (!isModifierRequired(data.instance.modifiers, 'hide', 'preventOverflow')) {
+    return data;
+  }
+
+  var refRect = data.offsets.reference;
+  var bound = find(data.instance.modifiers, function (modifier) {
+    return modifier.name === 'preventOverflow';
+  }).boundaries;
+
+  if (refRect.bottom < bound.top || refRect.left > bound.right || refRect.top > bound.bottom || refRect.right < bound.left) {
+    // Avoid unnecessary DOM access if visibility hasn't changed
+    if (data.hide === true) {
+      return data;
+    }
+
+    data.hide = true;
+    data.attributes['x-out-of-boundaries'] = '';
+  } else {
+    // Avoid unnecessary DOM access if visibility hasn't changed
+    if (data.hide === false) {
+      return data;
+    }
+
+    data.hide = false;
+    data.attributes['x-out-of-boundaries'] = false;
+  }
+
+  return data;
+}
+
+/**
+ * @function
+ * @memberof Modifiers
+ * @argument {Object} data - The data object generated by `update` method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {Object} The data object, properly modified
+ */
+function inner(data) {
+  var placement = data.placement;
+  var basePlacement = placement.split('-')[0];
+  var _data$offsets = data.offsets,
+      popper = _data$offsets.popper,
+      reference = _data$offsets.reference;
+
+  var isHoriz = ['left', 'right'].indexOf(basePlacement) !== -1;
+
+  var subtractLength = ['top', 'left'].indexOf(basePlacement) === -1;
+
+  popper[isHoriz ? 'left' : 'top'] = reference[basePlacement] - (subtractLength ? popper[isHoriz ? 'width' : 'height'] : 0);
+
+  data.placement = getOppositePlacement(placement);
+  data.offsets.popper = getClientRect(popper);
+
+  return data;
+}
+
+/**
+ * Modifier function, each modifier can have a function of this type assigned
+ * to its `fn` property.<br />
+ * These functions will be called on each update, this means that you must
+ * make sure they are performant enough to avoid performance bottlenecks.
+ *
+ * @function ModifierFn
+ * @argument {dataObject} data - The data object generated by `update` method
+ * @argument {Object} options - Modifiers configuration and options
+ * @returns {dataObject} The data object, properly modified
+ */
+
+/**
+ * Modifiers are plugins used to alter the behavior of your poppers.<br />
+ * Popper.js uses a set of 9 modifiers to provide all the basic functionalities
+ * needed by the library.
+ *
+ * Usually you don't want to override the `order`, `fn` and `onLoad` props.
+ * All the other properties are configurations that could be tweaked.
+ * @namespace modifiers
+ */
+var modifiers = {
+  /**
+   * Modifier used to shift the popper on the start or end of its reference
+   * element.<br />
+   * It will read the variation of the `placement` property.<br />
+   * It can be one either `-end` or `-start`.
+   * @memberof modifiers
+   * @inner
+   */
+  shift: {
+    /** @prop {number} order=100 - Index used to define the order of execution */
+    order: 100,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: shift
+  },
+
+  /**
+   * The `offset` modifier can shift your popper on both its axis.
+   *
+   * It accepts the following units:
+   * - `px` or unit-less, interpreted as pixels
+   * - `%` or `%r`, percentage relative to the length of the reference element
+   * - `%p`, percentage relative to the length of the popper element
+   * - `vw`, CSS viewport width unit
+   * - `vh`, CSS viewport height unit
+   *
+   * For length is intended the main axis relative to the placement of the popper.<br />
+   * This means that if the placement is `top` or `bottom`, the length will be the
+   * `width`. In case of `left` or `right`, it will be the `height`.
+   *
+   * You can provide a single value (as `Number` or `String`), or a pair of values
+   * as `String` divided by a comma or one (or more) white spaces.<br />
+   * The latter is a deprecated method because it leads to confusion and will be
+   * removed in v2.<br />
+   * Additionally, it accepts additions and subtractions between different units.
+   * Note that multiplications and divisions aren't supported.
+   *
+   * Valid examples are:
+   * ```
+   * 10
+   * '10%'
+   * '10, 10'
+   * '10%, 10'
+   * '10 + 10%'
+   * '10 - 5vh + 3%'
+   * '-10px + 5vh, 5px - 6%'
+   * ```
+   * > **NB**: If you desire to apply offsets to your poppers in a way that may make them overlap
+   * > with their reference element, unfortunately, you will have to disable the `flip` modifier.
+   * > You can read more on this at this [issue](https://github.com/FezVrasta/popper.js/issues/373).
+   *
+   * @memberof modifiers
+   * @inner
+   */
+  offset: {
+    /** @prop {number} order=200 - Index used to define the order of execution */
+    order: 200,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: offset,
+    /** @prop {Number|String} offset=0
+     * The offset value as described in the modifier description
+     */
+    offset: 0
+  },
+
+  /**
+   * Modifier used to prevent the popper from being positioned outside the boundary.
+   *
+   * A scenario exists where the reference itself is not within the boundaries.<br />
+   * We can say it has "escaped the boundaries" — or just "escaped".<br />
+   * In this case we need to decide whether the popper should either:
+   *
+   * - detach from the reference and remain "trapped" in the boundaries, or
+   * - if it should ignore the boundary and "escape with its reference"
+   *
+   * When `escapeWithReference` is set to`true` and reference is completely
+   * outside its boundaries, the popper will overflow (or completely leave)
+   * the boundaries in order to remain attached to the edge of the reference.
+   *
+   * @memberof modifiers
+   * @inner
+   */
+  preventOverflow: {
+    /** @prop {number} order=300 - Index used to define the order of execution */
+    order: 300,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: preventOverflow,
+    /**
+     * @prop {Array} [priority=['left','right','top','bottom']]
+     * Popper will try to prevent overflow following these priorities by default,
+     * then, it could overflow on the left and on top of the `boundariesElement`
+     */
+    priority: ['left', 'right', 'top', 'bottom'],
+    /**
+     * @prop {number} padding=5
+     * Amount of pixel used to define a minimum distance between the boundaries
+     * and the popper. This makes sure the popper always has a little padding
+     * between the edges of its container
+     */
+    padding: 5,
+    /**
+     * @prop {String|HTMLElement} boundariesElement='scrollParent'
+     * Boundaries used by the modifier. Can be `scrollParent`, `window`,
+     * `viewport` or any DOM element.
+     */
+    boundariesElement: 'scrollParent'
+  },
+
+  /**
+   * Modifier used to make sure the reference and its popper stay near each other
+   * without leaving any gap between the two. Especially useful when the arrow is
+   * enabled and you want to ensure that it points to its reference element.
+   * It cares only about the first axis. You can still have poppers with margin
+   * between the popper and its reference element.
+   * @memberof modifiers
+   * @inner
+   */
+  keepTogether: {
+    /** @prop {number} order=400 - Index used to define the order of execution */
+    order: 400,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: keepTogether
+  },
+
+  /**
+   * This modifier is used to move the `arrowElement` of the popper to make
+   * sure it is positioned between the reference element and its popper element.
+   * It will read the outer size of the `arrowElement` node to detect how many
+   * pixels of conjunction are needed.
+   *
+   * It has no effect if no `arrowElement` is provided.
+   * @memberof modifiers
+   * @inner
+   */
+  arrow: {
+    /** @prop {number} order=500 - Index used to define the order of execution */
+    order: 500,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: arrow,
+    /** @prop {String|HTMLElement} element='[x-arrow]' - Selector or node used as arrow */
+    element: '[x-arrow]'
+  },
+
+  /**
+   * Modifier used to flip the popper's placement when it starts to overlap its
+   * reference element.
+   *
+   * Requires the `preventOverflow` modifier before it in order to work.
+   *
+   * **NOTE:** this modifier will interrupt the current update cycle and will
+   * restart it if it detects the need to flip the placement.
+   * @memberof modifiers
+   * @inner
+   */
+  flip: {
+    /** @prop {number} order=600 - Index used to define the order of execution */
+    order: 600,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: flip,
+    /**
+     * @prop {String|Array} behavior='flip'
+     * The behavior used to change the popper's placement. It can be one of
+     * `flip`, `clockwise`, `counterclockwise` or an array with a list of valid
+     * placements (with optional variations)
+     */
+    behavior: 'flip',
+    /**
+     * @prop {number} padding=5
+     * The popper will flip if it hits the edges of the `boundariesElement`
+     */
+    padding: 5,
+    /**
+     * @prop {String|HTMLElement} boundariesElement='viewport'
+     * The element which will define the boundaries of the popper position.
+     * The popper will never be placed outside of the defined boundaries
+     * (except if `keepTogether` is enabled)
+     */
+    boundariesElement: 'viewport',
+    /**
+     * @prop {Boolean} flipVariations=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the reference element overlaps its boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariations: false,
+    /**
+     * @prop {Boolean} flipVariationsByContent=false
+     * The popper will switch placement variation between `-start` and `-end` when
+     * the popper element overlaps its reference boundaries.
+     *
+     * The original placement should have a set variation.
+     */
+    flipVariationsByContent: false
+  },
+
+  /**
+   * Modifier used to make the popper flow toward the inner of the reference element.
+   * By default, when this modifier is disabled, the popper will be placed outside
+   * the reference element.
+   * @memberof modifiers
+   * @inner
+   */
+  inner: {
+    /** @prop {number} order=700 - Index used to define the order of execution */
+    order: 700,
+    /** @prop {Boolean} enabled=false - Whether the modifier is enabled or not */
+    enabled: false,
+    /** @prop {ModifierFn} */
+    fn: inner
+  },
+
+  /**
+   * Modifier used to hide the popper when its reference element is outside of the
+   * popper boundaries. It will set a `x-out-of-boundaries` attribute which can
+   * be used to hide with a CSS selector the popper when its reference is
+   * out of boundaries.
+   *
+   * Requires the `preventOverflow` modifier before it in order to work.
+   * @memberof modifiers
+   * @inner
+   */
+  hide: {
+    /** @prop {number} order=800 - Index used to define the order of execution */
+    order: 800,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: hide
+  },
+
+  /**
+   * Computes the style that will be applied to the popper element to gets
+   * properly positioned.
+   *
+   * Note that this modifier will not touch the DOM, it just prepares the styles
+   * so that `applyStyle` modifier can apply it. This separation is useful
+   * in case you need to replace `applyStyle` with a custom implementation.
+   *
+   * This modifier has `850` as `order` value to maintain backward compatibility
+   * with previous versions of Popper.js. Expect the modifiers ordering method
+   * to change in future major versions of the library.
+   *
+   * @memberof modifiers
+   * @inner
+   */
+  computeStyle: {
+    /** @prop {number} order=850 - Index used to define the order of execution */
+    order: 850,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: computeStyle,
+    /**
+     * @prop {Boolean} gpuAcceleration=true
+     * If true, it uses the CSS 3D transformation to position the popper.
+     * Otherwise, it will use the `top` and `left` properties
+     */
+    gpuAcceleration: true,
+    /**
+     * @prop {string} [x='bottom']
+     * Where to anchor the X axis (`bottom` or `top`). AKA X offset origin.
+     * Change this if your popper should grow in a direction different from `bottom`
+     */
+    x: 'bottom',
+    /**
+     * @prop {string} [x='left']
+     * Where to anchor the Y axis (`left` or `right`). AKA Y offset origin.
+     * Change this if your popper should grow in a direction different from `right`
+     */
+    y: 'right'
+  },
+
+  /**
+   * Applies the computed styles to the popper element.
+   *
+   * All the DOM manipulations are limited to this modifier. This is useful in case
+   * you want to integrate Popper.js inside a framework or view library and you
+   * want to delegate all the DOM manipulations to it.
+   *
+   * Note that if you disable this modifier, you must make sure the popper element
+   * has its position set to `absolute` before Popper.js can do its work!
+   *
+   * Just disable this modifier and define your own to achieve the desired effect.
+   *
+   * @memberof modifiers
+   * @inner
+   */
+  applyStyle: {
+    /** @prop {number} order=900 - Index used to define the order of execution */
+    order: 900,
+    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
+    enabled: true,
+    /** @prop {ModifierFn} */
+    fn: applyStyle,
+    /** @prop {Function} */
+    onLoad: applyStyleOnLoad,
+    /**
+     * @deprecated since version 1.10.0, the property moved to `computeStyle` modifier
+     * @prop {Boolean} gpuAcceleration=true
+     * If true, it uses the CSS 3D transformation to position the popper.
+     * Otherwise, it will use the `top` and `left` properties
+     */
+    gpuAcceleration: undefined
+  }
+};
+
+/**
+ * The `dataObject` is an object containing all the information used by Popper.js.
+ * This object is passed to modifiers and to the `onCreate` and `onUpdate` callbacks.
+ * @name dataObject
+ * @property {Object} data.instance The Popper.js instance
+ * @property {String} data.placement Placement applied to popper
+ * @property {String} data.originalPlacement Placement originally defined on init
+ * @property {Boolean} data.flipped True if popper has been flipped by flip modifier
+ * @property {Boolean} data.hide True if the reference element is out of boundaries, useful to know when to hide the popper
+ * @property {HTMLElement} data.arrowElement Node used as arrow by arrow modifier
+ * @property {Object} data.styles Any CSS property defined here will be applied to the popper. It expects the JavaScript nomenclature (eg. `marginBottom`)
+ * @property {Object} data.arrowStyles Any CSS property defined here will be applied to the popper arrow. It expects the JavaScript nomenclature (eg. `marginBottom`)
+ * @property {Object} data.boundaries Offsets of the popper boundaries
+ * @property {Object} data.offsets The measurements of popper, reference and arrow elements
+ * @property {Object} data.offsets.popper `top`, `left`, `width`, `height` values
+ * @property {Object} data.offsets.reference `top`, `left`, `width`, `height` values
+ * @property {Object} data.offsets.arrow] `top` and `left` offsets, only one of them will be different from 0
+ */
+
+/**
+ * Default options provided to Popper.js constructor.<br />
+ * These can be overridden using the `options` argument of Popper.js.<br />
+ * To override an option, simply pass an object with the same
+ * structure of the `options` object, as the 3rd argument. For example:
+ * ```
+ * new Popper(ref, pop, {
+ *   modifiers: {
+ *     preventOverflow: { enabled: false }
+ *   }
+ * })
+ * ```
+ * @type {Object}
+ * @static
+ * @memberof Popper
+ */
+var Defaults = {
+  /**
+   * Popper's placement.
+   * @prop {Popper.placements} placement='bottom'
+   */
+  placement: 'bottom',
+
+  /**
+   * Set this to true if you want popper to position it self in 'fixed' mode
+   * @prop {Boolean} positionFixed=false
+   */
+  positionFixed: false,
+
+  /**
+   * Whether events (resize, scroll) are initially enabled.
+   * @prop {Boolean} eventsEnabled=true
+   */
+  eventsEnabled: true,
+
+  /**
+   * Set to true if you want to automatically remove the popper when
+   * you call the `destroy` method.
+   * @prop {Boolean} removeOnDestroy=false
+   */
+  removeOnDestroy: false,
+
+  /**
+   * Callback called when the popper is created.<br />
+   * By default, it is set to no-op.<br />
+   * Access Popper.js instance with `data.instance`.
+   * @prop {onCreate}
+   */
+  onCreate: function onCreate() {},
+
+  /**
+   * Callback called when the popper is updated. This callback is not called
+   * on the initialization/creation of the popper, but only on subsequent
+   * updates.<br />
+   * By default, it is set to no-op.<br />
+   * Access Popper.js instance with `data.instance`.
+   * @prop {onUpdate}
+   */
+  onUpdate: function onUpdate() {},
+
+  /**
+   * List of modifiers used to modify the offsets before they are applied to the popper.
+   * They provide most of the functionalities of Popper.js.
+   * @prop {modifiers}
+   */
+  modifiers: modifiers
+};
+
+/**
+ * @callback onCreate
+ * @param {dataObject} data
+ */
+
+/**
+ * @callback onUpdate
+ * @param {dataObject} data
+ */
+
+// Utils
+// Methods
+var Popper = function () {
+  /**
+   * Creates a new Popper.js instance.
+   * @class Popper
+   * @param {Element|referenceObject} reference - The reference element used to position the popper
+   * @param {Element} popper - The HTML / XML element used as the popper
+   * @param {Object} options - Your custom options to override the ones defined in [Defaults](#defaults)
+   * @return {Object} instance - The generated Popper.js instance
+   */
+  function Popper(reference, popper) {
+    var _this = this;
+
+    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    classCallCheck(this, Popper);
+
+    this.scheduleUpdate = function () {
+      return requestAnimationFrame(_this.update);
+    };
+
+    // make update() debounced, so that it only runs at most once-per-tick
+    this.update = debounce(this.update.bind(this));
+
+    // with {} we create a new object with the options inside it
+    this.options = _extends({}, Popper.Defaults, options);
+
+    // init state
+    this.state = {
+      isDestroyed: false,
+      isCreated: false,
+      scrollParents: []
+    };
+
+    // get reference and popper elements (allow jQuery wrappers)
+    this.reference = reference && reference.jquery ? reference[0] : reference;
+    this.popper = popper && popper.jquery ? popper[0] : popper;
+
+    // Deep merge modifiers options
+    this.options.modifiers = {};
+    Object.keys(_extends({}, Popper.Defaults.modifiers, options.modifiers)).forEach(function (name) {
+      _this.options.modifiers[name] = _extends({}, Popper.Defaults.modifiers[name] || {}, options.modifiers ? options.modifiers[name] : {});
+    });
+
+    // Refactoring modifiers' list (Object => Array)
+    this.modifiers = Object.keys(this.options.modifiers).map(function (name) {
+      return _extends({
+        name: name
+      }, _this.options.modifiers[name]);
+    })
+    // sort the modifiers by order
+    .sort(function (a, b) {
+      return a.order - b.order;
+    });
+
+    // modifiers have the ability to execute arbitrary code when Popper.js get inited
+    // such code is executed in the same order of its modifier
+    // they could add new properties to their options configuration
+    // BE AWARE: don't add options to `options.modifiers.name` but to `modifierOptions`!
+    this.modifiers.forEach(function (modifierOptions) {
+      if (modifierOptions.enabled && isFunction(modifierOptions.onLoad)) {
+        modifierOptions.onLoad(_this.reference, _this.popper, _this.options, modifierOptions, _this.state);
+      }
+    });
+
+    // fire the first update to position the popper in the right place
+    this.update();
+
+    var eventsEnabled = this.options.eventsEnabled;
+    if (eventsEnabled) {
+      // setup event listeners, they will take care of update the position in specific situations
+      this.enableEventListeners();
+    }
+
+    this.state.eventsEnabled = eventsEnabled;
+  }
+
+  // We can't use class properties because they don't get listed in the
+  // class prototype and break stuff like Sinon stubs
+
+
+  createClass(Popper, [{
+    key: 'update',
+    value: function update$$1() {
+      return update.call(this);
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy$$1() {
+      return destroy.call(this);
+    }
+  }, {
+    key: 'enableEventListeners',
+    value: function enableEventListeners$$1() {
+      return enableEventListeners.call(this);
+    }
+  }, {
+    key: 'disableEventListeners',
+    value: function disableEventListeners$$1() {
+      return disableEventListeners.call(this);
+    }
+
+    /**
+     * Schedules an update. It will run on the next UI update available.
+     * @method scheduleUpdate
+     * @memberof Popper
+     */
+
+
+    /**
+     * Collection of utilities useful when writing custom modifiers.
+     * Starting from version 1.7, this method is available only if you
+     * include `popper-utils.js` before `popper.js`.
+     *
+     * **DEPRECATION**: This way to access PopperUtils is deprecated
+     * and will be removed in v2! Use the PopperUtils module directly instead.
+     * Due to the high instability of the methods contained in Utils, we can't
+     * guarantee them to follow semver. Use them at your own risk!
+     * @static
+     * @private
+     * @type {Object}
+     * @deprecated since version 1.8
+     * @member Utils
+     * @memberof Popper
+     */
+
+  }]);
+  return Popper;
+}();
+
+/**
+ * The `referenceObject` is an object that provides an interface compatible with Popper.js
+ * and lets you use it as replacement of a real DOM node.<br />
+ * You can use this method to position a popper relatively to a set of coordinates
+ * in case you don't have a DOM node to use as reference.
+ *
+ * ```
+ * new Popper(referenceObject, popperNode);
+ * ```
+ *
+ * NB: This feature isn't supported in Internet Explorer 10.
+ * @name referenceObject
+ * @property {Function} data.getBoundingClientRect
+ * A function that returns a set of coordinates compatible with the native `getBoundingClientRect` method.
+ * @property {number} data.clientWidth
+ * An ES6 getter that will return the width of the virtual reference element.
+ * @property {number} data.clientHeight
+ * An ES6 getter that will return the height of the virtual reference element.
+ */
+
+
+Popper.Utils = (typeof window !== 'undefined' ? window : global).PopperUtils;
+Popper.placements = placements;
+Popper.Defaults = Defaults;
+
+/* harmony default export */ __webpack_exports__["default"] = (Popper);
+//# sourceMappingURL=popper.js.map
+
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2)))
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(1);
+var normalizeHeaderName = __webpack_require__(27);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(11);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(11);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(26)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*!
+ * jQuery Validation Plugin v1.15.1
+ *
+ * http://jqueryvalidation.org/
+ *
+ * Copyright (c) 2016 Jörn Zaefferer
+ * Released under the MIT license
+ */
+(function (factory) {
+	if (true) {
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
+		module.exports = factory(require("jquery"));
+	} else {
+		factory(jQuery);
+	}
+})(function ($) {
+
+	(function () {
+
+		function stripHtml(value) {
+
+			// Remove html tags and space chars
+			return value.replace(/<.[^<>]*?>/g, " ").replace(/&nbsp;|&#160;/gi, " ")
+
+			// Remove punctuation
+			.replace(/[.(),;:!?%#$'\"_+=\/\-“”’]*/g, "");
+		}
+
+		$.validator.addMethod("maxWords", function (value, element, params) {
+			return this.optional(element) || stripHtml(value).match(/\b\w+\b/g).length <= params;
+		}, $.validator.format("Please enter {0} words or less."));
+
+		$.validator.addMethod("minWords", function (value, element, params) {
+			return this.optional(element) || stripHtml(value).match(/\b\w+\b/g).length >= params;
+		}, $.validator.format("Please enter at least {0} words."));
+
+		$.validator.addMethod("rangeWords", function (value, element, params) {
+			var valueStripped = stripHtml(value),
+			    regex = /\b\w+\b/g;
+			return this.optional(element) || valueStripped.match(regex).length >= params[0] && valueStripped.match(regex).length <= params[1];
+		}, $.validator.format("Please enter between {0} and {1} words."));
+	})();
+
+	// Accept a value from a file input based on a required mimetype
+	$.validator.addMethod("accept", function (value, element, param) {
+
+		// Split mime on commas in case we have multiple types we can accept
+		var typeParam = typeof param === "string" ? param.replace(/\s/g, "") : "image/*",
+		    optionalValue = this.optional(element),
+		    i,
+		    file,
+		    regex;
+
+		// Element is optional
+		if (optionalValue) {
+			return optionalValue;
+		}
+
+		if ($(element).attr("type") === "file") {
+
+			// Escape string to be used in the regex
+			// see: http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
+			// Escape also "/*" as "/.*" as a wildcard
+			typeParam = typeParam.replace(/[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g, "\\$&").replace(/,/g, "|").replace(/\/\*/g, "/.*");
+
+			// Check if the element has a FileList before checking each file
+			if (element.files && element.files.length) {
+				regex = new RegExp(".?(" + typeParam + ")$", "i");
+				for (i = 0; i < element.files.length; i++) {
+					file = element.files[i];
+
+					// Grab the mimetype from the loaded file, verify it matches
+					if (!file.type.match(regex)) {
+						return false;
+					}
+				}
+			}
+		}
+
+		// Either return true because we've validated each file, or because the
+		// browser does not support element.files and the FileList feature
+		return true;
+	}, $.validator.format("Please enter a value with a valid mimetype."));
+
+	$.validator.addMethod("alphanumeric", function (value, element) {
+		return this.optional(element) || /^\w+$/i.test(value);
+	}, "Letters, numbers, and underscores only please");
+
+	/*
+  * Dutch bank account numbers (not 'giro' numbers) have 9 digits
+  * and pass the '11 check'.
+  * We accept the notation with spaces, as that is common.
+  * acceptable: 123456789 or 12 34 56 789
+  */
+	$.validator.addMethod("bankaccountNL", function (value, element) {
+		if (this.optional(element)) {
+			return true;
+		}
+		if (!/^[0-9]{9}|([0-9]{2} ){3}[0-9]{3}$/.test(value)) {
+			return false;
+		}
+
+		// Now '11 check'
+		var account = value.replace(/ /g, ""),
+		    // Remove spaces
+		sum = 0,
+		    len = account.length,
+		    pos,
+		    factor,
+		    digit;
+		for (pos = 0; pos < len; pos++) {
+			factor = len - pos;
+			digit = account.substring(pos, pos + 1);
+			sum = sum + factor * digit;
+		}
+		return sum % 11 === 0;
+	}, "Please specify a valid bank account number");
+
+	$.validator.addMethod("bankorgiroaccountNL", function (value, element) {
+		return this.optional(element) || $.validator.methods.bankaccountNL.call(this, value, element) || $.validator.methods.giroaccountNL.call(this, value, element);
+	}, "Please specify a valid bank or giro account number");
+
+	/**
+  * BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.
+  *
+  * BIC pattern: BBBBCCLLbbb (8 or 11 characters long; bbb is optional)
+  *
+  * Validation is case-insensitive. Please make sure to normalize input yourself.
+  *
+  * BIC definition in detail:
+  * - First 4 characters - bank code (only letters)
+  * - Next 2 characters - ISO 3166-1 alpha-2 country code (only letters)
+  * - Next 2 characters - location code (letters and digits)
+  *   a. shall not start with '0' or '1'
+  *   b. second character must be a letter ('O' is not allowed) or digit ('0' for test (therefore not allowed), '1' denoting passive participant, '2' typically reverse-billing)
+  * - Last 3 characters - branch code, optional (shall not start with 'X' except in case of 'XXX' for primary office) (letters and digits)
+  */
+	$.validator.addMethod("bic", function (value, element) {
+		return this.optional(element) || /^([A-Z]{6}[A-Z2-9][A-NP-Z1-9])(X{3}|[A-WY-Z0-9][A-Z0-9]{2})?$/.test(value.toUpperCase());
+	}, "Please specify a valid BIC code");
+
+	/*
+  * Código de identificación fiscal ( CIF ) is the tax identification code for Spanish legal entities
+  * Further rules can be found in Spanish on http://es.wikipedia.org/wiki/C%C3%B3digo_de_identificaci%C3%B3n_fiscal
+  */
+	$.validator.addMethod("cifES", function (value) {
+		"use strict";
+
+		var num = [],
+		    controlDigit,
+		    sum,
+		    i,
+		    count,
+		    tmp,
+		    secondDigit;
+
+		value = value.toUpperCase();
+
+		// Quick format test
+		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
+			return false;
+		}
+
+		for (i = 0; i < 9; i++) {
+			num[i] = parseInt(value.charAt(i), 10);
+		}
+
+		// Algorithm for checking CIF codes
+		sum = num[2] + num[4] + num[6];
+		for (count = 1; count < 8; count += 2) {
+			tmp = (2 * num[count]).toString();
+			secondDigit = tmp.charAt(1);
+
+			sum += parseInt(tmp.charAt(0), 10) + (secondDigit === "" ? 0 : parseInt(secondDigit, 10));
+		}
+
+		/* The first (position 1) is a letter following the following criteria:
+   *	A. Corporations
+   *	B. LLCs
+   *	C. General partnerships
+   *	D. Companies limited partnerships
+   *	E. Communities of goods
+   *	F. Cooperative Societies
+   *	G. Associations
+   *	H. Communities of homeowners in horizontal property regime
+   *	J. Civil Societies
+   *	K. Old format
+   *	L. Old format
+   *	M. Old format
+   *	N. Nonresident entities
+   *	P. Local authorities
+   *	Q. Autonomous bodies, state or not, and the like, and congregations and religious institutions
+   *	R. Congregations and religious institutions (since 2008 ORDER EHA/451/2008)
+   *	S. Organs of State Administration and regions
+   *	V. Agrarian Transformation
+   *	W. Permanent establishments of non-resident in Spain
+   */
+		if (/^[ABCDEFGHJNPQRSUVW]{1}/.test(value)) {
+			sum += "";
+			controlDigit = 10 - parseInt(sum.charAt(sum.length - 1), 10);
+			value += controlDigit;
+			return num[8].toString() === String.fromCharCode(64 + controlDigit) || num[8].toString() === value.charAt(value.length - 1);
+		}
+
+		return false;
+	}, "Please specify a valid CIF number.");
+
+	/*
+  * Brazillian CPF number (Cadastrado de Pessoas Físicas) is the equivalent of a Brazilian tax registration number.
+  * CPF numbers have 11 digits in total: 9 numbers followed by 2 check numbers that are being used for validation.
+  */
+	$.validator.addMethod("cpfBR", function (value) {
+
+		// Removing special characters from value
+		value = value.replace(/([~!@#$%^&*()_+=`{}\[\]\-|\\:;'<>,.\/? ])+/g, "");
+
+		// Checking value to have 11 digits only
+		if (value.length !== 11) {
+			return false;
+		}
+
+		var sum = 0,
+		    firstCN,
+		    secondCN,
+		    checkResult,
+		    i;
+
+		firstCN = parseInt(value.substring(9, 10), 10);
+		secondCN = parseInt(value.substring(10, 11), 10);
+
+		checkResult = function checkResult(sum, cn) {
+			var result = sum * 10 % 11;
+			if (result === 10 || result === 11) {
+				result = 0;
+			}
+			return result === cn;
+		};
+
+		// Checking for dump data
+		if (value === "" || value === "00000000000" || value === "11111111111" || value === "22222222222" || value === "33333333333" || value === "44444444444" || value === "55555555555" || value === "66666666666" || value === "77777777777" || value === "88888888888" || value === "99999999999") {
+			return false;
+		}
+
+		// Step 1 - using first Check Number:
+		for (i = 1; i <= 9; i++) {
+			sum = sum + parseInt(value.substring(i - 1, i), 10) * (11 - i);
+		}
+
+		// If first Check Number (CN) is valid, move to Step 2 - using second Check Number:
+		if (checkResult(sum, firstCN)) {
+			sum = 0;
+			for (i = 1; i <= 10; i++) {
+				sum = sum + parseInt(value.substring(i - 1, i), 10) * (12 - i);
+			}
+			return checkResult(sum, secondCN);
+		}
+		return false;
+	}, "Please specify a valid CPF number");
+
+	// http://jqueryvalidation.org/creditcard-method/
+	// based on http://en.wikipedia.org/wiki/Luhn_algorithm
+	$.validator.addMethod("creditcard", function (value, element) {
+		if (this.optional(element)) {
+			return "dependency-mismatch";
+		}
+
+		// Accept only spaces, digits and dashes
+		if (/[^0-9 \-]+/.test(value)) {
+			return false;
+		}
+
+		var nCheck = 0,
+		    nDigit = 0,
+		    bEven = false,
+		    n,
+		    cDigit;
+
+		value = value.replace(/\D/g, "");
+
+		// Basing min and max length on
+		// http://developer.ean.com/general_info/Valid_Credit_Card_Types
+		if (value.length < 13 || value.length > 19) {
+			return false;
+		}
+
+		for (n = value.length - 1; n >= 0; n--) {
+			cDigit = value.charAt(n);
+			nDigit = parseInt(cDigit, 10);
+			if (bEven) {
+				if ((nDigit *= 2) > 9) {
+					nDigit -= 9;
+				}
+			}
+
+			nCheck += nDigit;
+			bEven = !bEven;
+		}
+
+		return nCheck % 10 === 0;
+	}, "Please enter a valid credit card number.");
+
+	/* NOTICE: Modified version of Castle.Components.Validator.CreditCardValidator
+  * Redistributed under the the Apache License 2.0 at http://www.apache.org/licenses/LICENSE-2.0
+  * Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all (overrides all other settings)
+  */
+	$.validator.addMethod("creditcardtypes", function (value, element, param) {
+		if (/[^0-9\-]+/.test(value)) {
+			return false;
+		}
+
+		value = value.replace(/\D/g, "");
+
+		var validTypes = 0x0000;
+
+		if (param.mastercard) {
+			validTypes |= 0x0001;
+		}
+		if (param.visa) {
+			validTypes |= 0x0002;
+		}
+		if (param.amex) {
+			validTypes |= 0x0004;
+		}
+		if (param.dinersclub) {
+			validTypes |= 0x0008;
+		}
+		if (param.enroute) {
+			validTypes |= 0x0010;
+		}
+		if (param.discover) {
+			validTypes |= 0x0020;
+		}
+		if (param.jcb) {
+			validTypes |= 0x0040;
+		}
+		if (param.unknown) {
+			validTypes |= 0x0080;
+		}
+		if (param.all) {
+			validTypes = 0x0001 | 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080;
+		}
+		if (validTypes & 0x0001 && /^(5[12345])/.test(value)) {
+			// Mastercard
+			return value.length === 16;
+		}
+		if (validTypes & 0x0002 && /^(4)/.test(value)) {
+			// Visa
+			return value.length === 16;
+		}
+		if (validTypes & 0x0004 && /^(3[47])/.test(value)) {
+			// Amex
+			return value.length === 15;
+		}
+		if (validTypes & 0x0008 && /^(3(0[012345]|[68]))/.test(value)) {
+			// Dinersclub
+			return value.length === 14;
+		}
+		if (validTypes & 0x0010 && /^(2(014|149))/.test(value)) {
+			// Enroute
+			return value.length === 15;
+		}
+		if (validTypes & 0x0020 && /^(6011)/.test(value)) {
+			// Discover
+			return value.length === 16;
+		}
+		if (validTypes & 0x0040 && /^(3)/.test(value)) {
+			// Jcb
+			return value.length === 16;
+		}
+		if (validTypes & 0x0040 && /^(2131|1800)/.test(value)) {
+			// Jcb
+			return value.length === 15;
+		}
+		if (validTypes & 0x0080) {
+			// Unknown
+			return true;
+		}
+		return false;
+	}, "Please enter a valid credit card number.");
+
+	/**
+  * Validates currencies with any given symbols by @jameslouiz
+  * Symbols can be optional or required. Symbols required by default
+  *
+  * Usage examples:
+  *  currency: ["£", false] - Use false for soft currency validation
+  *  currency: ["$", false]
+  *  currency: ["RM", false] - also works with text based symbols such as "RM" - Malaysia Ringgit etc
+  *
+  *  <input class="currencyInput" name="currencyInput">
+  *
+  * Soft symbol checking
+  *  currencyInput: {
+  *     currency: ["$", false]
+  *  }
+  *
+  * Strict symbol checking (default)
+  *  currencyInput: {
+  *     currency: "$"
+  *     //OR
+  *     currency: ["$", true]
+  *  }
+  *
+  * Multiple Symbols
+  *  currencyInput: {
+  *     currency: "$,£,¢"
+  *  }
+  */
+	$.validator.addMethod("currency", function (value, element, param) {
+		var isParamString = typeof param === "string",
+		    symbol = isParamString ? param : param[0],
+		    soft = isParamString ? true : param[1],
+		    regex;
+
+		symbol = symbol.replace(/,/g, "");
+		symbol = soft ? symbol + "]" : symbol + "]?";
+		regex = "^[" + symbol + "([1-9]{1}[0-9]{0,2}(\\,[0-9]{3})*(\\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\\.[0-9]{0,2})?|0(\\.[0-9]{0,2})?|(\\.[0-9]{1,2})?)$";
+		regex = new RegExp(regex);
+		return this.optional(element) || regex.test(value);
+	}, "Please specify a valid currency");
+
+	$.validator.addMethod("dateFA", function (value, element) {
+		return this.optional(element) || /^[1-4]\d{3}\/((0?[1-6]\/((3[0-1])|([1-2][0-9])|(0?[1-9])))|((1[0-2]|(0?[7-9]))\/(30|([1-2][0-9])|(0?[1-9]))))$/.test(value);
+	}, $.validator.messages.date);
+
+	/**
+  * Return true, if the value is a valid date, also making this formal check dd/mm/yyyy.
+  *
+  * @example $.validator.methods.date("01/01/1900")
+  * @result true
+  *
+  * @example $.validator.methods.date("01/13/1990")
+  * @result false
+  *
+  * @example $.validator.methods.date("01.01.1900")
+  * @result false
+  *
+  * @example <input name="pippo" class="{dateITA:true}" />
+  * @desc Declares an optional input element whose value must be a valid date.
+  *
+  * @name $.validator.methods.dateITA
+  * @type Boolean
+  * @cat Plugins/Validate/Methods
+  */
+	$.validator.addMethod("dateITA", function (value, element) {
+		var check = false,
+		    re = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
+		    adata,
+		    gg,
+		    mm,
+		    aaaa,
+		    xdata;
+		if (re.test(value)) {
+			adata = value.split("/");
+			gg = parseInt(adata[0], 10);
+			mm = parseInt(adata[1], 10);
+			aaaa = parseInt(adata[2], 10);
+			xdata = new Date(Date.UTC(aaaa, mm - 1, gg, 12, 0, 0, 0));
+			if (xdata.getUTCFullYear() === aaaa && xdata.getUTCMonth() === mm - 1 && xdata.getUTCDate() === gg) {
+				check = true;
+			} else {
+				check = false;
+			}
+		} else {
+			check = false;
+		}
+		return this.optional(element) || check;
+	}, $.validator.messages.date);
+
+	$.validator.addMethod("dateNL", function (value, element) {
+		return this.optional(element) || /^(0?[1-9]|[12]\d|3[01])[\.\/\-](0?[1-9]|1[012])[\.\/\-]([12]\d)?(\d\d)$/.test(value);
+	}, $.validator.messages.date);
+
+	// Older "accept" file extension method. Old docs: http://docs.jquery.com/Plugins/Validation/Methods/accept
+	$.validator.addMethod("extension", function (value, element, param) {
+		param = typeof param === "string" ? param.replace(/,/g, "|") : "png|jpe?g|gif";
+		return this.optional(element) || value.match(new RegExp("\\.(" + param + ")$", "i"));
+	}, $.validator.format("Please enter a value with a valid extension."));
+
+	/**
+  * Dutch giro account numbers (not bank numbers) have max 7 digits
+  */
+	$.validator.addMethod("giroaccountNL", function (value, element) {
+		return this.optional(element) || /^[0-9]{1,7}$/.test(value);
+	}, "Please specify a valid giro account number");
+
+	/**
+  * IBAN is the international bank account number.
+  * It has a country - specific format, that is checked here too
+  *
+  * Validation is case-insensitive. Please make sure to normalize input yourself.
+  */
+	$.validator.addMethod("iban", function (value, element) {
+
+		// Some quick simple tests to prevent needless work
+		if (this.optional(element)) {
+			return true;
+		}
+
+		// Remove spaces and to upper case
+		var iban = value.replace(/ /g, "").toUpperCase(),
+		    ibancheckdigits = "",
+		    leadingZeroes = true,
+		    cRest = "",
+		    cOperator = "",
+		    countrycode,
+		    ibancheck,
+		    charAt,
+		    cChar,
+		    bbanpattern,
+		    bbancountrypatterns,
+		    ibanregexp,
+		    i,
+		    p;
+
+		// Check for IBAN code length.
+		// It contains:
+		// country code ISO 3166-1 - two letters,
+		// two check digits,
+		// Basic Bank Account Number (BBAN) - up to 30 chars
+		var minimalIBANlength = 5;
+		if (iban.length < minimalIBANlength) {
+			return false;
+		}
+
+		// Check the country code and find the country specific format
+		countrycode = iban.substring(0, 2);
+		bbancountrypatterns = {
+			"AL": "\\d{8}[\\dA-Z]{16}",
+			"AD": "\\d{8}[\\dA-Z]{12}",
+			"AT": "\\d{16}",
+			"AZ": "[\\dA-Z]{4}\\d{20}",
+			"BE": "\\d{12}",
+			"BH": "[A-Z]{4}[\\dA-Z]{14}",
+			"BA": "\\d{16}",
+			"BR": "\\d{23}[A-Z][\\dA-Z]",
+			"BG": "[A-Z]{4}\\d{6}[\\dA-Z]{8}",
+			"CR": "\\d{17}",
+			"HR": "\\d{17}",
+			"CY": "\\d{8}[\\dA-Z]{16}",
+			"CZ": "\\d{20}",
+			"DK": "\\d{14}",
+			"DO": "[A-Z]{4}\\d{20}",
+			"EE": "\\d{16}",
+			"FO": "\\d{14}",
+			"FI": "\\d{14}",
+			"FR": "\\d{10}[\\dA-Z]{11}\\d{2}",
+			"GE": "[\\dA-Z]{2}\\d{16}",
+			"DE": "\\d{18}",
+			"GI": "[A-Z]{4}[\\dA-Z]{15}",
+			"GR": "\\d{7}[\\dA-Z]{16}",
+			"GL": "\\d{14}",
+			"GT": "[\\dA-Z]{4}[\\dA-Z]{20}",
+			"HU": "\\d{24}",
+			"IS": "\\d{22}",
+			"IE": "[\\dA-Z]{4}\\d{14}",
+			"IL": "\\d{19}",
+			"IT": "[A-Z]\\d{10}[\\dA-Z]{12}",
+			"KZ": "\\d{3}[\\dA-Z]{13}",
+			"KW": "[A-Z]{4}[\\dA-Z]{22}",
+			"LV": "[A-Z]{4}[\\dA-Z]{13}",
+			"LB": "\\d{4}[\\dA-Z]{20}",
+			"LI": "\\d{5}[\\dA-Z]{12}",
+			"LT": "\\d{16}",
+			"LU": "\\d{3}[\\dA-Z]{13}",
+			"MK": "\\d{3}[\\dA-Z]{10}\\d{2}",
+			"MT": "[A-Z]{4}\\d{5}[\\dA-Z]{18}",
+			"MR": "\\d{23}",
+			"MU": "[A-Z]{4}\\d{19}[A-Z]{3}",
+			"MC": "\\d{10}[\\dA-Z]{11}\\d{2}",
+			"MD": "[\\dA-Z]{2}\\d{18}",
+			"ME": "\\d{18}",
+			"NL": "[A-Z]{4}\\d{10}",
+			"NO": "\\d{11}",
+			"PK": "[\\dA-Z]{4}\\d{16}",
+			"PS": "[\\dA-Z]{4}\\d{21}",
+			"PL": "\\d{24}",
+			"PT": "\\d{21}",
+			"RO": "[A-Z]{4}[\\dA-Z]{16}",
+			"SM": "[A-Z]\\d{10}[\\dA-Z]{12}",
+			"SA": "\\d{2}[\\dA-Z]{18}",
+			"RS": "\\d{18}",
+			"SK": "\\d{20}",
+			"SI": "\\d{15}",
+			"ES": "\\d{20}",
+			"SE": "\\d{20}",
+			"CH": "\\d{5}[\\dA-Z]{12}",
+			"TN": "\\d{20}",
+			"TR": "\\d{5}[\\dA-Z]{17}",
+			"AE": "\\d{3}\\d{16}",
+			"GB": "[A-Z]{4}\\d{14}",
+			"VG": "[\\dA-Z]{4}\\d{16}"
+		};
+
+		bbanpattern = bbancountrypatterns[countrycode];
+
+		// As new countries will start using IBAN in the
+		// future, we only check if the countrycode is known.
+		// This prevents false negatives, while almost all
+		// false positives introduced by this, will be caught
+		// by the checksum validation below anyway.
+		// Strict checking should return FALSE for unknown
+		// countries.
+		if (typeof bbanpattern !== "undefined") {
+			ibanregexp = new RegExp("^[A-Z]{2}\\d{2}" + bbanpattern + "$", "");
+			if (!ibanregexp.test(iban)) {
+				return false; // Invalid country specific format
+			}
+		}
+
+		// Now check the checksum, first convert to digits
+		ibancheck = iban.substring(4, iban.length) + iban.substring(0, 4);
+		for (i = 0; i < ibancheck.length; i++) {
+			charAt = ibancheck.charAt(i);
+			if (charAt !== "0") {
+				leadingZeroes = false;
+			}
+			if (!leadingZeroes) {
+				ibancheckdigits += "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(charAt);
+			}
+		}
+
+		// Calculate the result of: ibancheckdigits % 97
+		for (p = 0; p < ibancheckdigits.length; p++) {
+			cChar = ibancheckdigits.charAt(p);
+			cOperator = "" + cRest + "" + cChar;
+			cRest = cOperator % 97;
+		}
+		return cRest === 1;
+	}, "Please specify a valid IBAN");
+
+	$.validator.addMethod("integer", function (value, element) {
+		return this.optional(element) || /^-?\d+$/.test(value);
+	}, "A positive or negative non-decimal number please");
+
+	$.validator.addMethod("decimal", function (value, element) {
+		return this.optional(element) || /^\d+(\.\d{1,2})?$/.test(value);
+	}, "A positive or negative decimal number please");
+
+	$.validator.addMethod("ipv4", function (value, element) {
+		return this.optional(element) || /^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/i.test(value);
+	}, "Please enter a valid IP v4 address.");
+
+	$.validator.addMethod("ipv6", function (value, element) {
+		return this.optional(element) || /^((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))$/i.test(value);
+	}, "Please enter a valid IP v6 address.");
+
+	$.validator.addMethod("lettersonly", function (value, element) {
+		return this.optional(element) || /^[a-z]+$/i.test(value);
+	}, "Letters only please");
+
+	$.validator.addMethod("letterswithbasicpunc", function (value, element) {
+		return this.optional(element) || /^[a-z\-.,()'"\s]+$/i.test(value);
+	}, "Letters or punctuation only please");
+
+	$.validator.addMethod("mobileNL", function (value, element) {
+		return this.optional(element) || /^((\+|00(\s|\s?\-\s?)?)31(\s|\s?\-\s?)?(\(0\)[\-\s]?)?|0)6((\s|\s?\-\s?)?[0-9]){8}$/.test(value);
+	}, "Please specify a valid mobile number");
+
+	/* For UK phone functions, do the following server side processing:
+  * Compare original input with this RegEx pattern:
+  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
+  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
+  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
+  * A number of very detailed GB telephone number RegEx patterns can also be found at:
+  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+  */
+	$.validator.addMethod("mobileUK", function (phone_number, element) {
+		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
+		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)7(?:[1345789]\d{2}|624)\s?\d{3}\s?\d{3})$/);
+	}, "Please specify a valid mobile number");
+
+	/*
+  * The número de identidad de extranjero ( NIE )is a code used to identify the non-nationals in Spain
+  */
+	$.validator.addMethod("nieES", function (value) {
+		"use strict";
+
+		value = value.toUpperCase();
+
+		// Basic format test
+		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
+			return false;
+		}
+
+		// Test NIE
+		//T
+		if (/^[T]{1}/.test(value)) {
+			return value[8] === /^[T]{1}[A-Z0-9]{8}$/.test(value);
+		}
+
+		//XYZ
+		if (/^[XYZ]{1}/.test(value)) {
+			return value[8] === "TRWAGMYFPDXBNJZSQVHLCKE".charAt(value.replace("X", "0").replace("Y", "1").replace("Z", "2").substring(0, 8) % 23);
+		}
+
+		return false;
+	}, "Please specify a valid NIE number.");
+
+	/*
+  * The Número de Identificación Fiscal ( NIF ) is the way tax identification used in Spain for individuals
+  */
+	$.validator.addMethod("nifES", function (value) {
+		"use strict";
+
+		value = value.toUpperCase();
+
+		// Basic format test
+		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
+			return false;
+		}
+
+		// Test NIF
+		if (/^[0-9]{8}[A-Z]{1}$/.test(value)) {
+			return "TRWAGMYFPDXBNJZSQVHLCKE".charAt(value.substring(8, 0) % 23) === value.charAt(8);
+		}
+
+		// Test specials NIF (starts with K, L or M)
+		if (/^[KLM]{1}/.test(value)) {
+			return value[8] === String.fromCharCode(64);
+		}
+
+		return false;
+	}, "Please specify a valid NIF number.");
+
+	$.validator.addMethod("notEqualTo", function (value, element, param) {
+		return this.optional(element) || !$.validator.methods.equalTo.call(this, value, element, param);
+	}, "Please enter a different value, values must not be the same.");
+
+	$.validator.addMethod("nowhitespace", function (value, element) {
+		return this.optional(element) || /^\S+$/i.test(value);
+	}, "No white space please");
+
+	/**
+ * Return true if the field value matches the given format RegExp
+ *
+ * @example $.validator.methods.pattern("AR1004",element,/^AR\d{4}$/)
+ * @result true
+ *
+ * @example $.validator.methods.pattern("BR1004",element,/^AR\d{4}$/)
+ * @result false
+ *
+ * @name $.validator.methods.pattern
+ * @type Boolean
+ * @cat Plugins/Validate/Methods
+ */
+	$.validator.addMethod("pattern", function (value, element, param) {
+		if (this.optional(element)) {
+			return true;
+		}
+		if (typeof param === "string") {
+			param = new RegExp("^(?:" + param + ")$");
+		}
+		return param.test(value);
+	}, "Invalid format.");
+
+	/**
+  * Dutch phone numbers have 10 digits (or 11 and start with +31).
+  */
+	$.validator.addMethod("phoneNL", function (value, element) {
+		return this.optional(element) || /^((\+|00(\s|\s?\-\s?)?)31(\s|\s?\-\s?)?(\(0\)[\-\s]?)?|0)[1-9]((\s|\s?\-\s?)?[0-9]){8}$/.test(value);
+	}, "Please specify a valid phone number.");
+
+	/* For UK phone functions, do the following server side processing:
+  * Compare original input with this RegEx pattern:
+  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
+  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
+  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
+  * A number of very detailed GB telephone number RegEx patterns can also be found at:
+  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+  */
+	$.validator.addMethod("phoneUK", function (phone_number, element) {
+		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
+		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?)|(?:\(?0))(?:\d{2}\)?\s?\d{4}\s?\d{4}|\d{3}\)?\s?\d{3}\s?\d{3,4}|\d{4}\)?\s?(?:\d{5}|\d{3}\s?\d{3})|\d{5}\)?\s?\d{4,5})$/);
+	}, "Please specify a valid phone number");
+
+	/**
+  * Matches US phone number format
+  *
+  * where the area code may not start with 1 and the prefix may not start with 1
+  * allows '-' or ' ' as a separator and allows parens around area code
+  * some people may want to put a '1' in front of their number
+  *
+  * 1(212)-999-2345 or
+  * 212 999 2344 or
+  * 212-999-0983
+  *
+  * but not
+  * 111-123-5434
+  * and not
+  * 212 123 4567
+  */
+	$.validator.addMethod("phoneUS", function (phone_number, element) {
+		phone_number = phone_number.replace(/\s+/g, "");
+		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(\+?1-?)?(\([2-9]([02-9]\d|1[02-9])\)|[2-9]([02-9]\d|1[02-9]))-?[2-9]([02-9]\d|1[02-9])-?\d{4}$/);
+	}, "Please specify a valid phone number");
+
+	/* For UK phone functions, do the following server side processing:
+  * Compare original input with this RegEx pattern:
+  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
+  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
+  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
+  * A number of very detailed GB telephone number RegEx patterns can also be found at:
+  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
+  */
+
+	// Matches UK landline + mobile, accepting only 01-3 for landline or 07 for mobile to exclude many premium numbers
+	$.validator.addMethod("phonesUK", function (phone_number, element) {
+		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
+		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)(?:1\d{8,9}|[23]\d{9}|7(?:[1345789]\d{8}|624\d{6})))$/);
+	}, "Please specify a valid uk phone number");
+
+	/**
+  * Matches a valid Canadian Postal Code
+  *
+  * @example jQuery.validator.methods.postalCodeCA( "H0H 0H0", element )
+  * @result true
+  *
+  * @example jQuery.validator.methods.postalCodeCA( "H0H0H0", element )
+  * @result false
+  *
+  * @name jQuery.validator.methods.postalCodeCA
+  * @type Boolean
+  * @cat Plugins/Validate/Methods
+  */
+	$.validator.addMethod("postalCodeCA", function (value, element) {
+		return this.optional(element) || /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ] *\d[ABCEGHJKLMNPRSTVWXYZ]\d$/i.test(value);
+	}, "Please specify a valid postal code");
+
+	/*
+ * Valida CEPs do brasileiros:
+ *
+ * Formatos aceitos:
+ * 99999-999
+ * 99.999-999
+ * 99999999
+ */
+	$.validator.addMethod("postalcodeBR", function (cep_value, element) {
+		return this.optional(element) || /^\d{2}.\d{3}-\d{3}?$|^\d{5}-?\d{3}?$/.test(cep_value);
+	}, "Informe um CEP válido.");
+
+	/* Matches Italian postcode (CAP) */
+	$.validator.addMethod("postalcodeIT", function (value, element) {
+		return this.optional(element) || /^\d{5}$/.test(value);
+	}, "Please specify a valid postal code");
+
+	$.validator.addMethod("postalcodeNL", function (value, element) {
+		return this.optional(element) || /^[1-9][0-9]{3}\s?[a-zA-Z]{2}$/.test(value);
+	}, "Please specify a valid postal code");
+
+	// Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
+	$.validator.addMethod("postcodeUK", function (value, element) {
+		return this.optional(element) || /^((([A-PR-UWYZ][0-9])|([A-PR-UWYZ][0-9][0-9])|([A-PR-UWYZ][A-HK-Y][0-9])|([A-PR-UWYZ][A-HK-Y][0-9][0-9])|([A-PR-UWYZ][0-9][A-HJKSTUW])|([A-PR-UWYZ][A-HK-Y][0-9][ABEHMNPRVWXY]))\s?([0-9][ABD-HJLNP-UW-Z]{2})|(GIR)\s?(0AA))$/i.test(value);
+	}, "Please specify a valid UK postcode");
+
+	/*
+  * Lets you say "at least X inputs that match selector Y must be filled."
+  *
+  * The end result is that neither of these inputs:
+  *
+  *	<input class="productinfo" name="partnumber">
+  *	<input class="productinfo" name="description">
+  *
+  *	...will validate unless at least one of them is filled.
+  *
+  * partnumber:	{require_from_group: [1,".productinfo"]},
+  * description: {require_from_group: [1,".productinfo"]}
+  *
+  * options[0]: number of fields that must be filled in the group
+  * options[1]: CSS selector that defines the group of conditionally required fields
+  */
+	$.validator.addMethod("require_from_group", function (value, element, options) {
+		var $fields = $(options[1], element.form),
+		    $fieldsFirst = $fields.eq(0),
+		    validator = $fieldsFirst.data("valid_req_grp") ? $fieldsFirst.data("valid_req_grp") : $.extend({}, this),
+		    isValid = $fields.filter(function () {
+			return validator.elementValue(this);
+		}).length >= options[0];
+
+		// Store the cloned validator for future validation
+		$fieldsFirst.data("valid_req_grp", validator);
+
+		// If element isn't being validated, run each require_from_group field's validation rules
+		if (!$(element).data("being_validated")) {
+			$fields.data("being_validated", true);
+			$fields.each(function () {
+				validator.element(this);
+			});
+			$fields.data("being_validated", false);
+		}
+		return isValid;
+	}, $.validator.format("Please fill at least {0} of these fields."));
+
+	/*
+  * Lets you say "either at least X inputs that match selector Y must be filled,
+  * OR they must all be skipped (left blank)."
+  *
+  * The end result, is that none of these inputs:
+  *
+  *	<input class="productinfo" name="partnumber">
+  *	<input class="productinfo" name="description">
+  *	<input class="productinfo" name="color">
+  *
+  *	...will validate unless either at least two of them are filled,
+  *	OR none of them are.
+  *
+  * partnumber:	{skip_or_fill_minimum: [2,".productinfo"]},
+  * description: {skip_or_fill_minimum: [2,".productinfo"]},
+  * color:		{skip_or_fill_minimum: [2,".productinfo"]}
+  *
+  * options[0]: number of fields that must be filled in the group
+  * options[1]: CSS selector that defines the group of conditionally required fields
+  *
+  */
+	$.validator.addMethod("skip_or_fill_minimum", function (value, element, options) {
+		var $fields = $(options[1], element.form),
+		    $fieldsFirst = $fields.eq(0),
+		    validator = $fieldsFirst.data("valid_skip") ? $fieldsFirst.data("valid_skip") : $.extend({}, this),
+		    numberFilled = $fields.filter(function () {
+			return validator.elementValue(this);
+		}).length,
+		    isValid = numberFilled === 0 || numberFilled >= options[0];
+
+		// Store the cloned validator for future validation
+		$fieldsFirst.data("valid_skip", validator);
+
+		// If element isn't being validated, run each skip_or_fill_minimum field's validation rules
+		if (!$(element).data("being_validated")) {
+			$fields.data("being_validated", true);
+			$fields.each(function () {
+				validator.element(this);
+			});
+			$fields.data("being_validated", false);
+		}
+		return isValid;
+	}, $.validator.format("Please either skip these fields or fill at least {0} of them."));
+
+	/* Validates US States and/or Territories by @jdforsythe
+  * Can be case insensitive or require capitalization - default is case insensitive
+  * Can include US Territories or not - default does not
+  * Can include US Military postal abbreviations (AA, AE, AP) - default does not
+  *
+  * Note: "States" always includes DC (District of Colombia)
+  *
+  * Usage examples:
+  *
+  *  This is the default - case insensitive, no territories, no military zones
+  *  stateInput: {
+  *     caseSensitive: false,
+  *     includeTerritories: false,
+  *     includeMilitary: false
+  *  }
+  *
+  *  Only allow capital letters, no territories, no military zones
+  *  stateInput: {
+  *     caseSensitive: false
+  *  }
+  *
+  *  Case insensitive, include territories but not military zones
+  *  stateInput: {
+  *     includeTerritories: true
+  *  }
+  *
+  *  Only allow capital letters, include territories and military zones
+  *  stateInput: {
+  *     caseSensitive: true,
+  *     includeTerritories: true,
+  *     includeMilitary: true
+  *  }
+  *
+  */
+	$.validator.addMethod("stateUS", function (value, element, options) {
+		var isDefault = typeof options === "undefined",
+		    caseSensitive = isDefault || typeof options.caseSensitive === "undefined" ? false : options.caseSensitive,
+		    includeTerritories = isDefault || typeof options.includeTerritories === "undefined" ? false : options.includeTerritories,
+		    includeMilitary = isDefault || typeof options.includeMilitary === "undefined" ? false : options.includeMilitary,
+		    regex;
+
+		if (!includeTerritories && !includeMilitary) {
+			regex = "^(A[KLRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])$";
+		} else if (includeTerritories && includeMilitary) {
+			regex = "^(A[AEKLPRSZ]|C[AOT]|D[CE]|FL|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEINOPST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$";
+		} else if (includeTerritories) {
+			regex = "^(A[KLRSZ]|C[AOT]|D[CE]|FL|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEINOPST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$";
+		} else {
+			regex = "^(A[AEKLPRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])$";
+		}
+
+		regex = caseSensitive ? new RegExp(regex) : new RegExp(regex, "i");
+		return this.optional(element) || regex.test(value);
+	}, "Please specify a valid state");
+
+	// TODO check if value starts with <, otherwise don't try stripping anything
+	$.validator.addMethod("strippedminlength", function (value, element, param) {
+		return $(value).text().length >= param;
+	}, $.validator.format("Please enter at least {0} characters"));
+
+	$.validator.addMethod("time", function (value, element) {
+		return this.optional(element) || /^([01]\d|2[0-3]|[0-9])(:[0-5]\d){1,2}$/.test(value);
+	}, "Please enter a valid time, between 00:00 and 23:59");
+
+	$.validator.addMethod("time12h", function (value, element) {
+		return this.optional(element) || /^((0?[1-9]|1[012])(:[0-5]\d){1,2}(\ ?[AP]M))$/i.test(value);
+	}, "Please enter a valid time in 12-hour am/pm format");
+
+	// Same as url, but TLD is optional
+	$.validator.addMethod("url2", function (value, element) {
+		return this.optional(element) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)*(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
+	}, $.validator.messages.url);
+	/**
+  * Return true, if the value is a valid vehicle identification number (VIN).
+  *
+  * Works with all kind of text inputs.
+  *
+  * @example <input type="text" size="20" name="VehicleID" class="{required:true,vinUS:true}" />
+  * @desc Declares a required input element whose value must be a valid vehicle identification number.
+  *
+  * @name $.validator.methods.vinUS
+  * @type Boolean
+  * @cat Plugins/Validate/Methods
+  */
+	$.validator.addMethod("vinUS", function (v) {
+		if (v.length !== 17) {
+			return false;
+		}
+
+		var LL = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+		    VL = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 7, 9, 2, 3, 4, 5, 6, 7, 8, 9],
+		    FL = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2],
+		    rs = 0,
+		    i,
+		    n,
+		    d,
+		    f,
+		    cd,
+		    cdv;
+
+		for (i = 0; i < 17; i++) {
+			f = FL[i];
+			d = v.slice(i, i + 1);
+			if (i === 8) {
+				cdv = d;
+			}
+			if (!isNaN(d)) {
+				d *= f;
+			} else {
+				for (n = 0; n < LL.length; n++) {
+					if (d.toUpperCase() === LL[n]) {
+						d = VL[n];
+						d *= f;
+						if (isNaN(cdv) && n === 8) {
+							cdv = LL[n];
+						}
+						break;
+					}
+				}
+			}
+			rs += d;
+		}
+		cd = rs % 11;
+		if (cd === 10) {
+			cd = "X";
+		}
+		if (cd === cdv) {
+			return true;
+		}
+		return false;
+	}, "The specified vehicle identification number (VIN) is invalid.");
+
+	$.validator.addMethod("zipcodeUS", function (value, element) {
+		return this.optional(element) || /^\d{5}(-\d{4})?$/.test(value);
+	}, "The specified US ZIP Code is invalid");
+
+	$.validator.addMethod("ziprange", function (value, element) {
+		return this.optional(element) || /^90[2-5]\d\{2\}-\d{4}$/.test(value);
+	}, "Your ZIP-code must be in the range 902xx-xxxx to 905xx-xxxx");
+});
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/***************************************************************************************************
+LoadingOverlay - A flexible loading overlay jQuery plugin
+    Author          : Gaspare Sganga
+    Version         : 2.1.7
+    License         : MIT
+    Documentation   : https://gasparesganga.com/labs/jquery-loading-overlay/
+***************************************************************************************************/
+!function (e) {
+     true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (e),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) && module.exports ? e(require("jquery")) : e(jQuery);
+}(function (g, a) {
+    "use strict";
+    var t = { background: "rgba(255, 255, 255, 0.8)", backgroundClass: "", image: "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><circle r='80' cx='500' cy='90'/><circle r='80' cx='500' cy='910'/><circle r='80' cx='90' cy='500'/><circle r='80' cx='910' cy='500'/><circle r='80' cx='212' cy='212'/><circle r='80' cx='788' cy='212'/><circle r='80' cx='212' cy='788'/><circle r='80' cx='788' cy='788'/></svg>", imageAnimation: "2000ms rotate_right", imageAutoResize: !0, imageResizeFactor: 1, imageColor: "#202020", imageClass: "", imageOrder: 1, fontawesome: "", fontawesomeAnimation: "", fontawesomeAutoResize: !0, fontawesomeResizeFactor: 1, fontawesomeColor: "#202020", fontawesomeOrder: 2, custom: "", customAnimation: "", customAutoResize: !0, customResizeFactor: 1, customOrder: 3, text: "", textAnimation: "", textAutoResize: !0, textResizeFactor: .5, textColor: "#202020", textClass: "", textOrder: 4, progress: !1, progressAutoResize: !0, progressResizeFactor: .25, progressColor: "#a0a0a0", progressClass: "", progressOrder: 5, progressFixedPosition: "", progressSpeed: 200, progressMin: 0, progressMax: 100, size: 50, maxSize: 120, minSize: 20, direction: "column", fade: !0, resizeInterval: 50, zIndex: 2147483647 },
+        c = { overlay: { "box-sizing": "border-box", position: "relative", display: "flex", "flex-wrap": "nowrap", "align-items": "center", "justify-content": "space-around" }, element: { "box-sizing": "border-box", overflow: "visible", flex: "0 0 auto", display: "flex", "justify-content": "center", "align-items": "center" }, element_svg: { width: "100%", height: "100%" }, progress_fixed: { position: "absolute", left: "0", width: "100%" }, progress_wrapper: { position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }, progress_bar: { position: "absolute", left: "0" } },
+        n = { count: 0, container: a, settings: a, wholePage: a, resizeIntervalId: a, text: a, progress: a },
+        s = { animations: ["rotate_right", "rotate_left", "fadein", "pulse"], progressPosition: ["top", "bottom"] },
+        d = { animations: { name: "rotate_right", time: "2000ms" }, fade: [400, 200] };function o(e, s) {
+        e = g(e), s.size = w(s.size), s.maxSize = parseInt(s.maxSize, 10) || 0, s.minSize = parseInt(s.minSize, 10) || 0, s.resizeInterval = parseInt(s.resizeInterval, 10) || 0;var t = p(e),
+            a = u(e);if (!1 === a) {
+            if ((a = g.extend({}, n)).container = e, a.wholePage = e.is("body"), t = g("<div>", { class: "loadingoverlay" }).css(c.overlay).css("flex-direction", "row" === s.direction.toLowerCase() ? "row" : "column"), s.backgroundClass ? t.addClass(s.backgroundClass) : t.css("background", s.background), a.wholePage && t.css({ position: "fixed", top: 0, left: 0, width: "100%", height: "100%" }), void 0 !== s.zIndex && t.css("z-index", s.zIndex), s.image) {
+                g.isArray(s.imageColor) ? 0 === s.imageColor.length ? s.imageColor = !1 : 1 === s.imageColor.length ? s.imageColor = { fill: s.imageColor[0] } : s.imageColor = { fill: s.imageColor[0], stroke: s.imageColor[1] } : s.imageColor && (s.imageColor = { fill: s.imageColor });var o = v(t, s.imageOrder, s.imageAutoResize, s.imageResizeFactor, s.imageAnimation);"<svg" === s.image.slice(0, 4).toLowerCase() && "</svg>" === s.image.slice(-6).toLowerCase() ? (o.append(s.image), o.children().css(c.element_svg), !s.imageClass && s.imageColor && o.find("*").css(s.imageColor)) : ".svg" === s.image.slice(-4).toLowerCase() || "data:image/svg" === s.image.slice(0, 14).toLowerCase() ? g.ajax({ url: s.image, type: "GET", dataType: "html", global: !1 }).done(function (e) {
+                    o.html(e), o.children().css(c.element_svg), !s.imageClass && s.imageColor && o.find("*").css(s.imageColor);
+                }) : o.css({ "background-image": "url(" + s.image + ")", "background-position": "center", "background-repeat": "no-repeat", "background-size": "cover" }), s.imageClass && o.addClass(s.imageClass);
+            }if (s.fontawesome) {
+                o = v(t, s.fontawesomeOrder, s.fontawesomeAutoResize, s.fontawesomeResizeFactor, s.fontawesomeAnimation).addClass("loadingoverlay_fa");g("<div>", { class: s.fontawesome }).appendTo(o), s.fontawesomeColor && o.css("color", s.fontawesomeColor);
+            }if (s.custom) o = v(t, s.customOrder, s.customAutoResize, s.customResizeFactor, s.customAnimation).append(s.custom);if (s.text && (a.text = v(t, s.textOrder, s.textAutoResize, s.textResizeFactor, s.textAnimation).addClass("loadingoverlay_text").text(s.text), s.textClass ? a.text.addClass(s.textClass) : s.textColor && a.text.css("color", s.textColor)), s.progress) {
+                o = v(t, s.progressOrder, s.progressAutoResize, s.progressResizeFactor, !1).addClass("loadingoverlay_progress");var r = g("<div>").css(c.progress_wrapper).appendTo(o);a.progress = { bar: g("<div>").css(c.progress_bar).appendTo(r), fixed: !1, margin: 0, min: parseFloat(s.progressMin), max: parseFloat(s.progressMax), speed: parseInt(s.progressSpeed, 10) };var i = (s.progressFixedPosition + "").replace(/\s\s+/g, " ").toLowerCase().split(" ");2 === i.length && y(i[0]) ? (a.progress.fixed = i[0], a.progress.margin = w(i[1])) : 2 === i.length && y(i[1]) ? (a.progress.fixed = i[1], a.progress.margin = w(i[0])) : 1 === i.length && y(i[0]) && (a.progress.fixed = i[0], a.progress.margin = 0), "top" === a.progress.fixed ? o.css(c.progress_fixed).css("top", a.progress.margin ? a.progress.margin.value + (a.progress.margin.fixed ? a.progress.margin.units : "%") : 0) : "bottom" === a.progress.fixed && o.css(c.progress_fixed).css("top", "auto"), s.progressClass ? a.progress.bar.addClass(s.progressClass) : s.progressColor && a.progress.bar.css("background", s.progressColor);
+            }s.fade ? !0 === s.fade ? s.fade = d.fade : "string" == typeof s.fade || "number" == typeof s.fade ? s.fade = [s.fade, s.fade] : g.isArray(s.fade) && s.fade.length < 2 && (s.fade = [s.fade[0], s.fade[0]]) : s.fade = [0, 0], s.fade = [parseInt(s.fade[0], 10), parseInt(s.fade[1], 10)], a.settings = s, t.data("loadingoverlay_data", a), e.data("loadingoverlay", t), t.fadeTo(0, .01).appendTo("body"), f(e, !0), 0 < s.resizeInterval && (a.resizeIntervalId = setInterval(function () {
+                f(e, !1);
+            }, s.resizeInterval)), t.fadeTo(s.fade[0], 1);
+        }a.count++;
+    }function r(e, s) {
+        var t = p(e = g(e)),
+            a = u(e);!1 !== a && (a.count--, (s || a.count <= 0) && t.animate({ opacity: 0 }, a.settings.fade[1], function () {
+            a.resizeIntervalId && clearInterval(a.resizeIntervalId), g(this).remove(), e.removeData("loadingoverlay");
+        }));
+    }function i(e) {
+        f(g(e), !0);
+    }function l(e, s) {
+        var t = u(e = g(e));!1 !== t && t.text && (!1 === s ? t.text.hide() : t.text.show().text(s));
+    }function m(e, s) {
+        var t = u(e = g(e));if (!1 !== t && t.progress) if (!1 === s) t.progress.bar.hide();else {
+            var a = 100 * ((parseFloat(s) || 0) - t.progress.min) / (t.progress.max - t.progress.min);a < 0 && (a = 0), 100 < a && (a = 100), t.progress.bar.show().animate({ width: a + "%" }, t.progress.speed);
+        }
+    }function f(e, t) {
+        var s = p(e),
+            a = u(e);if (!1 !== a) {
+            if (!a.wholePage) {
+                var o = "fixed" === e.css("position"),
+                    r = o ? e[0].getBoundingClientRect() : e.offset();s.css({ position: o ? "fixed" : "absolute", top: r.top + parseInt(e.css("border-top-width"), 10), left: r.left + parseInt(e.css("border-left-width"), 10), width: e.innerWidth(), height: e.innerHeight() });
+            }if (a.settings.size) {
+                var i = a.wholePage ? g(window) : e,
+                    n = a.settings.size.value;a.settings.size.fixed || (n = Math.min(i.innerWidth(), i.innerHeight()) * n / 100, a.settings.maxSize && n > a.settings.maxSize && (n = a.settings.maxSize), a.settings.minSize && n < a.settings.minSize && (n = a.settings.minSize)), s.children(".loadingoverlay_element").each(function () {
+                    var e = g(this);if (t || e.data("loadingoverlay_autoresize")) {
+                        var s = e.data("loadingoverlay_resizefactor");e.hasClass("loadingoverlay_fa") || e.hasClass("loadingoverlay_text") ? e.css("font-size", n * s + a.settings.size.units) : e.hasClass("loadingoverlay_progress") ? (a.progress.bar.css("height", n * s + a.settings.size.units), a.progress.fixed ? "bottom" === a.progress.fixed && e.css("bottom", a.progress.margin ? a.progress.margin.value + (a.progress.margin.fixed ? a.progress.margin.units : "%") : 0).css("bottom", "+=" + n * s + a.settings.size.units) : a.progress.bar.css("top", e.position().top).css("top", "-=" + n * s * .5 + a.settings.size.units)) : e.css({ width: n * s + a.settings.size.units, height: n * s + a.settings.size.units });
+                    }
+                });
+            }
+        }
+    }function p(e) {
+        return e.data("loadingoverlay");
+    }function u(e) {
+        var s = p(e),
+            t = void 0 === s ? a : s.data("loadingoverlay_data");return void 0 === t ? (g(".loadingoverlay").each(function () {
+            var e = g(this),
+                s = e.data("loadingoverlay_data");document.body.contains(s.container[0]) || (s.resizeIntervalId && clearInterval(s.resizeIntervalId), e.remove());
+        }), !1) : (s.toggle(e.is(":visible")), t);
+    }function v(e, s, t, a, o) {
+        var r = g("<div>", { class: "loadingoverlay_element", css: { order: s } }).css(c.element).data({ loadingoverlay_autoresize: t, loadingoverlay_resizefactor: a }).appendTo(e);if (!0 === o && (o = d.animations.time + " " + d.animations.name), "string" == typeof o) {
+            var i,
+                n,
+                l = o.replace(/\s\s+/g, " ").toLowerCase().split(" ");2 === l.length && x(l[0]) && h(l[1]) ? (i = l[1], n = l[0]) : 2 === l.length && x(l[1]) && h(l[0]) ? (i = l[0], n = l[1]) : 1 === l.length && x(l[0]) ? (i = d.animations.name, n = l[0]) : 1 === l.length && h(l[0]) && (i = l[0], n = d.animations.time), r.css({ "animation-name": "loadingoverlay_animation__" + i, "animation-duration": n, "animation-timing-function": "linear", "animation-iteration-count": "infinite" });
+        }return r;
+    }function x(e) {
+        return !isNaN(parseFloat(e)) && ("s" === e.slice(-1) || "ms" === e.slice(-2));
+    }function h(e) {
+        return -1 < s.animations.indexOf(e);
+    }function y(e) {
+        return -1 < s.progressPosition.indexOf(e);
+    }function w(e) {
+        return !(!e || e < 0) && ("string" == typeof e && -1 < ["vmin", "vmax"].indexOf(e.slice(-4)) ? { fixed: !0, units: e.slice(-4), value: e.slice(0, -4) } : "string" == typeof e && -1 < ["rem"].indexOf(e.slice(-3)) ? { fixed: !0, units: e.slice(-3), value: e.slice(0, -3) } : "string" == typeof e && -1 < ["px", "em", "cm", "mm", "in", "pt", "pc", "vh", "vw"].indexOf(e.slice(-2)) ? { fixed: !0, units: e.slice(-2), value: e.slice(0, -2) } : { fixed: !1, units: "px", value: parseFloat(e) });
+    }g.LoadingOverlaySetup = function (e) {
+        g.extend(!0, t, e);
+    }, g.LoadingOverlay = function (e, s) {
+        switch (e.toLowerCase()) {case "show":
+                o("body", g.extend(!0, {}, t, s));break;case "hide":
+                r("body", s);break;case "resize":
+                i("body");break;case "text":
+                l("body", s);break;case "progress":
+                m("body", s);}
+    }, g.fn.LoadingOverlay = function (e, s) {
+        switch (e.toLowerCase()) {case "show":
+                return this.each(function () {
+                    o(this, g.extend(!0, {}, t, s));
+                });case "hide":
+                return this.each(function () {
+                    r(this, s);
+                });case "resize":
+                return this.each(function () {
+                    i(this);
+                });case "text":
+                return this.each(function () {
+                    l(this, s);
+                });case "progress":
+                return this.each(function () {
+                    m(this, s);
+                });}
+    }, g(function () {
+        g("head").append(["<style>", "@-webkit-keyframes loadingoverlay_animation__rotate_right {", "to {", "-webkit-transform : rotate(360deg);", "transform : rotate(360deg);", "}", "}", "@keyframes loadingoverlay_animation__rotate_right {", "to {", "-webkit-transform : rotate(360deg);", "transform : rotate(360deg);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__rotate_left {", "to {", "-webkit-transform : rotate(-360deg);", "transform : rotate(-360deg);", "}", "}", "@keyframes loadingoverlay_animation__rotate_left {", "to {", "-webkit-transform : rotate(-360deg);", "transform : rotate(-360deg);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__fadein {", "0% {", "opacity   : 0;", "-webkit-transform : scale(0.1, 0.1);", "transform : scale(0.1, 0.1);", "}", "50% {", "opacity   : 1;", "}", "100% {", "opacity   : 0;", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "}", "@keyframes loadingoverlay_animation__fadein {", "0% {", "opacity   : 0;", "-webkit-transform : scale(0.1, 0.1);", "transform : scale(0.1, 0.1);", "}", "50% {", "opacity   : 1;", "}", "100% {", "opacity   : 0;", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__pulse {", "0% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "50% {", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "100% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "}", "@keyframes loadingoverlay_animation__pulse {", "0% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "50% {", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "100% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "}", "</style>"].join(" "));
+    });
+});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+(function ($) {
+  $.fn.extend({ slimScroll: function slimScroll(options) {
+      var defaults = { width: 'auto', height: '250px', size: '7px', color: '#000', position: 'right', distance: '1px', start: 'top', opacity: .4, alwaysVisible: false, disableFadeOut: false, railVisible: false, railColor: '#333', railOpacity: .2, railDraggable: true, railClass: 'slimScrollRail', barClass: 'slimScrollBar', wrapperClass: 'slimScrollDiv', allowPageScroll: false, wheelStep: 20, touchScrollStep: 200, borderRadius: '7px', railBorderRadius: '7px' };var o = $.extend(defaults, options);this.each(function () {
+        var isOverPanel,
+            isOverBar,
+            isDragg,
+            queueHide,
+            touchDif,
+            barHeight,
+            percentScroll,
+            lastScroll,
+            divS = '<div></div>',
+            minBarHeight = 30,
+            releaseScroll = false;var me = $(this);if (me.parent().hasClass(o.wrapperClass)) {
+          var offset = me.scrollTop();bar = me.siblings('.' + o.barClass);rail = me.siblings('.' + o.railClass);getBarHeight();if ($.isPlainObject(options)) {
+            if ('height' in options && options.height == 'auto') {
+              me.parent().css('height', 'auto');me.css('height', 'auto');var height = me.parent().parent().height();me.parent().css('height', height);me.css('height', height);
+            } else if ('height' in options) {
+              var h = options.height;me.parent().css('height', h);me.css('height', h);
+            }
+            if ('scrollTo' in options) {
+              offset = parseInt(o.scrollTo);
+            } else if ('scrollBy' in options) {
+              offset += parseInt(o.scrollBy);
+            } else if ('destroy' in options) {
+              bar.remove();rail.remove();me.unwrap();return;
+            }
+            scrollContent(offset, false, true);
+          }
+          return;
+        } else if ($.isPlainObject(options)) {
+          if ('destroy' in options) {
+            return;
+          }
+        }
+        o.height = o.height == 'auto' ? me.parent().height() : o.height;var wrapper = $(divS).addClass(o.wrapperClass).css({ position: 'relative', overflow: 'hidden', width: o.width, height: o.height });me.css({ overflow: 'hidden', width: o.width, height: o.height });var rail = $(divS).addClass(o.railClass).css({ width: o.size, height: '100%', position: 'absolute', top: 0, display: o.alwaysVisible && o.railVisible ? 'block' : 'none', 'border-radius': o.railBorderRadius, background: o.railColor, opacity: o.railOpacity, zIndex: 90 });var bar = $(divS).addClass(o.barClass).css({ background: o.color, width: o.size, position: 'absolute', top: 0, opacity: o.opacity, display: o.alwaysVisible ? 'block' : 'none', 'border-radius': o.borderRadius, BorderRadius: o.borderRadius, MozBorderRadius: o.borderRadius, WebkitBorderRadius: o.borderRadius, zIndex: 99 });var posCss = o.position == 'right' ? { right: o.distance } : { left: o.distance };rail.css(posCss);bar.css(posCss);me.wrap(wrapper);me.parent().append(bar);me.parent().append(rail);if (o.railDraggable) {
+          bar.bind("mousedown", function (e) {
+            var $doc = $(document);isDragg = true;t = parseFloat(bar.css('top'));pageY = e.pageY;$doc.bind("mousemove.slimscroll", function (e) {
+              currTop = t + e.pageY - pageY;bar.css('top', currTop);scrollContent(0, bar.position().top, false);
+            });$doc.bind("mouseup.slimscroll", function (e) {
+              isDragg = false;hideBar();$doc.unbind('.slimscroll');
+            });return false;
+          }).bind("selectstart.slimscroll", function (e) {
+            e.stopPropagation();e.preventDefault();return false;
+          });
+        }
+        rail.hover(function () {
+          showBar();
+        }, function () {
+          hideBar();
+        });bar.hover(function () {
+          isOverBar = true;
+        }, function () {
+          isOverBar = false;
+        });me.hover(function () {
+          isOverPanel = true;showBar();hideBar();
+        }, function () {
+          isOverPanel = false;hideBar();
+        });me.bind('touchstart', function (e, b) {
+          if (e.originalEvent.touches.length) {
+            touchDif = e.originalEvent.touches[0].pageY;
+          }
+        });me.bind('touchmove', function (e) {
+          if (!releaseScroll) {
+            e.originalEvent.preventDefault();
+          }
+          if (e.originalEvent.touches.length) {
+            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;scrollContent(diff, true);touchDif = e.originalEvent.touches[0].pageY;
+          }
+        });getBarHeight();if (o.start === 'bottom') {
+          bar.css({ top: me.outerHeight() - bar.outerHeight() });scrollContent(0, true);
+        } else if (o.start !== 'top') {
+          scrollContent($(o.start).position().top, null, true);if (!o.alwaysVisible) {
+            bar.hide();
+          }
+        }
+        attachWheel(this);function _onWheel(e) {
+          if (!isOverPanel) {
+            return;
+          }
+          var e = e || window.event;var delta = 0;if (e.wheelDelta) {
+            delta = -e.wheelDelta / 120;
+          }
+          if (e.detail) {
+            delta = e.detail / 3;
+          }
+          var target = e.target || e.srcTarget || e.srcElement;if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
+            scrollContent(delta, true);
+          }
+          if (e.preventDefault && !releaseScroll) {
+            e.preventDefault();
+          }
+          if (!releaseScroll) {
+            e.returnValue = false;
+          }
+        }
+        function scrollContent(y, isWheel, isJump) {
+          releaseScroll = false;var delta = y;var maxTop = me.outerHeight() - bar.outerHeight();if (isWheel) {
+            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();delta = Math.min(Math.max(delta, 0), maxTop);delta = y > 0 ? Math.ceil(delta) : Math.floor(delta);bar.css({ top: delta + 'px' });
+          }
+          percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());delta = percentScroll * (me[0].scrollHeight - me.outerHeight());if (isJump) {
+            delta = y;var offsetTop = delta / me[0].scrollHeight * me.outerHeight();offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);bar.css({ top: offsetTop + 'px' });
+          }
+          me.scrollTop(delta);me.trigger('slimscrolling', ~~delta);showBar();hideBar();
+        }
+        function attachWheel(target) {
+          if (window.addEventListener) {
+            target.addEventListener('DOMMouseScroll', _onWheel, false);target.addEventListener('mousewheel', _onWheel, false);
+          } else {
+            document.attachEvent("onmousewheel", _onWheel);
+          }
+        }
+        function getBarHeight() {
+          barHeight = Math.max(me.outerHeight() / me[0].scrollHeight * me.outerHeight(), minBarHeight);bar.css({ height: barHeight + 'px' });var display = barHeight == me.outerHeight() ? 'none' : 'block';bar.css({ display: display });
+        }
+        function showBar() {
+          getBarHeight();clearTimeout(queueHide);if (percentScroll == ~~percentScroll) {
+            releaseScroll = o.allowPageScroll;if (lastScroll != percentScroll) {
+              var msg = ~~percentScroll == 0 ? 'top' : 'bottom';me.trigger('slimscroll', msg);
+            }
+          } else {
+            releaseScroll = false;
+          }
+          lastScroll = percentScroll;if (barHeight >= me.outerHeight()) {
+            releaseScroll = true;return;
+          }
+          bar.stop(true, true).fadeIn('fast');if (o.railVisible) {
+            rail.stop(true, true).fadeIn('fast');
+          }
+        }
+        function hideBar() {
+          if (!o.alwaysVisible) {
+            queueHide = setTimeout(function () {
+              if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
+                bar.fadeOut('slow');rail.fadeOut('slow');
+              }
+            }, 1000);
+          }
+        }
+      });return this;
+    } });$.fn.extend({ slimscroll: $.fn.slimScroll });
+})(jQuery);
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function bind(fn, thisArg) {
+  return function wrap() {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; i++) {
+      args[i] = arguments[i];
+    }
+    return fn.apply(thisArg, args);
+  };
+};
+
+
+/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {window._ = __webpack_require__(12);
+"use strict";
+
+
+var utils = __webpack_require__(1);
+var settle = __webpack_require__(28);
+var buildURL = __webpack_require__(30);
+var parseHeaders = __webpack_require__(31);
+var isURLSameOrigin = __webpack_require__(32);
+var createError = __webpack_require__(12);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(33);
+
+module.exports = function xhrAdapter(config) {
+  return new Promise(function dispatchXhrRequest(resolve, reject) {
+    var requestData = config.data;
+    var requestHeaders = config.headers;
+
+    if (utils.isFormData(requestData)) {
+      delete requestHeaders['Content-Type']; // Let the browser set it
+    }
+
+    var request = new XMLHttpRequest();
+    var loadEvent = 'onreadystatechange';
+    var xDomain = false;
+
+    // For IE 8/9 CORS support
+    // Only supports POST and GET calls and doesn't returns the response headers.
+    // DON'T do this for testing b/c XMLHttpRequest is mocked, not XDomainRequest.
+    if ("development" !== 'test' &&
+        typeof window !== 'undefined' &&
+        window.XDomainRequest && !('withCredentials' in request) &&
+        !isURLSameOrigin(config.url)) {
+      request = new window.XDomainRequest();
+      loadEvent = 'onload';
+      xDomain = true;
+      request.onprogress = function handleProgress() {};
+      request.ontimeout = function handleTimeout() {};
+    }
+
+    // HTTP basic authentication
+    if (config.auth) {
+      var username = config.auth.username || '';
+      var password = config.auth.password || '';
+      requestHeaders.Authorization = 'Basic ' + btoa(username + ':' + password);
+    }
+
+    request.open(config.method.toUpperCase(), buildURL(config.url, config.params, config.paramsSerializer), true);
+
+    // Set the request timeout in MS
+    request.timeout = config.timeout;
+
+    // Listen for ready state
+    request[loadEvent] = function handleLoad() {
+      if (!request || (request.readyState !== 4 && !xDomain)) {
+        return;
+      }
+
+      // The request errored out and we didn't get a response, this will be
+      // handled by onerror instead
+      // With one exception: request that using file: protocol, most browsers
+      // will return status as 0 even though it's a successful request
+      if (request.status === 0 && !(request.responseURL && request.responseURL.indexOf('file:') === 0)) {
+        return;
+      }
+
+      // Prepare the response
+      var responseHeaders = 'getAllResponseHeaders' in request ? parseHeaders(request.getAllResponseHeaders()) : null;
+      var responseData = !config.responseType || config.responseType === 'text' ? request.responseText : request.response;
+      var response = {
+        data: responseData,
+        // IE sends 1223 instead of 204 (https://github.com/mzabriskie/axios/issues/201)
+        status: request.status === 1223 ? 204 : request.status,
+        statusText: request.status === 1223 ? 'No Content' : request.statusText,
+        headers: responseHeaders,
+        config: config,
+        request: request
+      };
+
+      settle(resolve, reject, response);
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle low level network errors
+    request.onerror = function handleError() {
+      // Real errors are hidden from us by the browser
+      // onerror should only fire if it's a network error
+      reject(createError('Network Error', config, null, request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Handle timeout
+    request.ontimeout = function handleTimeout() {
+      reject(createError('timeout of ' + config.timeout + 'ms exceeded', config, 'ECONNABORTED',
+        request));
+
+      // Clean up request
+      request = null;
+    };
+
+    // Add xsrf header
+    // This is only done if running in a standard browser environment.
+    // Specifically not if we're in a web worker, or react-native.
+    if (utils.isStandardBrowserEnv()) {
+      var cookies = __webpack_require__(34);
+
+      // Add xsrf header
+      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
+          cookies.read(config.xsrfCookieName) :
+          undefined;
+
+      if (xsrfValue) {
+        requestHeaders[config.xsrfHeaderName] = xsrfValue;
+      }
+    }
+
+    // Add headers to the request
+    if ('setRequestHeader' in request) {
+      utils.forEach(requestHeaders, function setRequestHeader(val, key) {
+        if (typeof requestData === 'undefined' && key.toLowerCase() === 'content-type') {
+          // Remove Content-Type if data is undefined
+          delete requestHeaders[key];
+        } else {
+          // Otherwise add header to the request
+          request.setRequestHeader(key, val);
+        }
+      });
+    }
+
+    // Add withCredentials to request if needed
+    if (config.withCredentials) {
+      request.withCredentials = true;
+    }
+
+    // Add responseType to request if needed
+    if (config.responseType) {
+      try {
+        request.responseType = config.responseType;
+      } catch (e) {
+        // Expected DOMException thrown by browsers not compatible XMLHttpRequest Level 2.
+        // But, this can be suppressed for 'json' type as it can be parsed by default 'transformResponse' function.
+        if (config.responseType !== 'json') {
+          throw e;
+        }
+      }
+    }
+
+    // Handle progress if needed
+    if (typeof config.onDownloadProgress === 'function') {
+      request.addEventListener('progress', config.onDownloadProgress);
+    }
+
+    // Not all browsers support upload events
+    if (typeof config.onUploadProgress === 'function' && request.upload) {
+      request.upload.addEventListener('progress', config.onUploadProgress);
+    }
+
+    if (config.cancelToken) {
+      // Handle cancellation
+      config.cancelToken.promise.then(function onCanceled(cancel) {
+        if (!request) {
+          return;
+        }
+
+        request.abort();
+        reject(cancel);
+        // Clean up request
+        request = null;
+      });
+    }
+
+    if (requestData === undefined) {
+      requestData = null;
+    }
+
+    // Send the request
+    request.send(requestData);
+  });
+};
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var enhanceError = __webpack_require__(29);
+
+/**
+ * Create an Error with the specified message, config, error code, request and response.
+ *
+ * @param {string} message The error message.
+ * @param {Object} config The config.
+ * @param {string} [code] The error code (for example, 'ECONNABORTED').
+ * @param {Object} [request] The request.
+ * @param {Object} [response] The response.
+ * @returns {Error} The created error.
+ */
+module.exports = function createError(message, config, code, request, response) {
+  var error = new Error(message);
+  return enhanceError(error, config, code, request, response);
+};
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function isCancel(value) {
+  return !!(value && value.__CANCEL__);
+};
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * A `Cancel` is an object that is thrown when an operation is canceled.
+ *
+ * @class
+ * @param {string=} message The message.
+ */
+function Cancel(message) {
+  this.message = message;
+}
+
+Cancel.prototype.toString = function toString() {
+  return 'Cancel' + (this.message ? ': ' + this.message : '');
+};
+
+Cancel.prototype.__CANCEL__ = true;
+
+module.exports = Cancel;
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// jscs:disable maximumLineLength
+/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
+/*!
+ * jQuery UI Datepicker 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Datepicker
+//>>group: Widgets
+//>>description: Displays a calendar from an input or inline for selecting dates.
+//>>docs: http://api.jqueryui.com/datepicker/
+//>>demos: http://jqueryui.com/datepicker/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/datepicker.css
+//>>css.theme: ../../themes/base/theme.css
+
+( function( factory ) {
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+			__webpack_require__(0),
+			__webpack_require__(16),
+			__webpack_require__(44)
+		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+}( function( $ ) {
+
+$.extend( $.ui, { datepicker: { version: "1.12.1" } } );
+
+var datepicker_instActive;
+
+function datepicker_getZindex( elem ) {
+	var position, value;
+	while ( elem.length && elem[ 0 ] !== document ) {
+
+		// Ignore z-index if position is set to a value where z-index is ignored by the browser
+		// This makes behavior of this function consistent across browsers
+		// WebKit always returns auto if the element is positioned
+		position = elem.css( "position" );
+		if ( position === "absolute" || position === "relative" || position === "fixed" ) {
+
+			// IE returns 0 when zIndex is not specified
+			// other browsers return a string
+			// we ignore the case of nested elements with an explicit value of 0
+			// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
+			value = parseInt( elem.css( "zIndex" ), 10 );
+			if ( !isNaN( value ) && value !== 0 ) {
+				return value;
+			}
+		}
+		elem = elem.parent();
+	}
+
+	return 0;
+}
+/* Date picker manager.
+   Use the singleton instance of this class, $.datepicker, to interact with the date picker.
+   Settings for (groups of) date pickers are maintained in an instance object,
+   allowing multiple different settings on the same page. */
+
+function Datepicker() {
+	this._curInst = null; // The current instance in use
+	this._keyEvent = false; // If the last event was a key event
+	this._disabledInputs = []; // List of date picker inputs that have been disabled
+	this._datepickerShowing = false; // True if the popup picker is showing , false if not
+	this._inDialog = false; // True if showing within a "dialog", false if not
+	this._mainDivId = "ui-datepicker-div"; // The ID of the main datepicker division
+	this._inlineClass = "ui-datepicker-inline"; // The name of the inline marker class
+	this._appendClass = "ui-datepicker-append"; // The name of the append marker class
+	this._triggerClass = "ui-datepicker-trigger"; // The name of the trigger marker class
+	this._dialogClass = "ui-datepicker-dialog"; // The name of the dialog marker class
+	this._disableClass = "ui-datepicker-disabled"; // The name of the disabled covering marker class
+	this._unselectableClass = "ui-datepicker-unselectable"; // The name of the unselectable cell marker class
+	this._currentClass = "ui-datepicker-current-day"; // The name of the current day marker class
+	this._dayOverClass = "ui-datepicker-days-cell-over"; // The name of the day hover marker class
+	this.regional = []; // Available regional settings, indexed by language code
+	this.regional[ "" ] = { // Default regional settings
+		closeText: "Done", // Display text for close link
+		prevText: "Prev", // Display text for previous month link
+		nextText: "Next", // Display text for next month link
+		currentText: "Today", // Display text for current month link
+		monthNames: [ "January","February","March","April","May","June",
+			"July","August","September","October","November","December" ], // Names of months for drop-down and formatting
+		monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ], // For formatting
+		dayNames: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ], // For formatting
+		dayNamesShort: [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ], // For formatting
+		dayNamesMin: [ "Su","Mo","Tu","We","Th","Fr","Sa" ], // Column headings for days starting at Sunday
+		weekHeader: "Wk", // Column header for week of the year
+		dateFormat: "mm/dd/yy", // See format options on parseDate
+		firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
+		isRTL: false, // True if right-to-left language, false if left-to-right
+		showMonthAfterYear: false, // True if the year select precedes month, false for month then year
+		yearSuffix: "" // Additional text to append to the year in the month headers
+	};
+	this._defaults = { // Global defaults for all the date picker instances
+		showOn: "focus", // "focus" for popup on focus,
+			// "button" for trigger button, or "both" for either
+		showAnim: "fadeIn", // Name of jQuery animation for popup
+		showOptions: {}, // Options for enhanced animations
+		defaultDate: null, // Used when field is blank: actual date,
+			// +/-number for offset from today, null for today
+		appendText: "", // Display text following the input box, e.g. showing the format
+		buttonText: "...", // Text for trigger button
+		buttonImage: "", // URL for trigger button image
+		buttonImageOnly: false, // True if the image appears alone, false if it appears on a button
+		hideIfNoPrevNext: false, // True to hide next/previous month links
+			// if not applicable, false to just disable them
+		navigationAsDateFormat: false, // True if date formatting applied to prev/today/next links
+		gotoCurrent: false, // True if today link goes back to current selection instead
+		changeMonth: false, // True if month can be selected directly, false if only prev/next
+		changeYear: false, // True if year can be selected directly, false if only prev/next
+		yearRange: "c-10:c+10", // Range of years to display in drop-down,
+			// either relative to today's year (-nn:+nn), relative to currently displayed year
+			// (c-nn:c+nn), absolute (nnnn:nnnn), or a combination of the above (nnnn:-n)
+		showOtherMonths: false, // True to show dates in other months, false to leave blank
+		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselectable
+		showWeek: false, // True to show week of the year, false to not show it
+		calculateWeek: this.iso8601Week, // How to calculate the week of the year,
+			// takes a Date and returns the number of the week for it
+		shortYearCutoff: "+10", // Short year values < this are in the current century,
+			// > this are in the previous century,
+			// string value starting with "+" for current year + value
+		minDate: null, // The earliest selectable date, or null for no limit
+		maxDate: null, // The latest selectable date, or null for no limit
+		duration: "fast", // Duration of display/closure
+		beforeShowDay: null, // Function that takes a date and returns an array with
+			// [0] = true if selectable, false if not, [1] = custom CSS class name(s) or "",
+			// [2] = cell title (optional), e.g. $.datepicker.noWeekends
+		beforeShow: null, // Function that takes an input field and
+			// returns a set of custom settings for the date picker
+		onSelect: null, // Define a callback function when a date is selected
+		onChangeMonthYear: null, // Define a callback function when the month or year is changed
+		onClose: null, // Define a callback function when the datepicker is closed
+		numberOfMonths: 1, // Number of months to show at a time
+		showCurrentAtPos: 0, // The position in multipe months at which to show the current month (starting at 0)
+		stepMonths: 1, // Number of months to step back/forward
+		stepBigMonths: 12, // Number of months to step back/forward for the big links
+		altField: "", // Selector for an alternate field to store selected dates into
+		altFormat: "", // The date format to use for the alternate field
+		constrainInput: true, // The input is constrained by the current date format
+		showButtonPanel: false, // True to show button panel, false to not show it
+		autoSize: false, // True to size the input for the date format, false to leave as is
+		disabled: false // The initial disabled state
+	};
+	$.extend( this._defaults, this.regional[ "" ] );
+	this.regional.en = $.extend( true, {}, this.regional[ "" ] );
+	this.regional[ "en-US" ] = $.extend( true, {}, this.regional.en );
+	this.dpDiv = datepicker_bindHover( $( "<div id='" + this._mainDivId + "' class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>" ) );
+}
+
+$.extend( Datepicker.prototype, {
+	/* Class name added to elements to indicate already configured with a date picker. */
+	markerClassName: "hasDatepicker",
+
+	//Keep track of the maximum number of rows displayed (see #7043)
+	maxRows: 4,
+
+	// TODO rename to "widget" when switching to widget factory
+	_widgetDatepicker: function() {
+		return this.dpDiv;
+	},
+
+	/* Override the default settings for all instances of the date picker.
+	 * @param  settings  object - the new settings to use as defaults (anonymous object)
+	 * @return the manager object
+	 */
+	setDefaults: function( settings ) {
+		datepicker_extendRemove( this._defaults, settings || {} );
+		return this;
+	},
+
+	/* Attach the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 * @param  settings  object - the new settings to use for this date picker instance (anonymous)
+	 */
+	_attachDatepicker: function( target, settings ) {
+		var nodeName, inline, inst;
+		nodeName = target.nodeName.toLowerCase();
+		inline = ( nodeName === "div" || nodeName === "span" );
+		if ( !target.id ) {
+			this.uuid += 1;
+			target.id = "dp" + this.uuid;
+		}
+		inst = this._newInst( $( target ), inline );
+		inst.settings = $.extend( {}, settings || {} );
+		if ( nodeName === "input" ) {
+			this._connectDatepicker( target, inst );
+		} else if ( inline ) {
+			this._inlineDatepicker( target, inst );
+		}
+	},
+
+	/* Create a new instance object. */
+	_newInst: function( target, inline ) {
+		var id = target[ 0 ].id.replace( /([^A-Za-z0-9_\-])/g, "\\\\$1" ); // escape jQuery meta chars
+		return { id: id, input: target, // associated target
+			selectedDay: 0, selectedMonth: 0, selectedYear: 0, // current selection
+			drawMonth: 0, drawYear: 0, // month being drawn
+			inline: inline, // is datepicker inline or not
+			dpDiv: ( !inline ? this.dpDiv : // presentation div
+			datepicker_bindHover( $( "<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>" ) ) ) };
+	},
+
+	/* Attach the date picker to an input field. */
+	_connectDatepicker: function( target, inst ) {
+		var input = $( target );
+		inst.append = $( [] );
+		inst.trigger = $( [] );
+		if ( input.hasClass( this.markerClassName ) ) {
+			return;
+		}
+		this._attachments( input, inst );
+		input.addClass( this.markerClassName ).on( "keydown", this._doKeyDown ).
+			on( "keypress", this._doKeyPress ).on( "keyup", this._doKeyUp );
+		this._autoSize( inst );
+		$.data( target, "datepicker", inst );
+
+		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
+		if ( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
+	},
+
+	/* Make attachments based on settings. */
+	_attachments: function( input, inst ) {
+		var showOn, buttonText, buttonImage,
+			appendText = this._get( inst, "appendText" ),
+			isRTL = this._get( inst, "isRTL" );
+
+		if ( inst.append ) {
+			inst.append.remove();
+		}
+		if ( appendText ) {
+			inst.append = $( "<span class='" + this._appendClass + "'>" + appendText + "</span>" );
+			input[ isRTL ? "before" : "after" ]( inst.append );
+		}
+
+		input.off( "focus", this._showDatepicker );
+
+		if ( inst.trigger ) {
+			inst.trigger.remove();
+		}
+
+		showOn = this._get( inst, "showOn" );
+		if ( showOn === "focus" || showOn === "both" ) { // pop-up date picker when in the marked field
+			input.on( "focus", this._showDatepicker );
+		}
+		if ( showOn === "button" || showOn === "both" ) { // pop-up date picker when button clicked
+			buttonText = this._get( inst, "buttonText" );
+			buttonImage = this._get( inst, "buttonImage" );
+			inst.trigger = $( this._get( inst, "buttonImageOnly" ) ?
+				$( "<img/>" ).addClass( this._triggerClass ).
+					attr( { src: buttonImage, alt: buttonText, title: buttonText } ) :
+				$( "<button type='button'></button>" ).addClass( this._triggerClass ).
+					html( !buttonImage ? buttonText : $( "<img/>" ).attr(
+					{ src:buttonImage, alt:buttonText, title:buttonText } ) ) );
+			input[ isRTL ? "before" : "after" ]( inst.trigger );
+			inst.trigger.on( "click", function() {
+				if ( $.datepicker._datepickerShowing && $.datepicker._lastInput === input[ 0 ] ) {
+					$.datepicker._hideDatepicker();
+				} else if ( $.datepicker._datepickerShowing && $.datepicker._lastInput !== input[ 0 ] ) {
+					$.datepicker._hideDatepicker();
+					$.datepicker._showDatepicker( input[ 0 ] );
+				} else {
+					$.datepicker._showDatepicker( input[ 0 ] );
+				}
+				return false;
+			} );
+		}
+	},
+
+	/* Apply the maximum length for the date format. */
+	_autoSize: function( inst ) {
+		if ( this._get( inst, "autoSize" ) && !inst.inline ) {
+			var findMax, max, maxI, i,
+				date = new Date( 2009, 12 - 1, 20 ), // Ensure double digits
+				dateFormat = this._get( inst, "dateFormat" );
+
+			if ( dateFormat.match( /[DM]/ ) ) {
+				findMax = function( names ) {
+					max = 0;
+					maxI = 0;
+					for ( i = 0; i < names.length; i++ ) {
+						if ( names[ i ].length > max ) {
+							max = names[ i ].length;
+							maxI = i;
+						}
+					}
+					return maxI;
+				};
+				date.setMonth( findMax( this._get( inst, ( dateFormat.match( /MM/ ) ?
+					"monthNames" : "monthNamesShort" ) ) ) );
+				date.setDate( findMax( this._get( inst, ( dateFormat.match( /DD/ ) ?
+					"dayNames" : "dayNamesShort" ) ) ) + 20 - date.getDay() );
+			}
+			inst.input.attr( "size", this._formatDate( inst, date ).length );
+		}
+	},
+
+	/* Attach an inline date picker to a div. */
+	_inlineDatepicker: function( target, inst ) {
+		var divSpan = $( target );
+		if ( divSpan.hasClass( this.markerClassName ) ) {
+			return;
+		}
+		divSpan.addClass( this.markerClassName ).append( inst.dpDiv );
+		$.data( target, "datepicker", inst );
+		this._setDate( inst, this._getDefaultDate( inst ), true );
+		this._updateDatepicker( inst );
+		this._updateAlternate( inst );
+
+		//If disabled option is true, disable the datepicker before showing it (see ticket #5665)
+		if ( inst.settings.disabled ) {
+			this._disableDatepicker( target );
+		}
+
+		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
+		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
+		inst.dpDiv.css( "display", "block" );
+	},
+
+	/* Pop-up the date picker in a "dialog" box.
+	 * @param  input element - ignored
+	 * @param  date	string or Date - the initial date to display
+	 * @param  onSelect  function - the function to call when a date is selected
+	 * @param  settings  object - update the dialog date picker instance's settings (anonymous object)
+	 * @param  pos int[2] - coordinates for the dialog's position within the screen or
+	 *					event - with x/y coordinates or
+	 *					leave empty for default (screen centre)
+	 * @return the manager object
+	 */
+	_dialogDatepicker: function( input, date, onSelect, settings, pos ) {
+		var id, browserWidth, browserHeight, scrollX, scrollY,
+			inst = this._dialogInst; // internal instance
+
+		if ( !inst ) {
+			this.uuid += 1;
+			id = "dp" + this.uuid;
+			this._dialogInput = $( "<input type='text' id='" + id +
+				"' style='position: absolute; top: -100px; width: 0px;'/>" );
+			this._dialogInput.on( "keydown", this._doKeyDown );
+			$( "body" ).append( this._dialogInput );
+			inst = this._dialogInst = this._newInst( this._dialogInput, false );
+			inst.settings = {};
+			$.data( this._dialogInput[ 0 ], "datepicker", inst );
+		}
+		datepicker_extendRemove( inst.settings, settings || {} );
+		date = ( date && date.constructor === Date ? this._formatDate( inst, date ) : date );
+		this._dialogInput.val( date );
+
+		this._pos = ( pos ? ( pos.length ? pos : [ pos.pageX, pos.pageY ] ) : null );
+		if ( !this._pos ) {
+			browserWidth = document.documentElement.clientWidth;
+			browserHeight = document.documentElement.clientHeight;
+			scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+			scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+			this._pos = // should use actual width/height below
+				[ ( browserWidth / 2 ) - 100 + scrollX, ( browserHeight / 2 ) - 150 + scrollY ];
+		}
+
+		// Move input on screen for focus, but hidden behind dialog
+		this._dialogInput.css( "left", ( this._pos[ 0 ] + 20 ) + "px" ).css( "top", this._pos[ 1 ] + "px" );
+		inst.settings.onSelect = onSelect;
+		this._inDialog = true;
+		this.dpDiv.addClass( this._dialogClass );
+		this._showDatepicker( this._dialogInput[ 0 ] );
+		if ( $.blockUI ) {
+			$.blockUI( this.dpDiv );
+		}
+		$.data( this._dialogInput[ 0 ], "datepicker", inst );
+		return this;
+	},
+
+	/* Detach a datepicker from its control.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_destroyDatepicker: function( target ) {
+		var nodeName,
+			$target = $( target ),
+			inst = $.data( target, "datepicker" );
+
+		if ( !$target.hasClass( this.markerClassName ) ) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		$.removeData( target, "datepicker" );
+		if ( nodeName === "input" ) {
+			inst.append.remove();
+			inst.trigger.remove();
+			$target.removeClass( this.markerClassName ).
+				off( "focus", this._showDatepicker ).
+				off( "keydown", this._doKeyDown ).
+				off( "keypress", this._doKeyPress ).
+				off( "keyup", this._doKeyUp );
+		} else if ( nodeName === "div" || nodeName === "span" ) {
+			$target.removeClass( this.markerClassName ).empty();
+		}
+
+		if ( datepicker_instActive === inst ) {
+			datepicker_instActive = null;
+		}
+	},
+
+	/* Enable the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_enableDatepicker: function( target ) {
+		var nodeName, inline,
+			$target = $( target ),
+			inst = $.data( target, "datepicker" );
+
+		if ( !$target.hasClass( this.markerClassName ) ) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		if ( nodeName === "input" ) {
+			target.disabled = false;
+			inst.trigger.filter( "button" ).
+				each( function() { this.disabled = false; } ).end().
+				filter( "img" ).css( { opacity: "1.0", cursor: "" } );
+		} else if ( nodeName === "div" || nodeName === "span" ) {
+			inline = $target.children( "." + this._inlineClass );
+			inline.children().removeClass( "ui-state-disabled" );
+			inline.find( "select.ui-datepicker-month, select.ui-datepicker-year" ).
+				prop( "disabled", false );
+		}
+		this._disabledInputs = $.map( this._disabledInputs,
+			function( value ) { return ( value === target ? null : value ); } ); // delete entry
+	},
+
+	/* Disable the date picker to a jQuery selection.
+	 * @param  target	element - the target input field or division or span
+	 */
+	_disableDatepicker: function( target ) {
+		var nodeName, inline,
+			$target = $( target ),
+			inst = $.data( target, "datepicker" );
+
+		if ( !$target.hasClass( this.markerClassName ) ) {
+			return;
+		}
+
+		nodeName = target.nodeName.toLowerCase();
+		if ( nodeName === "input" ) {
+			target.disabled = true;
+			inst.trigger.filter( "button" ).
+				each( function() { this.disabled = true; } ).end().
+				filter( "img" ).css( { opacity: "0.5", cursor: "default" } );
+		} else if ( nodeName === "div" || nodeName === "span" ) {
+			inline = $target.children( "." + this._inlineClass );
+			inline.children().addClass( "ui-state-disabled" );
+			inline.find( "select.ui-datepicker-month, select.ui-datepicker-year" ).
+				prop( "disabled", true );
+		}
+		this._disabledInputs = $.map( this._disabledInputs,
+			function( value ) { return ( value === target ? null : value ); } ); // delete entry
+		this._disabledInputs[ this._disabledInputs.length ] = target;
+	},
+
+	/* Is the first field in a jQuery collection disabled as a datepicker?
+	 * @param  target	element - the target input field or division or span
+	 * @return boolean - true if disabled, false if enabled
+	 */
+	_isDisabledDatepicker: function( target ) {
+		if ( !target ) {
+			return false;
+		}
+		for ( var i = 0; i < this._disabledInputs.length; i++ ) {
+			if ( this._disabledInputs[ i ] === target ) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	/* Retrieve the instance data for the target control.
+	 * @param  target  element - the target input field or division or span
+	 * @return  object - the associated instance data
+	 * @throws  error if a jQuery problem getting data
+	 */
+	_getInst: function( target ) {
+		try {
+			return $.data( target, "datepicker" );
+		}
+		catch ( err ) {
+			throw "Missing instance data for this datepicker";
+		}
+	},
+
+	/* Update or retrieve the settings for a date picker attached to an input field or division.
+	 * @param  target  element - the target input field or division or span
+	 * @param  name	object - the new settings to update or
+	 *				string - the name of the setting to change or retrieve,
+	 *				when retrieving also "all" for all instance settings or
+	 *				"defaults" for all global defaults
+	 * @param  value   any - the new value for the setting
+	 *				(omit if above is an object or to retrieve a value)
+	 */
+	_optionDatepicker: function( target, name, value ) {
+		var settings, date, minDate, maxDate,
+			inst = this._getInst( target );
+
+		if ( arguments.length === 2 && typeof name === "string" ) {
+			return ( name === "defaults" ? $.extend( {}, $.datepicker._defaults ) :
+				( inst ? ( name === "all" ? $.extend( {}, inst.settings ) :
+				this._get( inst, name ) ) : null ) );
+		}
+
+		settings = name || {};
+		if ( typeof name === "string" ) {
+			settings = {};
+			settings[ name ] = value;
+		}
+
+		if ( inst ) {
+			if ( this._curInst === inst ) {
+				this._hideDatepicker();
+			}
+
+			date = this._getDateDatepicker( target, true );
+			minDate = this._getMinMaxDate( inst, "min" );
+			maxDate = this._getMinMaxDate( inst, "max" );
+			datepicker_extendRemove( inst.settings, settings );
+
+			// reformat the old minDate/maxDate values if dateFormat changes and a new minDate/maxDate isn't provided
+			if ( minDate !== null && settings.dateFormat !== undefined && settings.minDate === undefined ) {
+				inst.settings.minDate = this._formatDate( inst, minDate );
+			}
+			if ( maxDate !== null && settings.dateFormat !== undefined && settings.maxDate === undefined ) {
+				inst.settings.maxDate = this._formatDate( inst, maxDate );
+			}
+			if ( "disabled" in settings ) {
+				if ( settings.disabled ) {
+					this._disableDatepicker( target );
+				} else {
+					this._enableDatepicker( target );
+				}
+			}
+			this._attachments( $( target ), inst );
+			this._autoSize( inst );
+			this._setDate( inst, date );
+			this._updateAlternate( inst );
+			this._updateDatepicker( inst );
+		}
+	},
+
+	// Change method deprecated
+	_changeDatepicker: function( target, name, value ) {
+		this._optionDatepicker( target, name, value );
+	},
+
+	/* Redraw the date picker attached to an input field or division.
+	 * @param  target  element - the target input field or division or span
+	 */
+	_refreshDatepicker: function( target ) {
+		var inst = this._getInst( target );
+		if ( inst ) {
+			this._updateDatepicker( inst );
+		}
+	},
+
+	/* Set the dates for a jQuery selection.
+	 * @param  target element - the target input field or division or span
+	 * @param  date	Date - the new date
+	 */
+	_setDateDatepicker: function( target, date ) {
+		var inst = this._getInst( target );
+		if ( inst ) {
+			this._setDate( inst, date );
+			this._updateDatepicker( inst );
+			this._updateAlternate( inst );
+		}
+	},
+
+	/* Get the date(s) for the first entry in a jQuery selection.
+	 * @param  target element - the target input field or division or span
+	 * @param  noDefault boolean - true if no default date is to be used
+	 * @return Date - the current date
+	 */
+	_getDateDatepicker: function( target, noDefault ) {
+		var inst = this._getInst( target );
+		if ( inst && !inst.inline ) {
+			this._setDateFromField( inst, noDefault );
+		}
+		return ( inst ? this._getDate( inst ) : null );
+	},
+
+	/* Handle keystrokes. */
+	_doKeyDown: function( event ) {
+		var onSelect, dateStr, sel,
+			inst = $.datepicker._getInst( event.target ),
+			handled = true,
+			isRTL = inst.dpDiv.is( ".ui-datepicker-rtl" );
+
+		inst._keyEvent = true;
+		if ( $.datepicker._datepickerShowing ) {
+			switch ( event.keyCode ) {
+				case 9: $.datepicker._hideDatepicker();
+						handled = false;
+						break; // hide on tab out
+				case 13: sel = $( "td." + $.datepicker._dayOverClass + ":not(." +
+									$.datepicker._currentClass + ")", inst.dpDiv );
+						if ( sel[ 0 ] ) {
+							$.datepicker._selectDay( event.target, inst.selectedMonth, inst.selectedYear, sel[ 0 ] );
+						}
+
+						onSelect = $.datepicker._get( inst, "onSelect" );
+						if ( onSelect ) {
+							dateStr = $.datepicker._formatDate( inst );
+
+							// Trigger custom callback
+							onSelect.apply( ( inst.input ? inst.input[ 0 ] : null ), [ dateStr, inst ] );
+						} else {
+							$.datepicker._hideDatepicker();
+						}
+
+						return false; // don't submit the form
+				case 27: $.datepicker._hideDatepicker();
+						break; // hide on escape
+				case 33: $.datepicker._adjustDate( event.target, ( event.ctrlKey ?
+							-$.datepicker._get( inst, "stepBigMonths" ) :
+							-$.datepicker._get( inst, "stepMonths" ) ), "M" );
+						break; // previous month/year on page up/+ ctrl
+				case 34: $.datepicker._adjustDate( event.target, ( event.ctrlKey ?
+							+$.datepicker._get( inst, "stepBigMonths" ) :
+							+$.datepicker._get( inst, "stepMonths" ) ), "M" );
+						break; // next month/year on page down/+ ctrl
+				case 35: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._clearDate( event.target );
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // clear on ctrl or command +end
+				case 36: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._gotoToday( event.target );
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // current on ctrl or command +home
+				case 37: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._adjustDate( event.target, ( isRTL ? +1 : -1 ), "D" );
+						}
+						handled = event.ctrlKey || event.metaKey;
+
+						// -1 day on ctrl or command +left
+						if ( event.originalEvent.altKey ) {
+							$.datepicker._adjustDate( event.target, ( event.ctrlKey ?
+								-$.datepicker._get( inst, "stepBigMonths" ) :
+								-$.datepicker._get( inst, "stepMonths" ) ), "M" );
+						}
+
+						// next month/year on alt +left on Mac
+						break;
+				case 38: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._adjustDate( event.target, -7, "D" );
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // -1 week on ctrl or command +up
+				case 39: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._adjustDate( event.target, ( isRTL ? -1 : +1 ), "D" );
+						}
+						handled = event.ctrlKey || event.metaKey;
+
+						// +1 day on ctrl or command +right
+						if ( event.originalEvent.altKey ) {
+							$.datepicker._adjustDate( event.target, ( event.ctrlKey ?
+								+$.datepicker._get( inst, "stepBigMonths" ) :
+								+$.datepicker._get( inst, "stepMonths" ) ), "M" );
+						}
+
+						// next month/year on alt +right
+						break;
+				case 40: if ( event.ctrlKey || event.metaKey ) {
+							$.datepicker._adjustDate( event.target, +7, "D" );
+						}
+						handled = event.ctrlKey || event.metaKey;
+						break; // +1 week on ctrl or command +down
+				default: handled = false;
+			}
+		} else if ( event.keyCode === 36 && event.ctrlKey ) { // display the date picker on ctrl+home
+			$.datepicker._showDatepicker( this );
+		} else {
+			handled = false;
+		}
+
+		if ( handled ) {
+			event.preventDefault();
+			event.stopPropagation();
+		}
+	},
+
+	/* Filter entered characters - based on date format. */
+	_doKeyPress: function( event ) {
+		var chars, chr,
+			inst = $.datepicker._getInst( event.target );
+
+		if ( $.datepicker._get( inst, "constrainInput" ) ) {
+			chars = $.datepicker._possibleChars( $.datepicker._get( inst, "dateFormat" ) );
+			chr = String.fromCharCode( event.charCode == null ? event.keyCode : event.charCode );
+			return event.ctrlKey || event.metaKey || ( chr < " " || !chars || chars.indexOf( chr ) > -1 );
+		}
+	},
+
+	/* Synchronise manual entry and field/alternate field. */
+	_doKeyUp: function( event ) {
+		var date,
+			inst = $.datepicker._getInst( event.target );
+
+		if ( inst.input.val() !== inst.lastVal ) {
+			try {
+				date = $.datepicker.parseDate( $.datepicker._get( inst, "dateFormat" ),
+					( inst.input ? inst.input.val() : null ),
+					$.datepicker._getFormatConfig( inst ) );
+
+				if ( date ) { // only if valid
+					$.datepicker._setDateFromField( inst );
+					$.datepicker._updateAlternate( inst );
+					$.datepicker._updateDatepicker( inst );
+				}
+			}
+			catch ( err ) {
+			}
+		}
+		return true;
+	},
+
+	/* Pop-up the date picker for a given input field.
+	 * If false returned from beforeShow event handler do not show.
+	 * @param  input  element - the input field attached to the date picker or
+	 *					event - if triggered by focus
+	 */
+	_showDatepicker: function( input ) {
+		input = input.target || input;
+		if ( input.nodeName.toLowerCase() !== "input" ) { // find from button/image trigger
+			input = $( "input", input.parentNode )[ 0 ];
+		}
+
+		if ( $.datepicker._isDisabledDatepicker( input ) || $.datepicker._lastInput === input ) { // already here
+			return;
+		}
+
+		var inst, beforeShow, beforeShowSettings, isFixed,
+			offset, showAnim, duration;
+
+		inst = $.datepicker._getInst( input );
+		if ( $.datepicker._curInst && $.datepicker._curInst !== inst ) {
+			$.datepicker._curInst.dpDiv.stop( true, true );
+			if ( inst && $.datepicker._datepickerShowing ) {
+				$.datepicker._hideDatepicker( $.datepicker._curInst.input[ 0 ] );
+			}
+		}
+
+		beforeShow = $.datepicker._get( inst, "beforeShow" );
+		beforeShowSettings = beforeShow ? beforeShow.apply( input, [ input, inst ] ) : {};
+		if ( beforeShowSettings === false ) {
+			return;
+		}
+		datepicker_extendRemove( inst.settings, beforeShowSettings );
+
+		inst.lastVal = null;
+		$.datepicker._lastInput = input;
+		$.datepicker._setDateFromField( inst );
+
+		if ( $.datepicker._inDialog ) { // hide cursor
+			input.value = "";
+		}
+		if ( !$.datepicker._pos ) { // position below input
+			$.datepicker._pos = $.datepicker._findPos( input );
+			$.datepicker._pos[ 1 ] += input.offsetHeight; // add the height
+		}
+
+		isFixed = false;
+		$( input ).parents().each( function() {
+			isFixed |= $( this ).css( "position" ) === "fixed";
+			return !isFixed;
+		} );
+
+		offset = { left: $.datepicker._pos[ 0 ], top: $.datepicker._pos[ 1 ] };
+		$.datepicker._pos = null;
+
+		//to avoid flashes on Firefox
+		inst.dpDiv.empty();
+
+		// determine sizing offscreen
+		inst.dpDiv.css( { position: "absolute", display: "block", top: "-1000px" } );
+		$.datepicker._updateDatepicker( inst );
+
+		// fix width for dynamic number of date pickers
+		// and adjust position before showing
+		offset = $.datepicker._checkOffset( inst, offset, isFixed );
+		inst.dpDiv.css( { position: ( $.datepicker._inDialog && $.blockUI ?
+			"static" : ( isFixed ? "fixed" : "absolute" ) ), display: "none",
+			left: offset.left + "px", top: offset.top + "px" } );
+
+		if ( !inst.inline ) {
+			showAnim = $.datepicker._get( inst, "showAnim" );
+			duration = $.datepicker._get( inst, "duration" );
+			inst.dpDiv.css( "z-index", datepicker_getZindex( $( input ) ) + 1 );
+			$.datepicker._datepickerShowing = true;
+
+			if ( $.effects && $.effects.effect[ showAnim ] ) {
+				inst.dpDiv.show( showAnim, $.datepicker._get( inst, "showOptions" ), duration );
+			} else {
+				inst.dpDiv[ showAnim || "show" ]( showAnim ? duration : null );
+			}
+
+			if ( $.datepicker._shouldFocusInput( inst ) ) {
+				inst.input.trigger( "focus" );
+			}
+
+			$.datepicker._curInst = inst;
+		}
+	},
+
+	/* Generate the date picker content. */
+	_updateDatepicker: function( inst ) {
+		this.maxRows = 4; //Reset the max number of rows being displayed (see #7043)
+		datepicker_instActive = inst; // for delegate hover events
+		inst.dpDiv.empty().append( this._generateHTML( inst ) );
+		this._attachHandlers( inst );
+
+		var origyearshtml,
+			numMonths = this._getNumberOfMonths( inst ),
+			cols = numMonths[ 1 ],
+			width = 17,
+			activeCell = inst.dpDiv.find( "." + this._dayOverClass + " a" );
+
+		if ( activeCell.length > 0 ) {
+			datepicker_handleMouseover.apply( activeCell.get( 0 ) );
+		}
+
+		inst.dpDiv.removeClass( "ui-datepicker-multi-2 ui-datepicker-multi-3 ui-datepicker-multi-4" ).width( "" );
+		if ( cols > 1 ) {
+			inst.dpDiv.addClass( "ui-datepicker-multi-" + cols ).css( "width", ( width * cols ) + "em" );
+		}
+		inst.dpDiv[ ( numMonths[ 0 ] !== 1 || numMonths[ 1 ] !== 1 ? "add" : "remove" ) +
+			"Class" ]( "ui-datepicker-multi" );
+		inst.dpDiv[ ( this._get( inst, "isRTL" ) ? "add" : "remove" ) +
+			"Class" ]( "ui-datepicker-rtl" );
+
+		if ( inst === $.datepicker._curInst && $.datepicker._datepickerShowing && $.datepicker._shouldFocusInput( inst ) ) {
+			inst.input.trigger( "focus" );
+		}
+
+		// Deffered render of the years select (to avoid flashes on Firefox)
+		if ( inst.yearshtml ) {
+			origyearshtml = inst.yearshtml;
+			setTimeout( function() {
+
+				//assure that inst.yearshtml didn't change.
+				if ( origyearshtml === inst.yearshtml && inst.yearshtml ) {
+					inst.dpDiv.find( "select.ui-datepicker-year:first" ).replaceWith( inst.yearshtml );
+				}
+				origyearshtml = inst.yearshtml = null;
+			}, 0 );
+		}
+	},
+
+	// #6694 - don't focus the input if it's already focused
+	// this breaks the change event in IE
+	// Support: IE and jQuery <1.9
+	_shouldFocusInput: function( inst ) {
+		return inst.input && inst.input.is( ":visible" ) && !inst.input.is( ":disabled" ) && !inst.input.is( ":focus" );
+	},
+
+	/* Check positioning to remain on screen. */
+	_checkOffset: function( inst, offset, isFixed ) {
+		var dpWidth = inst.dpDiv.outerWidth(),
+			dpHeight = inst.dpDiv.outerHeight(),
+			inputWidth = inst.input ? inst.input.outerWidth() : 0,
+			inputHeight = inst.input ? inst.input.outerHeight() : 0,
+			viewWidth = document.documentElement.clientWidth + ( isFixed ? 0 : $( document ).scrollLeft() ),
+			viewHeight = document.documentElement.clientHeight + ( isFixed ? 0 : $( document ).scrollTop() );
+
+		offset.left -= ( this._get( inst, "isRTL" ) ? ( dpWidth - inputWidth ) : 0 );
+		offset.left -= ( isFixed && offset.left === inst.input.offset().left ) ? $( document ).scrollLeft() : 0;
+		offset.top -= ( isFixed && offset.top === ( inst.input.offset().top + inputHeight ) ) ? $( document ).scrollTop() : 0;
+
+		// Now check if datepicker is showing outside window viewport - move to a better place if so.
+		offset.left -= Math.min( offset.left, ( offset.left + dpWidth > viewWidth && viewWidth > dpWidth ) ?
+			Math.abs( offset.left + dpWidth - viewWidth ) : 0 );
+		offset.top -= Math.min( offset.top, ( offset.top + dpHeight > viewHeight && viewHeight > dpHeight ) ?
+			Math.abs( dpHeight + inputHeight ) : 0 );
+
+		return offset;
+	},
+
+	/* Find an object's position on the screen. */
+	_findPos: function( obj ) {
+		var position,
+			inst = this._getInst( obj ),
+			isRTL = this._get( inst, "isRTL" );
+
+		while ( obj && ( obj.type === "hidden" || obj.nodeType !== 1 || $.expr.filters.hidden( obj ) ) ) {
+			obj = obj[ isRTL ? "previousSibling" : "nextSibling" ];
+		}
+
+		position = $( obj ).offset();
+		return [ position.left, position.top ];
+	},
+
+	/* Hide the date picker from view.
+	 * @param  input  element - the input field attached to the date picker
+	 */
+	_hideDatepicker: function( input ) {
+		var showAnim, duration, postProcess, onClose,
+			inst = this._curInst;
+
+		if ( !inst || ( input && inst !== $.data( input, "datepicker" ) ) ) {
+			return;
+		}
+
+		if ( this._datepickerShowing ) {
+			showAnim = this._get( inst, "showAnim" );
+			duration = this._get( inst, "duration" );
+			postProcess = function() {
+				$.datepicker._tidyDialog( inst );
+			};
+
+			// DEPRECATED: after BC for 1.8.x $.effects[ showAnim ] is not needed
+			if ( $.effects && ( $.effects.effect[ showAnim ] || $.effects[ showAnim ] ) ) {
+				inst.dpDiv.hide( showAnim, $.datepicker._get( inst, "showOptions" ), duration, postProcess );
+			} else {
+				inst.dpDiv[ ( showAnim === "slideDown" ? "slideUp" :
+					( showAnim === "fadeIn" ? "fadeOut" : "hide" ) ) ]( ( showAnim ? duration : null ), postProcess );
+			}
+
+			if ( !showAnim ) {
+				postProcess();
+			}
+			this._datepickerShowing = false;
+
+			onClose = this._get( inst, "onClose" );
+			if ( onClose ) {
+				onClose.apply( ( inst.input ? inst.input[ 0 ] : null ), [ ( inst.input ? inst.input.val() : "" ), inst ] );
+			}
+
+			this._lastInput = null;
+			if ( this._inDialog ) {
+				this._dialogInput.css( { position: "absolute", left: "0", top: "-100px" } );
+				if ( $.blockUI ) {
+					$.unblockUI();
+					$( "body" ).append( this.dpDiv );
+				}
+			}
+			this._inDialog = false;
+		}
+	},
+
+	/* Tidy up after a dialog display. */
+	_tidyDialog: function( inst ) {
+		inst.dpDiv.removeClass( this._dialogClass ).off( ".ui-datepicker-calendar" );
+	},
+
+	/* Close date picker if clicked elsewhere. */
+	_checkExternalClick: function( event ) {
+		if ( !$.datepicker._curInst ) {
+			return;
+		}
+
+		var $target = $( event.target ),
+			inst = $.datepicker._getInst( $target[ 0 ] );
+
+		if ( ( ( $target[ 0 ].id !== $.datepicker._mainDivId &&
+				$target.parents( "#" + $.datepicker._mainDivId ).length === 0 &&
+				!$target.hasClass( $.datepicker.markerClassName ) &&
+				!$target.closest( "." + $.datepicker._triggerClass ).length &&
+				$.datepicker._datepickerShowing && !( $.datepicker._inDialog && $.blockUI ) ) ) ||
+			( $target.hasClass( $.datepicker.markerClassName ) && $.datepicker._curInst !== inst ) ) {
+				$.datepicker._hideDatepicker();
+		}
+	},
+
+	/* Adjust one of the date sub-fields. */
+	_adjustDate: function( id, offset, period ) {
+		var target = $( id ),
+			inst = this._getInst( target[ 0 ] );
+
+		if ( this._isDisabledDatepicker( target[ 0 ] ) ) {
+			return;
+		}
+		this._adjustInstDate( inst, offset +
+			( period === "M" ? this._get( inst, "showCurrentAtPos" ) : 0 ), // undo positioning
+			period );
+		this._updateDatepicker( inst );
+	},
+
+	/* Action for current link. */
+	_gotoToday: function( id ) {
+		var date,
+			target = $( id ),
+			inst = this._getInst( target[ 0 ] );
+
+		if ( this._get( inst, "gotoCurrent" ) && inst.currentDay ) {
+			inst.selectedDay = inst.currentDay;
+			inst.drawMonth = inst.selectedMonth = inst.currentMonth;
+			inst.drawYear = inst.selectedYear = inst.currentYear;
+		} else {
+			date = new Date();
+			inst.selectedDay = date.getDate();
+			inst.drawMonth = inst.selectedMonth = date.getMonth();
+			inst.drawYear = inst.selectedYear = date.getFullYear();
+		}
+		this._notifyChange( inst );
+		this._adjustDate( target );
+	},
+
+	/* Action for selecting a new month/year. */
+	_selectMonthYear: function( id, select, period ) {
+		var target = $( id ),
+			inst = this._getInst( target[ 0 ] );
+
+		inst[ "selected" + ( period === "M" ? "Month" : "Year" ) ] =
+		inst[ "draw" + ( period === "M" ? "Month" : "Year" ) ] =
+			parseInt( select.options[ select.selectedIndex ].value, 10 );
+
+		this._notifyChange( inst );
+		this._adjustDate( target );
+	},
+
+	/* Action for selecting a day. */
+	_selectDay: function( id, month, year, td ) {
+		var inst,
+			target = $( id );
+
+		if ( $( td ).hasClass( this._unselectableClass ) || this._isDisabledDatepicker( target[ 0 ] ) ) {
+			return;
+		}
+
+		inst = this._getInst( target[ 0 ] );
+		inst.selectedDay = inst.currentDay = $( "a", td ).html();
+		inst.selectedMonth = inst.currentMonth = month;
+		inst.selectedYear = inst.currentYear = year;
+		this._selectDate( id, this._formatDate( inst,
+			inst.currentDay, inst.currentMonth, inst.currentYear ) );
+	},
+
+	/* Erase the input field and hide the date picker. */
+	_clearDate: function( id ) {
+		var target = $( id );
+		this._selectDate( target, "" );
+	},
+
+	/* Update the input field with the selected date. */
+	_selectDate: function( id, dateStr ) {
+		var onSelect,
+			target = $( id ),
+			inst = this._getInst( target[ 0 ] );
+
+		dateStr = ( dateStr != null ? dateStr : this._formatDate( inst ) );
+		if ( inst.input ) {
+			inst.input.val( dateStr );
+		}
+		this._updateAlternate( inst );
+
+		onSelect = this._get( inst, "onSelect" );
+		if ( onSelect ) {
+			onSelect.apply( ( inst.input ? inst.input[ 0 ] : null ), [ dateStr, inst ] );  // trigger custom callback
+		} else if ( inst.input ) {
+			inst.input.trigger( "change" ); // fire the change event
+		}
+
+		if ( inst.inline ) {
+			this._updateDatepicker( inst );
+		} else {
+			this._hideDatepicker();
+			this._lastInput = inst.input[ 0 ];
+			if ( typeof( inst.input[ 0 ] ) !== "object" ) {
+				inst.input.trigger( "focus" ); // restore focus
+			}
+			this._lastInput = null;
+		}
+	},
+
+	/* Update any alternate field to synchronise with the main field. */
+	_updateAlternate: function( inst ) {
+		var altFormat, date, dateStr,
+			altField = this._get( inst, "altField" );
+
+		if ( altField ) { // update alternate field too
+			altFormat = this._get( inst, "altFormat" ) || this._get( inst, "dateFormat" );
+			date = this._getDate( inst );
+			dateStr = this.formatDate( altFormat, date, this._getFormatConfig( inst ) );
+			$( altField ).val( dateStr );
+		}
+	},
+
+	/* Set as beforeShowDay function to prevent selection of weekends.
+	 * @param  date  Date - the date to customise
+	 * @return [boolean, string] - is this date selectable?, what is its CSS class?
+	 */
+	noWeekends: function( date ) {
+		var day = date.getDay();
+		return [ ( day > 0 && day < 6 ), "" ];
+	},
+
+	/* Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
+	 * @param  date  Date - the date to get the week for
+	 * @return  number - the number of the week within the year that contains this date
+	 */
+	iso8601Week: function( date ) {
+		var time,
+			checkDate = new Date( date.getTime() );
+
+		// Find Thursday of this week starting on Monday
+		checkDate.setDate( checkDate.getDate() + 4 - ( checkDate.getDay() || 7 ) );
+
+		time = checkDate.getTime();
+		checkDate.setMonth( 0 ); // Compare with Jan 1
+		checkDate.setDate( 1 );
+		return Math.floor( Math.round( ( time - checkDate ) / 86400000 ) / 7 ) + 1;
+	},
+
+	/* Parse a string value into a date object.
+	 * See formatDate below for the possible formats.
+	 *
+	 * @param  format string - the expected format of the date
+	 * @param  value string - the date in the above format
+	 * @param  settings Object - attributes include:
+	 *					shortYearCutoff  number - the cutoff year for determining the century (optional)
+	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
+	 *					dayNames		string[7] - names of the days from Sunday (optional)
+	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
+	 *					monthNames		string[12] - names of the months (optional)
+	 * @return  Date - the extracted date value or null if value is blank
+	 */
+	parseDate: function( format, value, settings ) {
+		if ( format == null || value == null ) {
+			throw "Invalid arguments";
+		}
+
+		value = ( typeof value === "object" ? value.toString() : value + "" );
+		if ( value === "" ) {
+			return null;
+		}
+
+		var iFormat, dim, extra,
+			iValue = 0,
+			shortYearCutoffTemp = ( settings ? settings.shortYearCutoff : null ) || this._defaults.shortYearCutoff,
+			shortYearCutoff = ( typeof shortYearCutoffTemp !== "string" ? shortYearCutoffTemp :
+				new Date().getFullYear() % 100 + parseInt( shortYearCutoffTemp, 10 ) ),
+			dayNamesShort = ( settings ? settings.dayNamesShort : null ) || this._defaults.dayNamesShort,
+			dayNames = ( settings ? settings.dayNames : null ) || this._defaults.dayNames,
+			monthNamesShort = ( settings ? settings.monthNamesShort : null ) || this._defaults.monthNamesShort,
+			monthNames = ( settings ? settings.monthNames : null ) || this._defaults.monthNames,
+			year = -1,
+			month = -1,
+			day = -1,
+			doy = -1,
+			literal = false,
+			date,
+
+			// Check whether a format character is doubled
+			lookAhead = function( match ) {
+				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
+				if ( matches ) {
+					iFormat++;
+				}
+				return matches;
+			},
+
+			// Extract a number from the string value
+			getNumber = function( match ) {
+				var isDoubled = lookAhead( match ),
+					size = ( match === "@" ? 14 : ( match === "!" ? 20 :
+					( match === "y" && isDoubled ? 4 : ( match === "o" ? 3 : 2 ) ) ) ),
+					minSize = ( match === "y" ? size : 1 ),
+					digits = new RegExp( "^\\d{" + minSize + "," + size + "}" ),
+					num = value.substring( iValue ).match( digits );
+				if ( !num ) {
+					throw "Missing number at position " + iValue;
+				}
+				iValue += num[ 0 ].length;
+				return parseInt( num[ 0 ], 10 );
+			},
+
+			// Extract a name from the string value and convert to an index
+			getName = function( match, shortNames, longNames ) {
+				var index = -1,
+					names = $.map( lookAhead( match ) ? longNames : shortNames, function( v, k ) {
+						return [ [ k, v ] ];
+					} ).sort( function( a, b ) {
+						return -( a[ 1 ].length - b[ 1 ].length );
+					} );
+
+				$.each( names, function( i, pair ) {
+					var name = pair[ 1 ];
+					if ( value.substr( iValue, name.length ).toLowerCase() === name.toLowerCase() ) {
+						index = pair[ 0 ];
+						iValue += name.length;
+						return false;
+					}
+				} );
+				if ( index !== -1 ) {
+					return index + 1;
+				} else {
+					throw "Unknown name at position " + iValue;
+				}
+			},
+
+			// Confirm that a literal character matches the string value
+			checkLiteral = function() {
+				if ( value.charAt( iValue ) !== format.charAt( iFormat ) ) {
+					throw "Unexpected literal at position " + iValue;
+				}
+				iValue++;
+			};
+
+		for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
+			if ( literal ) {
+				if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
+					literal = false;
+				} else {
+					checkLiteral();
+				}
+			} else {
+				switch ( format.charAt( iFormat ) ) {
+					case "d":
+						day = getNumber( "d" );
+						break;
+					case "D":
+						getName( "D", dayNamesShort, dayNames );
+						break;
+					case "o":
+						doy = getNumber( "o" );
+						break;
+					case "m":
+						month = getNumber( "m" );
+						break;
+					case "M":
+						month = getName( "M", monthNamesShort, monthNames );
+						break;
+					case "y":
+						year = getNumber( "y" );
+						break;
+					case "@":
+						date = new Date( getNumber( "@" ) );
+						year = date.getFullYear();
+						month = date.getMonth() + 1;
+						day = date.getDate();
+						break;
+					case "!":
+						date = new Date( ( getNumber( "!" ) - this._ticksTo1970 ) / 10000 );
+						year = date.getFullYear();
+						month = date.getMonth() + 1;
+						day = date.getDate();
+						break;
+					case "'":
+						if ( lookAhead( "'" ) ) {
+							checkLiteral();
+						} else {
+							literal = true;
+						}
+						break;
+					default:
+						checkLiteral();
+				}
+			}
+		}
+
+		if ( iValue < value.length ) {
+			extra = value.substr( iValue );
+			if ( !/^\s+/.test( extra ) ) {
+				throw "Extra/unparsed characters found in date: " + extra;
+			}
+		}
+
+		if ( year === -1 ) {
+			year = new Date().getFullYear();
+		} else if ( year < 100 ) {
+			year += new Date().getFullYear() - new Date().getFullYear() % 100 +
+				( year <= shortYearCutoff ? 0 : -100 );
+		}
+
+		if ( doy > -1 ) {
+			month = 1;
+			day = doy;
+			do {
+				dim = this._getDaysInMonth( year, month - 1 );
+				if ( day <= dim ) {
+					break;
+				}
+				month++;
+				day -= dim;
+			} while ( true );
+		}
+
+		date = this._daylightSavingAdjust( new Date( year, month - 1, day ) );
+		if ( date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day ) {
+			throw "Invalid date"; // E.g. 31/02/00
+		}
+		return date;
+	},
+
+	/* Standard date formats. */
+	ATOM: "yy-mm-dd", // RFC 3339 (ISO 8601)
+	COOKIE: "D, dd M yy",
+	ISO_8601: "yy-mm-dd",
+	RFC_822: "D, d M y",
+	RFC_850: "DD, dd-M-y",
+	RFC_1036: "D, d M y",
+	RFC_1123: "D, d M yy",
+	RFC_2822: "D, d M yy",
+	RSS: "D, d M y", // RFC 822
+	TICKS: "!",
+	TIMESTAMP: "@",
+	W3C: "yy-mm-dd", // ISO 8601
+
+	_ticksTo1970: ( ( ( 1970 - 1 ) * 365 + Math.floor( 1970 / 4 ) - Math.floor( 1970 / 100 ) +
+		Math.floor( 1970 / 400 ) ) * 24 * 60 * 60 * 10000000 ),
+
+	/* Format a date object into a string value.
+	 * The format can be combinations of the following:
+	 * d  - day of month (no leading zero)
+	 * dd - day of month (two digit)
+	 * o  - day of year (no leading zeros)
+	 * oo - day of year (three digit)
+	 * D  - day name short
+	 * DD - day name long
+	 * m  - month of year (no leading zero)
+	 * mm - month of year (two digit)
+	 * M  - month name short
+	 * MM - month name long
+	 * y  - year (two digit)
+	 * yy - year (four digit)
+	 * @ - Unix timestamp (ms since 01/01/1970)
+	 * ! - Windows ticks (100ns since 01/01/0001)
+	 * "..." - literal text
+	 * '' - single quote
+	 *
+	 * @param  format string - the desired format of the date
+	 * @param  date Date - the date value to format
+	 * @param  settings Object - attributes include:
+	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
+	 *					dayNames		string[7] - names of the days from Sunday (optional)
+	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
+	 *					monthNames		string[12] - names of the months (optional)
+	 * @return  string - the date in the above format
+	 */
+	formatDate: function( format, date, settings ) {
+		if ( !date ) {
+			return "";
+		}
+
+		var iFormat,
+			dayNamesShort = ( settings ? settings.dayNamesShort : null ) || this._defaults.dayNamesShort,
+			dayNames = ( settings ? settings.dayNames : null ) || this._defaults.dayNames,
+			monthNamesShort = ( settings ? settings.monthNamesShort : null ) || this._defaults.monthNamesShort,
+			monthNames = ( settings ? settings.monthNames : null ) || this._defaults.monthNames,
+
+			// Check whether a format character is doubled
+			lookAhead = function( match ) {
+				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
+				if ( matches ) {
+					iFormat++;
+				}
+				return matches;
+			},
+
+			// Format a number, with leading zero if necessary
+			formatNumber = function( match, value, len ) {
+				var num = "" + value;
+				if ( lookAhead( match ) ) {
+					while ( num.length < len ) {
+						num = "0" + num;
+					}
+				}
+				return num;
+			},
+
+			// Format a name, short or long as requested
+			formatName = function( match, value, shortNames, longNames ) {
+				return ( lookAhead( match ) ? longNames[ value ] : shortNames[ value ] );
+			},
+			output = "",
+			literal = false;
+
+		if ( date ) {
+			for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
+				if ( literal ) {
+					if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
+						literal = false;
+					} else {
+						output += format.charAt( iFormat );
+					}
+				} else {
+					switch ( format.charAt( iFormat ) ) {
+						case "d":
+							output += formatNumber( "d", date.getDate(), 2 );
+							break;
+						case "D":
+							output += formatName( "D", date.getDay(), dayNamesShort, dayNames );
+							break;
+						case "o":
+							output += formatNumber( "o",
+								Math.round( ( new Date( date.getFullYear(), date.getMonth(), date.getDate() ).getTime() - new Date( date.getFullYear(), 0, 0 ).getTime() ) / 86400000 ), 3 );
+							break;
+						case "m":
+							output += formatNumber( "m", date.getMonth() + 1, 2 );
+							break;
+						case "M":
+							output += formatName( "M", date.getMonth(), monthNamesShort, monthNames );
+							break;
+						case "y":
+							output += ( lookAhead( "y" ) ? date.getFullYear() :
+								( date.getFullYear() % 100 < 10 ? "0" : "" ) + date.getFullYear() % 100 );
+							break;
+						case "@":
+							output += date.getTime();
+							break;
+						case "!":
+							output += date.getTime() * 10000 + this._ticksTo1970;
+							break;
+						case "'":
+							if ( lookAhead( "'" ) ) {
+								output += "'";
+							} else {
+								literal = true;
+							}
+							break;
+						default:
+							output += format.charAt( iFormat );
+					}
+				}
+			}
+		}
+		return output;
+	},
+
+	/* Extract all possible characters from the date format. */
+	_possibleChars: function( format ) {
+		var iFormat,
+			chars = "",
+			literal = false,
+
+			// Check whether a format character is doubled
+			lookAhead = function( match ) {
+				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
+				if ( matches ) {
+					iFormat++;
+				}
+				return matches;
+			};
+
+		for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
+			if ( literal ) {
+				if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
+					literal = false;
+				} else {
+					chars += format.charAt( iFormat );
+				}
+			} else {
+				switch ( format.charAt( iFormat ) ) {
+					case "d": case "m": case "y": case "@":
+						chars += "0123456789";
+						break;
+					case "D": case "M":
+						return null; // Accept anything
+					case "'":
+						if ( lookAhead( "'" ) ) {
+							chars += "'";
+						} else {
+							literal = true;
+						}
+						break;
+					default:
+						chars += format.charAt( iFormat );
+				}
+			}
+		}
+		return chars;
+	},
+
+	/* Get a setting value, defaulting if necessary. */
+	_get: function( inst, name ) {
+		return inst.settings[ name ] !== undefined ?
+			inst.settings[ name ] : this._defaults[ name ];
+	},
+
+	/* Parse existing date and initialise date picker. */
+	_setDateFromField: function( inst, noDefault ) {
+		if ( inst.input.val() === inst.lastVal ) {
+			return;
+		}
+
+		var dateFormat = this._get( inst, "dateFormat" ),
+			dates = inst.lastVal = inst.input ? inst.input.val() : null,
+			defaultDate = this._getDefaultDate( inst ),
+			date = defaultDate,
+			settings = this._getFormatConfig( inst );
+
+		try {
+			date = this.parseDate( dateFormat, dates, settings ) || defaultDate;
+		} catch ( event ) {
+			dates = ( noDefault ? "" : dates );
+		}
+		inst.selectedDay = date.getDate();
+		inst.drawMonth = inst.selectedMonth = date.getMonth();
+		inst.drawYear = inst.selectedYear = date.getFullYear();
+		inst.currentDay = ( dates ? date.getDate() : 0 );
+		inst.currentMonth = ( dates ? date.getMonth() : 0 );
+		inst.currentYear = ( dates ? date.getFullYear() : 0 );
+		this._adjustInstDate( inst );
+	},
+
+	/* Retrieve the default date shown on opening. */
+	_getDefaultDate: function( inst ) {
+		return this._restrictMinMax( inst,
+			this._determineDate( inst, this._get( inst, "defaultDate" ), new Date() ) );
+	},
+
+	/* A date may be specified as an exact value or a relative one. */
+	_determineDate: function( inst, date, defaultDate ) {
+		var offsetNumeric = function( offset ) {
+				var date = new Date();
+				date.setDate( date.getDate() + offset );
+				return date;
+			},
+			offsetString = function( offset ) {
+				try {
+					return $.datepicker.parseDate( $.datepicker._get( inst, "dateFormat" ),
+						offset, $.datepicker._getFormatConfig( inst ) );
+				}
+				catch ( e ) {
+
+					// Ignore
+				}
+
+				var date = ( offset.toLowerCase().match( /^c/ ) ?
+					$.datepicker._getDate( inst ) : null ) || new Date(),
+					year = date.getFullYear(),
+					month = date.getMonth(),
+					day = date.getDate(),
+					pattern = /([+\-]?[0-9]+)\s*(d|D|w|W|m|M|y|Y)?/g,
+					matches = pattern.exec( offset );
+
+				while ( matches ) {
+					switch ( matches[ 2 ] || "d" ) {
+						case "d" : case "D" :
+							day += parseInt( matches[ 1 ], 10 ); break;
+						case "w" : case "W" :
+							day += parseInt( matches[ 1 ], 10 ) * 7; break;
+						case "m" : case "M" :
+							month += parseInt( matches[ 1 ], 10 );
+							day = Math.min( day, $.datepicker._getDaysInMonth( year, month ) );
+							break;
+						case "y": case "Y" :
+							year += parseInt( matches[ 1 ], 10 );
+							day = Math.min( day, $.datepicker._getDaysInMonth( year, month ) );
+							break;
+					}
+					matches = pattern.exec( offset );
+				}
+				return new Date( year, month, day );
+			},
+			newDate = ( date == null || date === "" ? defaultDate : ( typeof date === "string" ? offsetString( date ) :
+				( typeof date === "number" ? ( isNaN( date ) ? defaultDate : offsetNumeric( date ) ) : new Date( date.getTime() ) ) ) );
+
+		newDate = ( newDate && newDate.toString() === "Invalid Date" ? defaultDate : newDate );
+		if ( newDate ) {
+			newDate.setHours( 0 );
+			newDate.setMinutes( 0 );
+			newDate.setSeconds( 0 );
+			newDate.setMilliseconds( 0 );
+		}
+		return this._daylightSavingAdjust( newDate );
+	},
+
+	/* Handle switch to/from daylight saving.
+	 * Hours may be non-zero on daylight saving cut-over:
+	 * > 12 when midnight changeover, but then cannot generate
+	 * midnight datetime, so jump to 1AM, otherwise reset.
+	 * @param  date  (Date) the date to check
+	 * @return  (Date) the corrected date
+	 */
+	_daylightSavingAdjust: function( date ) {
+		if ( !date ) {
+			return null;
+		}
+		date.setHours( date.getHours() > 12 ? date.getHours() + 2 : 0 );
+		return date;
+	},
+
+	/* Set the date(s) directly. */
+	_setDate: function( inst, date, noChange ) {
+		var clear = !date,
+			origMonth = inst.selectedMonth,
+			origYear = inst.selectedYear,
+			newDate = this._restrictMinMax( inst, this._determineDate( inst, date, new Date() ) );
+
+		inst.selectedDay = inst.currentDay = newDate.getDate();
+		inst.drawMonth = inst.selectedMonth = inst.currentMonth = newDate.getMonth();
+		inst.drawYear = inst.selectedYear = inst.currentYear = newDate.getFullYear();
+		if ( ( origMonth !== inst.selectedMonth || origYear !== inst.selectedYear ) && !noChange ) {
+			this._notifyChange( inst );
+		}
+		this._adjustInstDate( inst );
+		if ( inst.input ) {
+			inst.input.val( clear ? "" : this._formatDate( inst ) );
+		}
+	},
+
+	/* Retrieve the date(s) directly. */
+	_getDate: function( inst ) {
+		var startDate = ( !inst.currentYear || ( inst.input && inst.input.val() === "" ) ? null :
+			this._daylightSavingAdjust( new Date(
+			inst.currentYear, inst.currentMonth, inst.currentDay ) ) );
+			return startDate;
+	},
+
+	/* Attach the onxxx handlers.  These are declared statically so
+	 * they work with static code transformers like Caja.
+	 */
+	_attachHandlers: function( inst ) {
+		var stepMonths = this._get( inst, "stepMonths" ),
+			id = "#" + inst.id.replace( /\\\\/g, "\\" );
+		inst.dpDiv.find( "[data-handler]" ).map( function() {
+			var handler = {
+				prev: function() {
+					$.datepicker._adjustDate( id, -stepMonths, "M" );
+				},
+				next: function() {
+					$.datepicker._adjustDate( id, +stepMonths, "M" );
+				},
+				hide: function() {
+					$.datepicker._hideDatepicker();
+				},
+				today: function() {
+					$.datepicker._gotoToday( id );
+				},
+				selectDay: function() {
+					$.datepicker._selectDay( id, +this.getAttribute( "data-month" ), +this.getAttribute( "data-year" ), this );
+					return false;
+				},
+				selectMonth: function() {
+					$.datepicker._selectMonthYear( id, this, "M" );
+					return false;
+				},
+				selectYear: function() {
+					$.datepicker._selectMonthYear( id, this, "Y" );
+					return false;
+				}
+			};
+			$( this ).on( this.getAttribute( "data-event" ), handler[ this.getAttribute( "data-handler" ) ] );
+		} );
+	},
+
+	/* Generate the HTML for the current state of the date picker. */
+	_generateHTML: function( inst ) {
+		var maxDraw, prevText, prev, nextText, next, currentText, gotoDate,
+			controls, buttonPanel, firstDay, showWeek, dayNames, dayNamesMin,
+			monthNames, monthNamesShort, beforeShowDay, showOtherMonths,
+			selectOtherMonths, defaultDate, html, dow, row, group, col, selectedDate,
+			cornerClass, calender, thead, day, daysInMonth, leadDays, curRows, numRows,
+			printDate, dRow, tbody, daySettings, otherMonth, unselectable,
+			tempDate = new Date(),
+			today = this._daylightSavingAdjust(
+				new Date( tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate() ) ), // clear time
+			isRTL = this._get( inst, "isRTL" ),
+			showButtonPanel = this._get( inst, "showButtonPanel" ),
+			hideIfNoPrevNext = this._get( inst, "hideIfNoPrevNext" ),
+			navigationAsDateFormat = this._get( inst, "navigationAsDateFormat" ),
+			numMonths = this._getNumberOfMonths( inst ),
+			showCurrentAtPos = this._get( inst, "showCurrentAtPos" ),
+			stepMonths = this._get( inst, "stepMonths" ),
+			isMultiMonth = ( numMonths[ 0 ] !== 1 || numMonths[ 1 ] !== 1 ),
+			currentDate = this._daylightSavingAdjust( ( !inst.currentDay ? new Date( 9999, 9, 9 ) :
+				new Date( inst.currentYear, inst.currentMonth, inst.currentDay ) ) ),
+			minDate = this._getMinMaxDate( inst, "min" ),
+			maxDate = this._getMinMaxDate( inst, "max" ),
+			drawMonth = inst.drawMonth - showCurrentAtPos,
+			drawYear = inst.drawYear;
+
+		if ( drawMonth < 0 ) {
+			drawMonth += 12;
+			drawYear--;
+		}
+		if ( maxDate ) {
+			maxDraw = this._daylightSavingAdjust( new Date( maxDate.getFullYear(),
+				maxDate.getMonth() - ( numMonths[ 0 ] * numMonths[ 1 ] ) + 1, maxDate.getDate() ) );
+			maxDraw = ( minDate && maxDraw < minDate ? minDate : maxDraw );
+			while ( this._daylightSavingAdjust( new Date( drawYear, drawMonth, 1 ) ) > maxDraw ) {
+				drawMonth--;
+				if ( drawMonth < 0 ) {
+					drawMonth = 11;
+					drawYear--;
+				}
+			}
+		}
+		inst.drawMonth = drawMonth;
+		inst.drawYear = drawYear;
+
+		prevText = this._get( inst, "prevText" );
+		prevText = ( !navigationAsDateFormat ? prevText : this.formatDate( prevText,
+			this._daylightSavingAdjust( new Date( drawYear, drawMonth - stepMonths, 1 ) ),
+			this._getFormatConfig( inst ) ) );
+
+		prev = ( this._canAdjustMonth( inst, -1, drawYear, drawMonth ) ?
+			"<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='click'" +
+			" title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w" ) + "'>" + prevText + "</span></a>" :
+			( hideIfNoPrevNext ? "" : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w" ) + "'>" + prevText + "</span></a>" ) );
+
+		nextText = this._get( inst, "nextText" );
+		nextText = ( !navigationAsDateFormat ? nextText : this.formatDate( nextText,
+			this._daylightSavingAdjust( new Date( drawYear, drawMonth + stepMonths, 1 ) ),
+			this._getFormatConfig( inst ) ) );
+
+		next = ( this._canAdjustMonth( inst, +1, drawYear, drawMonth ) ?
+			"<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='click'" +
+			" title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e" ) + "'>" + nextText + "</span></a>" :
+			( hideIfNoPrevNext ? "" : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e" ) + "'>" + nextText + "</span></a>" ) );
+
+		currentText = this._get( inst, "currentText" );
+		gotoDate = ( this._get( inst, "gotoCurrent" ) && inst.currentDay ? currentDate : today );
+		currentText = ( !navigationAsDateFormat ? currentText :
+			this.formatDate( currentText, gotoDate, this._getFormatConfig( inst ) ) );
+
+		controls = ( !inst.inline ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='hide' data-event='click'>" +
+			this._get( inst, "closeText" ) + "</button>" : "" );
+
+		buttonPanel = ( showButtonPanel ) ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + ( isRTL ? controls : "" ) +
+			( this._isInRange( inst, gotoDate ) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
+			">" + currentText + "</button>" : "" ) + ( isRTL ? "" : controls ) + "</div>" : "";
+
+		firstDay = parseInt( this._get( inst, "firstDay" ), 10 );
+		firstDay = ( isNaN( firstDay ) ? 0 : firstDay );
+
+		showWeek = this._get( inst, "showWeek" );
+		dayNames = this._get( inst, "dayNames" );
+		dayNamesMin = this._get( inst, "dayNamesMin" );
+		monthNames = this._get( inst, "monthNames" );
+		monthNamesShort = this._get( inst, "monthNamesShort" );
+		beforeShowDay = this._get( inst, "beforeShowDay" );
+		showOtherMonths = this._get( inst, "showOtherMonths" );
+		selectOtherMonths = this._get( inst, "selectOtherMonths" );
+		defaultDate = this._getDefaultDate( inst );
+		html = "";
+
+		for ( row = 0; row < numMonths[ 0 ]; row++ ) {
+			group = "";
+			this.maxRows = 4;
+			for ( col = 0; col < numMonths[ 1 ]; col++ ) {
+				selectedDate = this._daylightSavingAdjust( new Date( drawYear, drawMonth, inst.selectedDay ) );
+				cornerClass = " ui-corner-all";
+				calender = "";
+				if ( isMultiMonth ) {
+					calender += "<div class='ui-datepicker-group";
+					if ( numMonths[ 1 ] > 1 ) {
+						switch ( col ) {
+							case 0: calender += " ui-datepicker-group-first";
+								cornerClass = " ui-corner-" + ( isRTL ? "right" : "left" ); break;
+							case numMonths[ 1 ] - 1: calender += " ui-datepicker-group-last";
+								cornerClass = " ui-corner-" + ( isRTL ? "left" : "right" ); break;
+							default: calender += " ui-datepicker-group-middle"; cornerClass = ""; break;
+						}
+					}
+					calender += "'>";
+				}
+				calender += "<div class='ui-datepicker-header ui-widget-header ui-helper-clearfix" + cornerClass + "'>" +
+					( /all|left/.test( cornerClass ) && row === 0 ? ( isRTL ? next : prev ) : "" ) +
+					( /all|right/.test( cornerClass ) && row === 0 ? ( isRTL ? prev : next ) : "" ) +
+					this._generateMonthYearHeader( inst, drawMonth, drawYear, minDate, maxDate,
+					row > 0 || col > 0, monthNames, monthNamesShort ) + // draw month headers
+					"</div><table class='ui-datepicker-calendar'><thead>" +
+					"<tr>";
+				thead = ( showWeek ? "<th class='ui-datepicker-week-col'>" + this._get( inst, "weekHeader" ) + "</th>" : "" );
+				for ( dow = 0; dow < 7; dow++ ) { // days of the week
+					day = ( dow + firstDay ) % 7;
+					thead += "<th scope='col'" + ( ( dow + firstDay + 6 ) % 7 >= 5 ? " class='ui-datepicker-week-end'" : "" ) + ">" +
+						"<span title='" + dayNames[ day ] + "'>" + dayNamesMin[ day ] + "</span></th>";
+				}
+				calender += thead + "</tr></thead><tbody>";
+				daysInMonth = this._getDaysInMonth( drawYear, drawMonth );
+				if ( drawYear === inst.selectedYear && drawMonth === inst.selectedMonth ) {
+					inst.selectedDay = Math.min( inst.selectedDay, daysInMonth );
+				}
+				leadDays = ( this._getFirstDayOfMonth( drawYear, drawMonth ) - firstDay + 7 ) % 7;
+				curRows = Math.ceil( ( leadDays + daysInMonth ) / 7 ); // calculate the number of rows to generate
+				numRows = ( isMultiMonth ? this.maxRows > curRows ? this.maxRows : curRows : curRows ); //If multiple months, use the higher number of rows (see #7043)
+				this.maxRows = numRows;
+				printDate = this._daylightSavingAdjust( new Date( drawYear, drawMonth, 1 - leadDays ) );
+				for ( dRow = 0; dRow < numRows; dRow++ ) { // create date picker rows
+					calender += "<tr>";
+					tbody = ( !showWeek ? "" : "<td class='ui-datepicker-week-col'>" +
+						this._get( inst, "calculateWeek" )( printDate ) + "</td>" );
+					for ( dow = 0; dow < 7; dow++ ) { // create date picker days
+						daySettings = ( beforeShowDay ?
+							beforeShowDay.apply( ( inst.input ? inst.input[ 0 ] : null ), [ printDate ] ) : [ true, "" ] );
+						otherMonth = ( printDate.getMonth() !== drawMonth );
+						unselectable = ( otherMonth && !selectOtherMonths ) || !daySettings[ 0 ] ||
+							( minDate && printDate < minDate ) || ( maxDate && printDate > maxDate );
+						tbody += "<td class='" +
+							( ( dow + firstDay + 6 ) % 7 >= 5 ? " ui-datepicker-week-end" : "" ) + // highlight weekends
+							( otherMonth ? " ui-datepicker-other-month" : "" ) + // highlight days from other months
+							( ( printDate.getTime() === selectedDate.getTime() && drawMonth === inst.selectedMonth && inst._keyEvent ) || // user pressed key
+							( defaultDate.getTime() === printDate.getTime() && defaultDate.getTime() === selectedDate.getTime() ) ?
+
+							// or defaultDate is current printedDate and defaultDate is selectedDate
+							" " + this._dayOverClass : "" ) + // highlight selected day
+							( unselectable ? " " + this._unselectableClass + " ui-state-disabled" : "" ) +  // highlight unselectable days
+							( otherMonth && !showOtherMonths ? "" : " " + daySettings[ 1 ] + // highlight custom dates
+							( printDate.getTime() === currentDate.getTime() ? " " + this._currentClass : "" ) + // highlight selected day
+							( printDate.getTime() === today.getTime() ? " ui-datepicker-today" : "" ) ) + "'" + // highlight today (if different)
+							( ( !otherMonth || showOtherMonths ) && daySettings[ 2 ] ? " title='" + daySettings[ 2 ].replace( /'/g, "&#39;" ) + "'" : "" ) + // cell title
+							( unselectable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'" ) + ">" + // actions
+							( otherMonth && !showOtherMonths ? "&#xa0;" : // display for other months
+							( unselectable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
+							( printDate.getTime() === today.getTime() ? " ui-state-highlight" : "" ) +
+							( printDate.getTime() === currentDate.getTime() ? " ui-state-active" : "" ) + // highlight selected day
+							( otherMonth ? " ui-priority-secondary" : "" ) + // distinguish dates from other months
+							"' href='#'>" + printDate.getDate() + "</a>" ) ) + "</td>"; // display selectable date
+						printDate.setDate( printDate.getDate() + 1 );
+						printDate = this._daylightSavingAdjust( printDate );
+					}
+					calender += tbody + "</tr>";
+				}
+				drawMonth++;
+				if ( drawMonth > 11 ) {
+					drawMonth = 0;
+					drawYear++;
+				}
+				calender += "</tbody></table>" + ( isMultiMonth ? "</div>" +
+							( ( numMonths[ 0 ] > 0 && col === numMonths[ 1 ] - 1 ) ? "<div class='ui-datepicker-row-break'></div>" : "" ) : "" );
+				group += calender;
+			}
+			html += group;
+		}
+		html += buttonPanel;
+		inst._keyEvent = false;
+		return html;
+	},
+
+	/* Generate the month and year header. */
+	_generateMonthYearHeader: function( inst, drawMonth, drawYear, minDate, maxDate,
+			secondary, monthNames, monthNamesShort ) {
+
+		var inMinYear, inMaxYear, month, years, thisYear, determineYear, year, endYear,
+			changeMonth = this._get( inst, "changeMonth" ),
+			changeYear = this._get( inst, "changeYear" ),
+			showMonthAfterYear = this._get( inst, "showMonthAfterYear" ),
+			html = "<div class='ui-datepicker-title'>",
+			monthHtml = "";
+
+		// Month selection
+		if ( secondary || !changeMonth ) {
+			monthHtml += "<span class='ui-datepicker-month'>" + monthNames[ drawMonth ] + "</span>";
+		} else {
+			inMinYear = ( minDate && minDate.getFullYear() === drawYear );
+			inMaxYear = ( maxDate && maxDate.getFullYear() === drawYear );
+			monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='change'>";
+			for ( month = 0; month < 12; month++ ) {
+				if ( ( !inMinYear || month >= minDate.getMonth() ) && ( !inMaxYear || month <= maxDate.getMonth() ) ) {
+					monthHtml += "<option value='" + month + "'" +
+						( month === drawMonth ? " selected='selected'" : "" ) +
+						">" + monthNamesShort[ month ] + "</option>";
+				}
+			}
+			monthHtml += "</select>";
+		}
+
+		if ( !showMonthAfterYear ) {
+			html += monthHtml + ( secondary || !( changeMonth && changeYear ) ? "&#xa0;" : "" );
+		}
+
+		// Year selection
+		if ( !inst.yearshtml ) {
+			inst.yearshtml = "";
+			if ( secondary || !changeYear ) {
+				html += "<span class='ui-datepicker-year'>" + drawYear + "</span>";
+			} else {
+
+				// determine range of years to display
+				years = this._get( inst, "yearRange" ).split( ":" );
+				thisYear = new Date().getFullYear();
+				determineYear = function( value ) {
+					var year = ( value.match( /c[+\-].*/ ) ? drawYear + parseInt( value.substring( 1 ), 10 ) :
+						( value.match( /[+\-].*/ ) ? thisYear + parseInt( value, 10 ) :
+						parseInt( value, 10 ) ) );
+					return ( isNaN( year ) ? thisYear : year );
+				};
+				year = determineYear( years[ 0 ] );
+				endYear = Math.max( year, determineYear( years[ 1 ] || "" ) );
+				year = ( minDate ? Math.max( year, minDate.getFullYear() ) : year );
+				endYear = ( maxDate ? Math.min( endYear, maxDate.getFullYear() ) : endYear );
+				inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'>";
+				for ( ; year <= endYear; year++ ) {
+					inst.yearshtml += "<option value='" + year + "'" +
+						( year === drawYear ? " selected='selected'" : "" ) +
+						">" + year + "</option>";
+				}
+				inst.yearshtml += "</select>";
+
+				html += inst.yearshtml;
+				inst.yearshtml = null;
+			}
+		}
+
+		html += this._get( inst, "yearSuffix" );
+		if ( showMonthAfterYear ) {
+			html += ( secondary || !( changeMonth && changeYear ) ? "&#xa0;" : "" ) + monthHtml;
+		}
+		html += "</div>"; // Close datepicker_header
+		return html;
+	},
+
+	/* Adjust one of the date sub-fields. */
+	_adjustInstDate: function( inst, offset, period ) {
+		var year = inst.selectedYear + ( period === "Y" ? offset : 0 ),
+			month = inst.selectedMonth + ( period === "M" ? offset : 0 ),
+			day = Math.min( inst.selectedDay, this._getDaysInMonth( year, month ) ) + ( period === "D" ? offset : 0 ),
+			date = this._restrictMinMax( inst, this._daylightSavingAdjust( new Date( year, month, day ) ) );
+
+		inst.selectedDay = date.getDate();
+		inst.drawMonth = inst.selectedMonth = date.getMonth();
+		inst.drawYear = inst.selectedYear = date.getFullYear();
+		if ( period === "M" || period === "Y" ) {
+			this._notifyChange( inst );
+		}
+	},
+
+	/* Ensure a date is within any min/max bounds. */
+	_restrictMinMax: function( inst, date ) {
+		var minDate = this._getMinMaxDate( inst, "min" ),
+			maxDate = this._getMinMaxDate( inst, "max" ),
+			newDate = ( minDate && date < minDate ? minDate : date );
+		return ( maxDate && newDate > maxDate ? maxDate : newDate );
+	},
+
+	/* Notify change of month/year. */
+	_notifyChange: function( inst ) {
+		var onChange = this._get( inst, "onChangeMonthYear" );
+		if ( onChange ) {
+			onChange.apply( ( inst.input ? inst.input[ 0 ] : null ),
+				[ inst.selectedYear, inst.selectedMonth + 1, inst ] );
+		}
+	},
+
+	/* Determine the number of months to show. */
+	_getNumberOfMonths: function( inst ) {
+		var numMonths = this._get( inst, "numberOfMonths" );
+		return ( numMonths == null ? [ 1, 1 ] : ( typeof numMonths === "number" ? [ 1, numMonths ] : numMonths ) );
+	},
+
+	/* Determine the current maximum date - ensure no time components are set. */
+	_getMinMaxDate: function( inst, minMax ) {
+		return this._determineDate( inst, this._get( inst, minMax + "Date" ), null );
+	},
+
+	/* Find the number of days in a given month. */
+	_getDaysInMonth: function( year, month ) {
+		return 32 - this._daylightSavingAdjust( new Date( year, month, 32 ) ).getDate();
+	},
+
+	/* Find the day of the week of the first of a month. */
+	_getFirstDayOfMonth: function( year, month ) {
+		return new Date( year, month, 1 ).getDay();
+	},
+
+	/* Determines if we should allow a "next/prev" month display change. */
+	_canAdjustMonth: function( inst, offset, curYear, curMonth ) {
+		var numMonths = this._getNumberOfMonths( inst ),
+			date = this._daylightSavingAdjust( new Date( curYear,
+			curMonth + ( offset < 0 ? offset : numMonths[ 0 ] * numMonths[ 1 ] ), 1 ) );
+
+		if ( offset < 0 ) {
+			date.setDate( this._getDaysInMonth( date.getFullYear(), date.getMonth() ) );
+		}
+		return this._isInRange( inst, date );
+	},
+
+	/* Is the given date in the accepted range? */
+	_isInRange: function( inst, date ) {
+		var yearSplit, currentYear,
+			minDate = this._getMinMaxDate( inst, "min" ),
+			maxDate = this._getMinMaxDate( inst, "max" ),
+			minYear = null,
+			maxYear = null,
+			years = this._get( inst, "yearRange" );
+			if ( years ) {
+				yearSplit = years.split( ":" );
+				currentYear = new Date().getFullYear();
+				minYear = parseInt( yearSplit[ 0 ], 10 );
+				maxYear = parseInt( yearSplit[ 1 ], 10 );
+				if ( yearSplit[ 0 ].match( /[+\-].*/ ) ) {
+					minYear += currentYear;
+				}
+				if ( yearSplit[ 1 ].match( /[+\-].*/ ) ) {
+					maxYear += currentYear;
+				}
+			}
+
+		return ( ( !minDate || date.getTime() >= minDate.getTime() ) &&
+			( !maxDate || date.getTime() <= maxDate.getTime() ) &&
+			( !minYear || date.getFullYear() >= minYear ) &&
+			( !maxYear || date.getFullYear() <= maxYear ) );
+	},
+
+	/* Provide the configuration settings for formatting/parsing. */
+	_getFormatConfig: function( inst ) {
+		var shortYearCutoff = this._get( inst, "shortYearCutoff" );
+		shortYearCutoff = ( typeof shortYearCutoff !== "string" ? shortYearCutoff :
+			new Date().getFullYear() % 100 + parseInt( shortYearCutoff, 10 ) );
+		return { shortYearCutoff: shortYearCutoff,
+			dayNamesShort: this._get( inst, "dayNamesShort" ), dayNames: this._get( inst, "dayNames" ),
+			monthNamesShort: this._get( inst, "monthNamesShort" ), monthNames: this._get( inst, "monthNames" ) };
+	},
+
+	/* Format the given date for display. */
+	_formatDate: function( inst, day, month, year ) {
+		if ( !day ) {
+			inst.currentDay = inst.selectedDay;
+			inst.currentMonth = inst.selectedMonth;
+			inst.currentYear = inst.selectedYear;
+		}
+		var date = ( day ? ( typeof day === "object" ? day :
+			this._daylightSavingAdjust( new Date( year, month, day ) ) ) :
+			this._daylightSavingAdjust( new Date( inst.currentYear, inst.currentMonth, inst.currentDay ) ) );
+		return this.formatDate( this._get( inst, "dateFormat" ), date, this._getFormatConfig( inst ) );
+	}
+} );
+
+/*
+ * Bind hover events for datepicker elements.
+ * Done via delegate so the binding only occurs once in the lifetime of the parent div.
+ * Global datepicker_instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
+ */
+function datepicker_bindHover( dpDiv ) {
+	var selector = "button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a";
+	return dpDiv.on( "mouseout", selector, function() {
+			$( this ).removeClass( "ui-state-hover" );
+			if ( this.className.indexOf( "ui-datepicker-prev" ) !== -1 ) {
+				$( this ).removeClass( "ui-datepicker-prev-hover" );
+			}
+			if ( this.className.indexOf( "ui-datepicker-next" ) !== -1 ) {
+				$( this ).removeClass( "ui-datepicker-next-hover" );
+			}
+		} )
+		.on( "mouseover", selector, datepicker_handleMouseover );
+}
+
+function datepicker_handleMouseover() {
+	if ( !$.datepicker._isDisabledDatepicker( datepicker_instActive.inline ? datepicker_instActive.dpDiv.parent()[ 0 ] : datepicker_instActive.input[ 0 ] ) ) {
+		$( this ).parents( ".ui-datepicker-calendar" ).find( "a" ).removeClass( "ui-state-hover" );
+		$( this ).addClass( "ui-state-hover" );
+		if ( this.className.indexOf( "ui-datepicker-prev" ) !== -1 ) {
+			$( this ).addClass( "ui-datepicker-prev-hover" );
+		}
+		if ( this.className.indexOf( "ui-datepicker-next" ) !== -1 ) {
+			$( this ).addClass( "ui-datepicker-next-hover" );
+		}
+	}
+}
+
+/* jQuery extend now ignores nulls! */
+function datepicker_extendRemove( target, props ) {
+	$.extend( target, props );
+	for ( var name in props ) {
+		if ( props[ name ] == null ) {
+			target[ name ] = props[ name ];
+		}
+	}
+	return target;
+}
+
+/* Invoke the datepicker functionality.
+   @param  options  string - a command, optionally followed by additional parameters or
+					Object - settings for attaching new datepicker functionality
+   @return  jQuery object */
+$.fn.datepicker = function( options ) {
+
+	/* Verify an empty collection wasn't passed - Fixes #6976 */
+	if ( !this.length ) {
+		return this;
+	}
+
+	/* Initialise the date picker. */
+	if ( !$.datepicker.initialized ) {
+		$( document ).on( "mousedown", $.datepicker._checkExternalClick );
+		$.datepicker.initialized = true;
+	}
+
+	/* Append datepicker main container to body if not exist. */
+	if ( $( "#" + $.datepicker._mainDivId ).length === 0 ) {
+		$( "body" ).append( $.datepicker.dpDiv );
+	}
+
+	var otherArgs = Array.prototype.slice.call( arguments, 1 );
+	if ( typeof options === "string" && ( options === "isDisabled" || options === "getDate" || options === "widget" ) ) {
+		return $.datepicker[ "_" + options + "Datepicker" ].
+			apply( $.datepicker, [ this[ 0 ] ].concat( otherArgs ) );
+	}
+	if ( options === "option" && arguments.length === 2 && typeof arguments[ 1 ] === "string" ) {
+		return $.datepicker[ "_" + options + "Datepicker" ].
+			apply( $.datepicker, [ this[ 0 ] ].concat( otherArgs ) );
+	}
+	return this.each( function() {
+		typeof options === "string" ?
+			$.datepicker[ "_" + options + "Datepicker" ].
+				apply( $.datepicker, [ this ].concat( otherArgs ) ) :
+			$.datepicker._attachDatepicker( this, options );
+	} );
+};
+
+$.datepicker = new Datepicker(); // singleton instance
+$.datepicker.initialized = false;
+$.datepicker.uuid = new Date().getTime();
+$.datepicker.version = "1.12.1";
+
+return $.datepicker;
+
+} ) );
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
+	if ( true ) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(0) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+} ( function( $ ) {
+
+$.ui = $.ui || {};
+
+return $.ui.version = "1.12.1";
+
+} ) );
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(18);
+__webpack_require__(49);
+module.exports = __webpack_require__(50);
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_summernote__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_summernote___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_summernote__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_timepicker__ = __webpack_require__(48);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_timepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_timepicker__);
+
+
+__webpack_require__(19);
+__webpack_require__(6);
+__webpack_require__(3);
+__webpack_require__(7);
+__webpack_require__(8);
+
+
+
+
+
+
+
+
+
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+$(function () {
+    if ($('.datetimepicker').length > 0) {
+        $('.datetimepicker').datepicker({
+            format: 'mm/dd/yyyy'
+        });
+    }
+    if ($('.timepicker').length > 0) {
+        $('.timepicker').timepicker({});
+    }
+});
+/**
+ * First we will load all of this project's JavaScript dependencies which
+ * includes Vue and other libraries. It is a great starting point when
+ * building robust, powerful web applications using Vue and Laravel.
+ */
+var $sidebarOverlay = $(".task-overlay");
+$(".task-chat, #mobile_btn").on("click", function (e) {
+    var $target = $($(this).attr("href"));
+    if ($target.length) {
+        $target.toggleClass("opened");
+        $sidebarOverlay.toggleClass("opened");
+        $("html").toggleClass("menu-opened");
+        $sidebarOverlay.attr("data-reff", $(this).attr("href"));
+    }
+    e.preventDefault();
+});
+
+$sidebarOverlay.on("click", function (e) {
+    var $target = $($(this).attr("data-reff"));
+    if ($target.length) {
+        $target.removeClass("opened");
+        $("html").removeClass("menu-opened");
+        $(this).removeClass("opened");
+        $(".main-wrapper").removeClass("slide-nav-toggle");
+    }
+    e.preventDefault();
+});
+
+$(document).ready(function () {
+    if ($('.themes-icon').length > 0) {
+        $(".themes-icon").click(function () {
+            $('.themes').toggleClass("active");
+            $('.main-wrapper').removeClass('open-msg-box');
+        });
+    }
+});
+
+!function ($) {
+    "use strict";
+
+    var Sidemenu = function Sidemenu() {
+        this.$menuItem = $("#sidebar-menu a");
+    };
+
+    Sidemenu.prototype.menuItemClick = function (e) {
+        if ($(this).parent().hasClass("submenu")) {
+            e.preventDefault();
+        }
+        if (!$(this).hasClass("subdrop")) {
+            $("ul", $(this).parents("ul:first")).slideUp(350);
+            $("a", $(this).parents("ul:first")).removeClass("subdrop");
+            $(this).next("ul").slideDown(350);
+            $(this).addClass("subdrop");
+        } else if ($(this).hasClass("subdrop")) {
+            $(this).removeClass("subdrop");
+            $(this).next("ul").slideUp(350);
+        }
+    }, Sidemenu.prototype.init = function () {
+        var $this = this;
+        $this.$menuItem.on('click', $this.menuItemClick);
+        $("#sidebar-menu ul li.submenu a.active").parents("li:last").children("a:first").addClass("active").trigger("click");
+    }, $.Sidemenu = new Sidemenu(), $.Sidemenu.Constructor = Sidemenu;
+}(window.jQuery), function ($) {
+    "use strict";
+
+    var App = function App() {
+        this.$body = $("body");
+    };
+    App.prototype.init = function () {
+        var $this = this;
+        $(document).ready($this.onDocReady);
+        $.Sidemenu.init();
+    }, $.App = new App(), $.App.Constructor = App;
+}(window.jQuery), function ($) {
+    "use strict";
+
+    $.App.init();
+}(window.jQuery);
+
+$(document).ready(function () {
+    if ($('.select').length > 0) {
+        $('.select').select2({
+            minimumResultsForSearch: -1,
+            width: '100%'
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.modal').length > 0) {
+        var modalUniqueClass = ".modal";
+        $('.modal').on('show.bs.modal', function (e) {
+            var $element = $(this);
+            var $uniques = $(modalUniqueClass + ':visible').not($(this));
+            if ($uniques.length) {
+                $uniques.modal('hide');
+                $uniques.one('hidden.bs.modal', function (e) {
+                    $element.modal('show');
+                });
+                return false;
+            }
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.floating').length > 0) {
+        $('.floating').on('focus blur', function (e) {
+            $(this).parents('.form-focus').toggleClass('focused', e.type === 'focus' || this.value.length > 0);
+        }).trigger('blur');
+    }
+});
+
+$(document).ready(function () {
+    if ($('.msg-list-scroll').length > 0) {
+        $('.msg-list-scroll').slimscroll({
+            height: '100%',
+            color: '#878787',
+            disableFadeOut: true,
+            borderRadius: 0,
+            size: '4px',
+            alwaysVisible: false,
+            touchScrollStep: 100
+        });
+        var h = $(window).height() - 124;
+        $('.msg-list-scroll').height(h);
+        $('.msg-sidebar .slimScrollDiv').height(h);
+
+        $(window).resize(function () {
+            var h = $(window).height() - 124;
+            $('.msg-list-scroll').height(h);
+            $('.msg-sidebar .slimScrollDiv').height(h);
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.slimscroll').length > 0) {
+        $('.slimscroll').slimScroll({
+            height: 'auto',
+            width: '100%',
+            position: 'right',
+            size: "7px",
+            color: '#ccc',
+            wheelStep: 10,
+            touchScrollStep: 100
+        });
+        var h = $(window).height() - 60;
+        $('.slimscroll').height(h);
+        $('.sidebar .slimScrollDiv').height(h);
+
+        $(window).resize(function () {
+            var h = $(window).height() - 60;
+            $('.slimscroll').height(h);
+            $('.sidebar .slimScrollDiv').height(h);
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.page-wrapper').length > 0) {
+        var height = $(window).height();
+        $(".page-wrapper").css("min-height", height);
+    }
+});
+
+$(window).resize(function () {
+    if ($('.page-wrapper').length > 0) {
+        var height = $(window).height();
+        $(".page-wrapper").css("min-height", height);
+    }
+});
+
+$(document).ready(function () {
+    if ($('.datatable').length > 0) {
+        $('.datatable').DataTable({
+            "bFilter": false
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('[data-toggle="tooltip"]').length > 0) {
+        $('[data-toggle="tooltip"]').tooltip();
+    }
+});
+
+$(document).ready(function () {
+    if ($('.btn-toggle').length > 0) {
+        $('.btn-toggle').click(function () {
+            $(this).find('.btn').toggleClass('active');
+            if ($(this).find('.btn-success').size() > 0) {
+                $(this).find('.btn').toggleClass('btn-success');
+            }
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.main-wrapper').length > 0) {
+        var $wrapper = $(".main-wrapper");
+        $(document).on('click', '#mobile_btn', function (e) {
+            $(".dropdown.open > .dropdown-toggle").dropdown("toggle");
+            return false;
+        });
+        $(document).on('click', '#mobile_btn', function (e) {
+            $wrapper.toggleClass('slide-nav-toggle');
+            $('#chat_sidebar').removeClass('opened');
+            return false;
+        });
+        $(document).on('click', '#open_msg_box', function (e) {
+            $wrapper.toggleClass('open-msg-box').removeClass('');
+            $('.themes').removeClass('active');
+            $('.dropdown').removeClass('open');
+            return false;
+        });
+    }
+});
+
+$(document).ready(function () {
+    if ($('.dropdown-toggle').length > 0) {
+        $('.dropdown-toggle').click(function () {
+            if ($('.main-wrapper').hasClass('open-msg-box')) {
+                $('.main-wrapper').removeClass('open-msg-box');
+            }
+        });
+    }
+});
+
+$(document).ready(function () {
+    $('.table-responsive').on('shown.bs.dropdown', function (e) {
+        var $table = $(this),
+            $dropmenu = $(e.target).find('.dropdown-menu'),
+            tableOffsetHeight = $table.offset().top + $table.height(),
+            menuOffsetHeight = $dropmenu.offset().top + $dropmenu.outerHeight(true);
+
+        if (menuOffsetHeight > tableOffsetHeight) $table.css("padding-bottom", menuOffsetHeight - tableOffsetHeight);
+    });
+    $('.table-responsive').on('hide.bs.dropdown', function () {
+        $(this).css("padding-bottom", 0);
+    });
+
+    $('a[data-toggle="modal"]').on('click', function () {
+        setTimeout(function () {
+            if ($(".modal.custom-modal").hasClass('in')) {
+                $(".modal-backdrop").addClass('custom-backdrop');
+            }
+        }, 500);
+    });
+});
+
+$(document).ready(function () {
+    if ($('.clickable-row').length > 0) {
+        $(".clickable-row").click(function () {
+            window.location = $(this).data("href");
+        });
+    }
+});
+$(document).ready(function () {
+    if ($('.checkbox-all').length > 0) {
+        $('.checkbox-all').click(function () {
+            $('.checkmail').click();
+        });
+    }
+    if ($('.checkmail').length > 0) {
+        $('.checkmail').each(function () {
+            $(this).click(function () {
+                if ($(this).closest('tr').hasClass("checked")) {
+                    $(this).closest('tr').removeClass('checked');
+                } else {
+                    $(this).closest('tr').addClass('checked');
+                }
+            });
+        });
+    }
+    if ($('.mail-important').length > 0) {
+        $(".mail-important").click(function () {
+            $(this).find('i.fa').toggleClass("fa-star");
+            $(this).find('i.fa').toggleClass("fa-star-o");
+        });
+    }
+});
+$(document).ready(function () {
+    if ($('select').length > 0) {
+        $('select').select2({
+            width: '100%'
+        });
+    }
+});
+$('.summernote').summernote({
+    height: 200, // set editor height
+    minHeight: null, // set minimum height of editor
+    maxHeight: null, // set maximum height of editor
+    focus: false // set focus to editable area after initializing summernote
+});
+$(document).on('click', '.addImage', function (e) {
+    console.log('addImage');
+    var html = '';
+    html = '<tr id="image-row' + myLabel.imageRow + '">';
+    html += '  <td class="text-left"><a href="" type="image" id="thumb-image' + myLabel.imageRow + '"data-toggle="image" class=""><img src="' + myLabel.placeholder + '" alt="" title="" data-placeholder="' + myLabel.placeholder + '" /></a><input type="hidden" name="images[' + myLabel.imageRow + '][image]" value="" id="input-image' + myLabel.imageRow + '" /></td>';
+    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><select name="images[' + myLabel.imageRow + '][thumbnail]" class="form-control select floating" id="input-thumbnail[' + myLabel.imageRow + '][thumbnail]" >\n' + '                                            <option value="0">false</option>\n' + '                                            <option value="1">true</option>\n' + '                                        </select></div></td>';
+    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><input type="text" name="images[' + myLabel.imageRow + '][sort_order]" value="" class="form-control" id="input-sort_order' + myLabel.imageRow + '" data-placeholder="Sort Order" required></div></td>';
+    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
+    html += '</tr>';
+
+    $('#images tbody').append(html);
+    myLabel.imageRow++;
+});
+
+/* Dynamic Menu Selction */
+/** Select Dynamic Menu*/
+$('#menu a[href]').on('click', function () {
+
+    sessionStorage.setItem('menu', $(this).attr('href'));
+});
+
+if (!sessionStorage.getItem('menu')) {
+    $('#menu #dashboard').addClass('active');
+} else {
+    // Sets active and open to selected page in the left column menu.
+    if (sessionStorage.getItem('menu') != '#') {
+        $('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('li').addClass('active');
+    }
+}
+
+if (localStorage.getItem('sidebar') == 'active') {
+    $('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
+
+    $('#sidebar').addClass('active');
+
+    // Slide Down Menu
+    $('#menu li.active').has('ul').children('ul').addClass(' in');
+    $('#menu li').not('.active').has('ul').children('ul').addClass('');
+} else {
+    $('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
+    $('#menu li li.active').has('ul').children('ul').addClass(' in');
+    $('#menu li li').not('.active').has('ul').children('ul').addClass('');
+}
+
+// Menu button
+$('#button-menu').on('click', function () {
+    // Checks if the left column is active or not.
+    if ($('#sidebar').hasClass('active')) {
+        localStorage.setItem('sidebar', '');
+
+        $('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
+
+        $('#sidebar').removeClass('active');
+
+        $('#menu > li > ul').removeClass('in collapse');
+        $('#menu > li > ul').removeAttr('style');
+    } else {
+        localStorage.setItem('sidebar', 'active');
+
+        $('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
+
+        $('#sidebar').addClass('active');
+
+        // Add the slide down to open menu items
+        $('#menu li.open').has('ul').children('ul').addClass('collapse in');
+        $('#menu li').not('.open').has('ul').children('ul').addClass('collapse');
+    }
+});
+
+// Image Manager
+$(document).on('click', 'a[data-toggle=\'image\']', function (e) {
+    var $element = $(this);
+    //console.log($element);
+    var $popover = $element.data('bs.popover'); // element has bs popover?
+
+    e.preventDefault();
+
+    // destroy all image popovers
+    $('a[data-toggle="image"]').popover('destroy');
+
+    // remove flickering (do not re-add popover when clicking for removal)
+    if ($popover) {
+        return;
+    }
+    console.log($element);
+    $element.popover({
+        html: true,
+        placement: 'right',
+        trigger: 'manual',
+        content: function content() {
+            return '<a type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>';
+        }
+    });
+
+    $element.popover('show');
+    console.log(1);
+    $('#button-image').on('click', function () {
+        var $button = $(this);
+        var $icon = $button.find('> i');
+
+        $('#modal-image').remove();
+
+        $.ajax({
+            url: myLabel.filemanager + '?target=' + $element.parent().find('input').attr('id') + '&thumb=' + $element.attr('id') + '&type=' + $element.attr('type'),
+            dataType: 'html',
+            beforeSend: function beforeSend() {
+                $button.prop('disabled', true);
+                if ($icon.length) {
+                    $icon.attr('class', 'fa fa-circle-o-notch fa-spin');
+                }
+            },
+            complete: function complete() {
+                $button.prop('disabled', false);
+
+                if ($icon.length) {
+                    $icon.attr('class', 'fa fa-pencil');
+                }
+            },
+            success: function success(html) {
+                $('body').append('<div id="modal-image" class="modal">' + html + '</div>');
+
+                $('#modal-image').modal('show');
+            }
+        });
+
+        $element.popover('destroy');
+    });
+
+    $('#button-clear').on('click', function () {
+        $element.find('img').attr('src', $element.find('img').attr('data-placeholder'));
+
+        $element.parent().find('input').val('');
+
+        $element.popover('destroy');
+    });
+});
+
+$('select[name="country_id"]').on('change', function () {
+    var country_id = $('select[name="country_id"]').find(":selected").val();
+    $.ajax({
+        url: myLabel.states,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            country_id: country_id
+        },
+        beforeSend: function beforeSend() {
+            $('select[name="country_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+        },
+        complete: function complete() {
+            $('.fa-spin').remove();
+        },
+        success: function success(json) {
+            // }
+            var html = '';
+            // html = '<option value="">select option</option>';
+
+            if (json['states'] && json['states'] != '') {
+                for (var i = 0; i < json['states'].length; i++) {
+                    html += '<option value="' + json['states'][i]['id'] + '"';
+                    //console.log(json['states'][i]['id']);
+                    if (json['states'][i]['id'] == myLabel.state_id) {
+
+                        html += ' selected="selected"';
+                    }
+
+                    html += '>' + json['states'][i]['name'] + '</option>';
+                }
+            } else {
+                html += '<option value="0" selected="selected">Empty</option>';
+            }
+
+            $('select[name="state_id"]').html(html);
+        },
+        error: function error(xhr, ajaxOptions, thrownError) {
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+$('select[name="state_id"]').on('change', function () {
+    var state_id = $('select[name="state_id"]').find(":selected").val();
+    $.ajax({
+        url: myLabel.childStates,
+        dataType: 'json',
+        method: 'POST',
+        data: {
+            state_id: state_id
+        },
+        beforeSend: function beforeSend() {
+            $('select[name="state_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+        },
+        complete: function complete() {
+            $('.fa-spin').remove();
+        },
+        success: function success(json) {
+            // }
+            var html = '';
+            // html = '<option value="">select option</option>';
+
+            if (json['states'] && json['states'] != '') {
+                for (var i = 0; i < json['states'].length; i++) {
+                    html += '<option value="' + json['states'][i]['id'] + '"';
+                    //console.log(json['states'][i]['id']);
+                    if (json['states'][i]['id'] == myLabel.state_id) {
+
+                        html += ' selected="selected"';
+                    }
+
+                    html += '>' + json['states'][i]['name'] + '</option>';
+                }
+            } else {
+                html += '<option value="0" selected="selected">Empty</option>';
+            }
+
+            $('select[name="childstate_id"]').html(html);
+        },
+        error: function error(xhr, ajaxOptions, thrownError) {
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+    });
+});
+$('select[name="country_id"]').trigger('change');
+$('select[name="state_id"]').trigger('change');
+
+// Agent Form Validation
+var $frmAgent = $("#frmAgent"),
+    $frmLogin = $("#frmLogin"),
+    $frmResetPassword = $("#frmResetPassword"),
+    $frmEditProfile = $("#frmEditProfile"),
+    validate = $.fn.validate !== undefined,
+    dataTable = $.fn.dataTable !== undefined;
+
+// Agent Form Validation
+if ($frmAgent.length > 0 && validate) {
+    $frmAgent.validate({
+        rules: {
+            firstname: {
+                required: true
+            },
+            lastname: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            },
+            "input-password": {
+                alphanumeric: true,
+                nowhitespace: true
+            },
+            "input-confirm": {
+                alphanumeric: true,
+                nowhitespace: true,
+                equalTo: "#input-password"
+            },
+            phone: {
+                integer: false
+            },
+            mobile: {
+                integer: false
+            },
+            postcode: {
+                nowhitespace: true,
+                integer: true
+            }
+        }
+    });
+}
+// Reset Password
+if ($frmResetPassword.length > 0 && validate) {
+    $frmResetPassword.validate({
+        rules: {
+            "input-old": {
+                required: true,
+                nowhitespace: true
+            },
+            "input-password": {
+                alphanumeric: true,
+                required: true,
+                nowhitespace: true
+            },
+            "input-confirm": {
+                alphanumeric: true,
+                required: true,
+                nowhitespace: true,
+                equalTo: "#input-password"
+            }
+        },
+        submitHandler: function submitHandler(form) {
+            $.ajax({
+                type: "POST",
+                url: $(form).attr('action'),
+                dataType: "json",
+                data: $(form).serialize(),
+                success: function success(json) {
+                    if (json['error']) {
+                        $("#btnReset").LoadingOverlay("show");
+                        if (json['error']) {
+                            $('#containerBox .frmResetPassword').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $("#btnReset").LoadingOverlay("hide");
+                        }
+                    }
+                    if (json['success']) {
+                        $('#containerBox > .frmResetPassword').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
+                        $("#btnReset").LoadingOverlay("hide");
+                        $frmResetPassword[0].reset();
+                        setTimeout(function () {
+                            location.href = json['redirect'];
+                        }, 600);
+                    }
+                }
+            });
+
+            return false; // required to block normal submit since you used ajax
+        }
+    });
+}
+// Profile Form Validation
+if ($frmEditProfile.length > 0 && validate) {
+    $frmEditProfile.validate({
+        rules: {
+            firstname: {
+                required: true
+            },
+            lastname: {
+                required: true
+            },
+            email: {
+                email: true
+            },
+            phone: {
+                integer: true
+            },
+            mobile: {
+                integer: false
+            },
+            postcode: {
+                nowhitespace: true,
+                integer: true
+            }
+        }
+    });
+}
+// Admin Login Form Valiation
+if ($frmLogin.length > 0 && validate) {
+    $frmLogin.validate({
+        rules: {
+            email: {
+                required: true,
+                email: true
+            },
+            password: {
+                required: true
+            }
+        },
+        submitHandler: function submitHandler(form) {
+            $.ajax({
+                type: "POST",
+                url: $(form).attr('action'),
+                dataType: "json",
+                data: $(form).serialize(),
+                beforeSend: function beforeSend() {
+                    $("#loginButton").LoadingOverlay("show");
+                },
+                success: function success(json) {
+                    if (json['error']) {
+                        $("#loginButton").LoadingOverlay("hide");
+                        if (json['error']) {
+                            $('#containerBox .adminLoginForm').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $("#loginButton").LoadingOverlay("hide");
+                        }
+                    }
+                    if (json['success']) {
+                        $('#containerBox > .adminLoginForm').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
+                        location.href = json['redirect'];
+                        setTimeout(function () {}, 600);
+                    }
+                }
+            });
+
+            return false; // required to block normal submit since you used ajax
+        }
+
+    });
+}
+
+// Global Fetch Data & Delete Data
+var $dt = $("#datatable");
+var $deleteBtn = $("#deleteBtn");
+var $frmProject = $("#frmProject");
+var $frmChildProject = $("#frmChildProject");
+var $frmCategory = $("#frmCategory");
+var $frmChildState = $("#frmChildState");
+var $frmItem = $("#frmItem");
+var $frmHandbook = $("#frmHandbook");
+// Project Form Validation
+if ($frmProject.length > 0 && validate) {
+    $frmProject.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            fit: {
+                required: true
+            },
+            fit1: {
+                required: true
+            },
+            fit2: {
+                required: true
+            },
+            sequence: {
+                required: true
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            meta_title: {
+                required: true
+            }
+        }
+    });
+}
+// Project Form Validation
+if ($frmChildProject.length > 0 && validate) {
+    $frmChildProject.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            project_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sequence: {
+                required: true
+            },
+            sort_order: {
+                required: true,
+                integer: true
+            }
+        }
+    });
+}
+// Category Form Validation
+if ($frmCategory.length > 0 && validate) {
+    $frmCategory.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            project_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sequence: {
+                required: true
+            }
+        }
+    });
+}
+// Child State Form Validation
+if ($frmChildState.length > 0 && validate) {
+    $frmChildState.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            country_id: {
+                required: true
+            },
+            state_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sort_order: {
+                required: true
+            }
+        }
+    });
+}
+// Item Form Validation
+if ($frmItem.length > 0 && validate) {
+    $frmItem.validate({
+        rules: {
+            projects_id: {
+                required: true
+            },
+            title: {
+                required: true
+            },
+            category_id: {
+                required: true
+            },
+            price: {
+                required: true,
+                decimal: true
+            },
+            sort_order: {
+                required: true
+            },
+            meta_title: {
+                required: true
+            }
+        }
+    });
+}
+// Handbook Form validation
+if ($frmHandbook.length > 0 && validate) {
+    $frmHandbook.validate({
+        rules: {
+            name: {
+                required: true
+            },
+            project_id: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            sequence: {
+                required: true
+            }
+        }
+    });
+}
+// Global Fetch Data & Delete Data
+if ($dt.length > 0 && dataTable) {
+    var dataTable = $dt.DataTable({
+        "processing": true,
+        "searching": true,
+        "paging": true,
+        "order": [],
+        "ajax": {
+            "url": myLabel.fetch,
+            "type": 'POST',
+            "dataSrc": "data"
+        },
+        'language': {
+            'loadingRecords': '&nbsp;',
+            'processing': '<div class="spinner"></div>'
+        },
+        "oLanguage": {
+            "sEmptyTable": "Empty Table"
+        },
+        dom: 'lBfrtip',
+        buttons: ['excel', 'csv', 'pdf'],
+        "columnDefs": [{
+            "targets": 0,
+            "orderable": false
+        }, {
+            visible: false
+        }],
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    }).on('change', '.updateStatus', function (e) {
+        var id = $(this).attr('data-id');
+        var status = $(this).val();
+        $.ajax({
+            type: "POST",
+            url: myLabel.status,
+            cache: false,
+            data: { id: id, status: status },
+            success: function success(res) {
+                if (res.status) {
+                    dataTable.ajax.reload();
+                }
+            }
+        });
+    }).on('click', '#checkAll', function () {
+        $('#agentTable input[type=checkbox]').prop('checked', this.checked);
+    });
+}
+$(document).on('click', '#deleteBtn', function (e) {
+    var selected = [];
+    $('#datatable .selectCheckbox').each(function () {
+        if ($(this).is(":checked")) {
+            var id = $(this).val();
+            if (id != undefined || id != 0 || id != '' || id != null) {
+                selected.push(id);
+            }
+        }
+    });
+
+    if (selected.length > 0) {
+        console.log(selected);
+        swal({
+            title: "Confirm Delete",
+            text: "Are you want to delete this record?(Yes/No)",
+            type: "info",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+
+            setTimeout(function () {
+                $.ajax({
+                    type: "POST",
+                    url: myLabel.delete,
+                    data: { selected: selected },
+                    cache: false,
+                    success: function success(res) {
+                        if (res.status === true) {
+                            swal(res.message);
+                        } else {
+                            swal(res.message);
+                        }
+
+                        dataTable.ajax.reload();
+                    }
+                });
+            }, 2000);
+        });
+    } else {
+        swal("You must select one record");
+    }
+});
+// Global Fetch Data & Delete Data
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {window._ = __webpack_require__(20);
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -13243,10 +20357,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
  */
 
 try {
-  window.Popper = __webpack_require__(13).default;
-  window.$ = global.$ = window.jQuery = __webpack_require__(1);
+  window.Popper = __webpack_require__(4).default;
+  window.$ = global.$ = window.jQuery = __webpack_require__(0);
   // window.toastr = require('toastr');
-  __webpack_require__(16);
+  __webpack_require__(21);
   console.log('before');
 } catch (e) {}
 
@@ -13256,7 +20370,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(17);
+window.axios = __webpack_require__(22);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -13279,7 +20393,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 12 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30445,2637 +37559,10 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(9)(module)))
 
 /***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* WEBPACK VAR INJECTION */(function(global) {/**!
- * @fileOverview Kickass library to create and place poppers near their reference elements.
- * @version 1.16.1
- * @license
- * Copyright (c) 2016 Federico Zivolo and contributors
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
-var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof navigator !== 'undefined';
-
-var timeoutDuration = function () {
-  var longerTimeoutBrowsers = ['Edge', 'Trident', 'Firefox'];
-  for (var i = 0; i < longerTimeoutBrowsers.length; i += 1) {
-    if (isBrowser && navigator.userAgent.indexOf(longerTimeoutBrowsers[i]) >= 0) {
-      return 1;
-    }
-  }
-  return 0;
-}();
-
-function microtaskDebounce(fn) {
-  var called = false;
-  return function () {
-    if (called) {
-      return;
-    }
-    called = true;
-    window.Promise.resolve().then(function () {
-      called = false;
-      fn();
-    });
-  };
-}
-
-function taskDebounce(fn) {
-  var scheduled = false;
-  return function () {
-    if (!scheduled) {
-      scheduled = true;
-      setTimeout(function () {
-        scheduled = false;
-        fn();
-      }, timeoutDuration);
-    }
-  };
-}
-
-var supportsMicroTasks = isBrowser && window.Promise;
-
-/**
-* Create a debounced version of a method, that's asynchronously deferred
-* but called in the minimum time possible.
-*
-* @method
-* @memberof Popper.Utils
-* @argument {Function} fn
-* @returns {Function}
-*/
-var debounce = supportsMicroTasks ? microtaskDebounce : taskDebounce;
-
-/**
- * Check if the given variable is a function
- * @method
- * @memberof Popper.Utils
- * @argument {Any} functionToCheck - variable to check
- * @returns {Boolean} answer to: is a function?
- */
-function isFunction(functionToCheck) {
-  var getType = {};
-  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
-}
-
-/**
- * Get CSS computed property of the given element
- * @method
- * @memberof Popper.Utils
- * @argument {Eement} element
- * @argument {String} property
- */
-function getStyleComputedProperty(element, property) {
-  if (element.nodeType !== 1) {
-    return [];
-  }
-  // NOTE: 1 DOM access here
-  var window = element.ownerDocument.defaultView;
-  var css = window.getComputedStyle(element, null);
-  return property ? css[property] : css;
-}
-
-/**
- * Returns the parentNode or the host of the element
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @returns {Element} parent
- */
-function getParentNode(element) {
-  if (element.nodeName === 'HTML') {
-    return element;
-  }
-  return element.parentNode || element.host;
-}
-
-/**
- * Returns the scrolling parent of the given element
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @returns {Element} scroll parent
- */
-function getScrollParent(element) {
-  // Return body, `getScroll` will take care to get the correct `scrollTop` from it
-  if (!element) {
-    return document.body;
-  }
-
-  switch (element.nodeName) {
-    case 'HTML':
-    case 'BODY':
-      return element.ownerDocument.body;
-    case '#document':
-      return element.body;
-  }
-
-  // Firefox want us to check `-x` and `-y` variations as well
-
-  var _getStyleComputedProp = getStyleComputedProperty(element),
-      overflow = _getStyleComputedProp.overflow,
-      overflowX = _getStyleComputedProp.overflowX,
-      overflowY = _getStyleComputedProp.overflowY;
-
-  if (/(auto|scroll|overlay)/.test(overflow + overflowY + overflowX)) {
-    return element;
-  }
-
-  return getScrollParent(getParentNode(element));
-}
-
-/**
- * Returns the reference node of the reference object, or the reference object itself.
- * @method
- * @memberof Popper.Utils
- * @param {Element|Object} reference - the reference element (the popper will be relative to this)
- * @returns {Element} parent
- */
-function getReferenceNode(reference) {
-  return reference && reference.referenceNode ? reference.referenceNode : reference;
-}
-
-var isIE11 = isBrowser && !!(window.MSInputMethodContext && document.documentMode);
-var isIE10 = isBrowser && /MSIE 10/.test(navigator.userAgent);
-
-/**
- * Determines if the browser is Internet Explorer
- * @method
- * @memberof Popper.Utils
- * @param {Number} version to check
- * @returns {Boolean} isIE
- */
-function isIE(version) {
-  if (version === 11) {
-    return isIE11;
-  }
-  if (version === 10) {
-    return isIE10;
-  }
-  return isIE11 || isIE10;
-}
-
-/**
- * Returns the offset parent of the given element
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @returns {Element} offset parent
- */
-function getOffsetParent(element) {
-  if (!element) {
-    return document.documentElement;
-  }
-
-  var noOffsetParent = isIE(10) ? document.body : null;
-
-  // NOTE: 1 DOM access here
-  var offsetParent = element.offsetParent || null;
-  // Skip hidden elements which don't have an offsetParent
-  while (offsetParent === noOffsetParent && element.nextElementSibling) {
-    offsetParent = (element = element.nextElementSibling).offsetParent;
-  }
-
-  var nodeName = offsetParent && offsetParent.nodeName;
-
-  if (!nodeName || nodeName === 'BODY' || nodeName === 'HTML') {
-    return element ? element.ownerDocument.documentElement : document.documentElement;
-  }
-
-  // .offsetParent will return the closest TH, TD or TABLE in case
-  // no offsetParent is present, I hate this job...
-  if (['TH', 'TD', 'TABLE'].indexOf(offsetParent.nodeName) !== -1 && getStyleComputedProperty(offsetParent, 'position') === 'static') {
-    return getOffsetParent(offsetParent);
-  }
-
-  return offsetParent;
-}
-
-function isOffsetContainer(element) {
-  var nodeName = element.nodeName;
-
-  if (nodeName === 'BODY') {
-    return false;
-  }
-  return nodeName === 'HTML' || getOffsetParent(element.firstElementChild) === element;
-}
-
-/**
- * Finds the root node (document, shadowDOM root) of the given element
- * @method
- * @memberof Popper.Utils
- * @argument {Element} node
- * @returns {Element} root node
- */
-function getRoot(node) {
-  if (node.parentNode !== null) {
-    return getRoot(node.parentNode);
-  }
-
-  return node;
-}
-
-/**
- * Finds the offset parent common to the two provided nodes
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element1
- * @argument {Element} element2
- * @returns {Element} common offset parent
- */
-function findCommonOffsetParent(element1, element2) {
-  // This check is needed to avoid errors in case one of the elements isn't defined for any reason
-  if (!element1 || !element1.nodeType || !element2 || !element2.nodeType) {
-    return document.documentElement;
-  }
-
-  // Here we make sure to give as "start" the element that comes first in the DOM
-  var order = element1.compareDocumentPosition(element2) & Node.DOCUMENT_POSITION_FOLLOWING;
-  var start = order ? element1 : element2;
-  var end = order ? element2 : element1;
-
-  // Get common ancestor container
-  var range = document.createRange();
-  range.setStart(start, 0);
-  range.setEnd(end, 0);
-  var commonAncestorContainer = range.commonAncestorContainer;
-
-  // Both nodes are inside #document
-
-  if (element1 !== commonAncestorContainer && element2 !== commonAncestorContainer || start.contains(end)) {
-    if (isOffsetContainer(commonAncestorContainer)) {
-      return commonAncestorContainer;
-    }
-
-    return getOffsetParent(commonAncestorContainer);
-  }
-
-  // one of the nodes is inside shadowDOM, find which one
-  var element1root = getRoot(element1);
-  if (element1root.host) {
-    return findCommonOffsetParent(element1root.host, element2);
-  } else {
-    return findCommonOffsetParent(element1, getRoot(element2).host);
-  }
-}
-
-/**
- * Gets the scroll value of the given element in the given side (top and left)
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @argument {String} side `top` or `left`
- * @returns {number} amount of scrolled pixels
- */
-function getScroll(element) {
-  var side = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'top';
-
-  var upperSide = side === 'top' ? 'scrollTop' : 'scrollLeft';
-  var nodeName = element.nodeName;
-
-  if (nodeName === 'BODY' || nodeName === 'HTML') {
-    var html = element.ownerDocument.documentElement;
-    var scrollingElement = element.ownerDocument.scrollingElement || html;
-    return scrollingElement[upperSide];
-  }
-
-  return element[upperSide];
-}
-
-/*
- * Sum or subtract the element scroll values (left and top) from a given rect object
- * @method
- * @memberof Popper.Utils
- * @param {Object} rect - Rect object you want to change
- * @param {HTMLElement} element - The element from the function reads the scroll values
- * @param {Boolean} subtract - set to true if you want to subtract the scroll values
- * @return {Object} rect - The modifier rect object
- */
-function includeScroll(rect, element) {
-  var subtract = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-  var scrollTop = getScroll(element, 'top');
-  var scrollLeft = getScroll(element, 'left');
-  var modifier = subtract ? -1 : 1;
-  rect.top += scrollTop * modifier;
-  rect.bottom += scrollTop * modifier;
-  rect.left += scrollLeft * modifier;
-  rect.right += scrollLeft * modifier;
-  return rect;
-}
-
-/*
- * Helper to detect borders of a given element
- * @method
- * @memberof Popper.Utils
- * @param {CSSStyleDeclaration} styles
- * Result of `getStyleComputedProperty` on the given element
- * @param {String} axis - `x` or `y`
- * @return {number} borders - The borders size of the given axis
- */
-
-function getBordersSize(styles, axis) {
-  var sideA = axis === 'x' ? 'Left' : 'Top';
-  var sideB = sideA === 'Left' ? 'Right' : 'Bottom';
-
-  return parseFloat(styles['border' + sideA + 'Width']) + parseFloat(styles['border' + sideB + 'Width']);
-}
-
-function getSize(axis, body, html, computedStyle) {
-  return Math.max(body['offset' + axis], body['scroll' + axis], html['client' + axis], html['offset' + axis], html['scroll' + axis], isIE(10) ? parseInt(html['offset' + axis]) + parseInt(computedStyle['margin' + (axis === 'Height' ? 'Top' : 'Left')]) + parseInt(computedStyle['margin' + (axis === 'Height' ? 'Bottom' : 'Right')]) : 0);
-}
-
-function getWindowSizes(document) {
-  var body = document.body;
-  var html = document.documentElement;
-  var computedStyle = isIE(10) && getComputedStyle(html);
-
-  return {
-    height: getSize('Height', body, html, computedStyle),
-    width: getSize('Width', body, html, computedStyle)
-  };
-}
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
-}();
-
-
-
-
-
-var defineProperty = function (obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-};
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
-/**
- * Given element offsets, generate an output similar to getBoundingClientRect
- * @method
- * @memberof Popper.Utils
- * @argument {Object} offsets
- * @returns {Object} ClientRect like output
- */
-function getClientRect(offsets) {
-  return _extends({}, offsets, {
-    right: offsets.left + offsets.width,
-    bottom: offsets.top + offsets.height
-  });
-}
-
-/**
- * Get bounding client rect of given element
- * @method
- * @memberof Popper.Utils
- * @param {HTMLElement} element
- * @return {Object} client rect
- */
-function getBoundingClientRect(element) {
-  var rect = {};
-
-  // IE10 10 FIX: Please, don't ask, the element isn't
-  // considered in DOM in some circumstances...
-  // This isn't reproducible in IE10 compatibility mode of IE11
-  try {
-    if (isIE(10)) {
-      rect = element.getBoundingClientRect();
-      var scrollTop = getScroll(element, 'top');
-      var scrollLeft = getScroll(element, 'left');
-      rect.top += scrollTop;
-      rect.left += scrollLeft;
-      rect.bottom += scrollTop;
-      rect.right += scrollLeft;
-    } else {
-      rect = element.getBoundingClientRect();
-    }
-  } catch (e) {}
-
-  var result = {
-    left: rect.left,
-    top: rect.top,
-    width: rect.right - rect.left,
-    height: rect.bottom - rect.top
-  };
-
-  // subtract scrollbar size from sizes
-  var sizes = element.nodeName === 'HTML' ? getWindowSizes(element.ownerDocument) : {};
-  var width = sizes.width || element.clientWidth || result.width;
-  var height = sizes.height || element.clientHeight || result.height;
-
-  var horizScrollbar = element.offsetWidth - width;
-  var vertScrollbar = element.offsetHeight - height;
-
-  // if an hypothetical scrollbar is detected, we must be sure it's not a `border`
-  // we make this check conditional for performance reasons
-  if (horizScrollbar || vertScrollbar) {
-    var styles = getStyleComputedProperty(element);
-    horizScrollbar -= getBordersSize(styles, 'x');
-    vertScrollbar -= getBordersSize(styles, 'y');
-
-    result.width -= horizScrollbar;
-    result.height -= vertScrollbar;
-  }
-
-  return getClientRect(result);
-}
-
-function getOffsetRectRelativeToArbitraryNode(children, parent) {
-  var fixedPosition = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-  var isIE10 = isIE(10);
-  var isHTML = parent.nodeName === 'HTML';
-  var childrenRect = getBoundingClientRect(children);
-  var parentRect = getBoundingClientRect(parent);
-  var scrollParent = getScrollParent(children);
-
-  var styles = getStyleComputedProperty(parent);
-  var borderTopWidth = parseFloat(styles.borderTopWidth);
-  var borderLeftWidth = parseFloat(styles.borderLeftWidth);
-
-  // In cases where the parent is fixed, we must ignore negative scroll in offset calc
-  if (fixedPosition && isHTML) {
-    parentRect.top = Math.max(parentRect.top, 0);
-    parentRect.left = Math.max(parentRect.left, 0);
-  }
-  var offsets = getClientRect({
-    top: childrenRect.top - parentRect.top - borderTopWidth,
-    left: childrenRect.left - parentRect.left - borderLeftWidth,
-    width: childrenRect.width,
-    height: childrenRect.height
-  });
-  offsets.marginTop = 0;
-  offsets.marginLeft = 0;
-
-  // Subtract margins of documentElement in case it's being used as parent
-  // we do this only on HTML because it's the only element that behaves
-  // differently when margins are applied to it. The margins are included in
-  // the box of the documentElement, in the other cases not.
-  if (!isIE10 && isHTML) {
-    var marginTop = parseFloat(styles.marginTop);
-    var marginLeft = parseFloat(styles.marginLeft);
-
-    offsets.top -= borderTopWidth - marginTop;
-    offsets.bottom -= borderTopWidth - marginTop;
-    offsets.left -= borderLeftWidth - marginLeft;
-    offsets.right -= borderLeftWidth - marginLeft;
-
-    // Attach marginTop and marginLeft because in some circumstances we may need them
-    offsets.marginTop = marginTop;
-    offsets.marginLeft = marginLeft;
-  }
-
-  if (isIE10 && !fixedPosition ? parent.contains(scrollParent) : parent === scrollParent && scrollParent.nodeName !== 'BODY') {
-    offsets = includeScroll(offsets, parent);
-  }
-
-  return offsets;
-}
-
-function getViewportOffsetRectRelativeToArtbitraryNode(element) {
-  var excludeScroll = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-  var html = element.ownerDocument.documentElement;
-  var relativeOffset = getOffsetRectRelativeToArbitraryNode(element, html);
-  var width = Math.max(html.clientWidth, window.innerWidth || 0);
-  var height = Math.max(html.clientHeight, window.innerHeight || 0);
-
-  var scrollTop = !excludeScroll ? getScroll(html) : 0;
-  var scrollLeft = !excludeScroll ? getScroll(html, 'left') : 0;
-
-  var offset = {
-    top: scrollTop - relativeOffset.top + relativeOffset.marginTop,
-    left: scrollLeft - relativeOffset.left + relativeOffset.marginLeft,
-    width: width,
-    height: height
-  };
-
-  return getClientRect(offset);
-}
-
-/**
- * Check if the given element is fixed or is inside a fixed parent
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @argument {Element} customContainer
- * @returns {Boolean} answer to "isFixed?"
- */
-function isFixed(element) {
-  var nodeName = element.nodeName;
-  if (nodeName === 'BODY' || nodeName === 'HTML') {
-    return false;
-  }
-  if (getStyleComputedProperty(element, 'position') === 'fixed') {
-    return true;
-  }
-  var parentNode = getParentNode(element);
-  if (!parentNode) {
-    return false;
-  }
-  return isFixed(parentNode);
-}
-
-/**
- * Finds the first parent of an element that has a transformed property defined
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @returns {Element} first transformed parent or documentElement
- */
-
-function getFixedPositionOffsetParent(element) {
-  // This check is needed to avoid errors in case one of the elements isn't defined for any reason
-  if (!element || !element.parentElement || isIE()) {
-    return document.documentElement;
-  }
-  var el = element.parentElement;
-  while (el && getStyleComputedProperty(el, 'transform') === 'none') {
-    el = el.parentElement;
-  }
-  return el || document.documentElement;
-}
-
-/**
- * Computed the boundaries limits and return them
- * @method
- * @memberof Popper.Utils
- * @param {HTMLElement} popper
- * @param {HTMLElement} reference
- * @param {number} padding
- * @param {HTMLElement} boundariesElement - Element used to define the boundaries
- * @param {Boolean} fixedPosition - Is in fixed position mode
- * @returns {Object} Coordinates of the boundaries
- */
-function getBoundaries(popper, reference, padding, boundariesElement) {
-  var fixedPosition = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-
-  // NOTE: 1 DOM access here
-
-  var boundaries = { top: 0, left: 0 };
-  var offsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
-
-  // Handle viewport case
-  if (boundariesElement === 'viewport') {
-    boundaries = getViewportOffsetRectRelativeToArtbitraryNode(offsetParent, fixedPosition);
-  } else {
-    // Handle other cases based on DOM element used as boundaries
-    var boundariesNode = void 0;
-    if (boundariesElement === 'scrollParent') {
-      boundariesNode = getScrollParent(getParentNode(reference));
-      if (boundariesNode.nodeName === 'BODY') {
-        boundariesNode = popper.ownerDocument.documentElement;
-      }
-    } else if (boundariesElement === 'window') {
-      boundariesNode = popper.ownerDocument.documentElement;
-    } else {
-      boundariesNode = boundariesElement;
-    }
-
-    var offsets = getOffsetRectRelativeToArbitraryNode(boundariesNode, offsetParent, fixedPosition);
-
-    // In case of HTML, we need a different computation
-    if (boundariesNode.nodeName === 'HTML' && !isFixed(offsetParent)) {
-      var _getWindowSizes = getWindowSizes(popper.ownerDocument),
-          height = _getWindowSizes.height,
-          width = _getWindowSizes.width;
-
-      boundaries.top += offsets.top - offsets.marginTop;
-      boundaries.bottom = height + offsets.top;
-      boundaries.left += offsets.left - offsets.marginLeft;
-      boundaries.right = width + offsets.left;
-    } else {
-      // for all the other DOM elements, this one is good
-      boundaries = offsets;
-    }
-  }
-
-  // Add paddings
-  padding = padding || 0;
-  var isPaddingNumber = typeof padding === 'number';
-  boundaries.left += isPaddingNumber ? padding : padding.left || 0;
-  boundaries.top += isPaddingNumber ? padding : padding.top || 0;
-  boundaries.right -= isPaddingNumber ? padding : padding.right || 0;
-  boundaries.bottom -= isPaddingNumber ? padding : padding.bottom || 0;
-
-  return boundaries;
-}
-
-function getArea(_ref) {
-  var width = _ref.width,
-      height = _ref.height;
-
-  return width * height;
-}
-
-/**
- * Utility used to transform the `auto` placement to the placement with more
- * available space.
- * @method
- * @memberof Popper.Utils
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function computeAutoPlacement(placement, refRect, popper, reference, boundariesElement) {
-  var padding = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 0;
-
-  if (placement.indexOf('auto') === -1) {
-    return placement;
-  }
-
-  var boundaries = getBoundaries(popper, reference, padding, boundariesElement);
-
-  var rects = {
-    top: {
-      width: boundaries.width,
-      height: refRect.top - boundaries.top
-    },
-    right: {
-      width: boundaries.right - refRect.right,
-      height: boundaries.height
-    },
-    bottom: {
-      width: boundaries.width,
-      height: boundaries.bottom - refRect.bottom
-    },
-    left: {
-      width: refRect.left - boundaries.left,
-      height: boundaries.height
-    }
-  };
-
-  var sortedAreas = Object.keys(rects).map(function (key) {
-    return _extends({
-      key: key
-    }, rects[key], {
-      area: getArea(rects[key])
-    });
-  }).sort(function (a, b) {
-    return b.area - a.area;
-  });
-
-  var filteredAreas = sortedAreas.filter(function (_ref2) {
-    var width = _ref2.width,
-        height = _ref2.height;
-    return width >= popper.clientWidth && height >= popper.clientHeight;
-  });
-
-  var computedPlacement = filteredAreas.length > 0 ? filteredAreas[0].key : sortedAreas[0].key;
-
-  var variation = placement.split('-')[1];
-
-  return computedPlacement + (variation ? '-' + variation : '');
-}
-
-/**
- * Get offsets to the reference element
- * @method
- * @memberof Popper.Utils
- * @param {Object} state
- * @param {Element} popper - the popper element
- * @param {Element} reference - the reference element (the popper will be relative to this)
- * @param {Element} fixedPosition - is in fixed position mode
- * @returns {Object} An object containing the offsets which will be applied to the popper
- */
-function getReferenceOffsets(state, popper, reference) {
-  var fixedPosition = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-
-  var commonOffsetParent = fixedPosition ? getFixedPositionOffsetParent(popper) : findCommonOffsetParent(popper, getReferenceNode(reference));
-  return getOffsetRectRelativeToArbitraryNode(reference, commonOffsetParent, fixedPosition);
-}
-
-/**
- * Get the outer sizes of the given element (offset size + margins)
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element
- * @returns {Object} object containing width and height properties
- */
-function getOuterSizes(element) {
-  var window = element.ownerDocument.defaultView;
-  var styles = window.getComputedStyle(element);
-  var x = parseFloat(styles.marginTop || 0) + parseFloat(styles.marginBottom || 0);
-  var y = parseFloat(styles.marginLeft || 0) + parseFloat(styles.marginRight || 0);
-  var result = {
-    width: element.offsetWidth + y,
-    height: element.offsetHeight + x
-  };
-  return result;
-}
-
-/**
- * Get the opposite placement of the given one
- * @method
- * @memberof Popper.Utils
- * @argument {String} placement
- * @returns {String} flipped placement
- */
-function getOppositePlacement(placement) {
-  var hash = { left: 'right', right: 'left', bottom: 'top', top: 'bottom' };
-  return placement.replace(/left|right|bottom|top/g, function (matched) {
-    return hash[matched];
-  });
-}
-
-/**
- * Get offsets to the popper
- * @method
- * @memberof Popper.Utils
- * @param {Object} position - CSS position the Popper will get applied
- * @param {HTMLElement} popper - the popper element
- * @param {Object} referenceOffsets - the reference offsets (the popper will be relative to this)
- * @param {String} placement - one of the valid placement options
- * @returns {Object} popperOffsets - An object containing the offsets which will be applied to the popper
- */
-function getPopperOffsets(popper, referenceOffsets, placement) {
-  placement = placement.split('-')[0];
-
-  // Get popper node sizes
-  var popperRect = getOuterSizes(popper);
-
-  // Add position, width and height to our offsets object
-  var popperOffsets = {
-    width: popperRect.width,
-    height: popperRect.height
-  };
-
-  // depending by the popper placement we have to compute its offsets slightly differently
-  var isHoriz = ['right', 'left'].indexOf(placement) !== -1;
-  var mainSide = isHoriz ? 'top' : 'left';
-  var secondarySide = isHoriz ? 'left' : 'top';
-  var measurement = isHoriz ? 'height' : 'width';
-  var secondaryMeasurement = !isHoriz ? 'height' : 'width';
-
-  popperOffsets[mainSide] = referenceOffsets[mainSide] + referenceOffsets[measurement] / 2 - popperRect[measurement] / 2;
-  if (placement === secondarySide) {
-    popperOffsets[secondarySide] = referenceOffsets[secondarySide] - popperRect[secondaryMeasurement];
-  } else {
-    popperOffsets[secondarySide] = referenceOffsets[getOppositePlacement(secondarySide)];
-  }
-
-  return popperOffsets;
-}
-
-/**
- * Mimics the `find` method of Array
- * @method
- * @memberof Popper.Utils
- * @argument {Array} arr
- * @argument prop
- * @argument value
- * @returns index or -1
- */
-function find(arr, check) {
-  // use native find if supported
-  if (Array.prototype.find) {
-    return arr.find(check);
-  }
-
-  // use `filter` to obtain the same behavior of `find`
-  return arr.filter(check)[0];
-}
-
-/**
- * Return the index of the matching object
- * @method
- * @memberof Popper.Utils
- * @argument {Array} arr
- * @argument prop
- * @argument value
- * @returns index or -1
- */
-function findIndex(arr, prop, value) {
-  // use native findIndex if supported
-  if (Array.prototype.findIndex) {
-    return arr.findIndex(function (cur) {
-      return cur[prop] === value;
-    });
-  }
-
-  // use `find` + `indexOf` if `findIndex` isn't supported
-  var match = find(arr, function (obj) {
-    return obj[prop] === value;
-  });
-  return arr.indexOf(match);
-}
-
-/**
- * Loop trough the list of modifiers and run them in order,
- * each of them will then edit the data object.
- * @method
- * @memberof Popper.Utils
- * @param {dataObject} data
- * @param {Array} modifiers
- * @param {String} ends - Optional modifier name used as stopper
- * @returns {dataObject}
- */
-function runModifiers(modifiers, data, ends) {
-  var modifiersToRun = ends === undefined ? modifiers : modifiers.slice(0, findIndex(modifiers, 'name', ends));
-
-  modifiersToRun.forEach(function (modifier) {
-    if (modifier['function']) {
-      // eslint-disable-line dot-notation
-      console.warn('`modifier.function` is deprecated, use `modifier.fn`!');
-    }
-    var fn = modifier['function'] || modifier.fn; // eslint-disable-line dot-notation
-    if (modifier.enabled && isFunction(fn)) {
-      // Add properties to offsets to make them a complete clientRect object
-      // we do this before each modifier to make sure the previous one doesn't
-      // mess with these values
-      data.offsets.popper = getClientRect(data.offsets.popper);
-      data.offsets.reference = getClientRect(data.offsets.reference);
-
-      data = fn(data, modifier);
-    }
-  });
-
-  return data;
-}
-
-/**
- * Updates the position of the popper, computing the new offsets and applying
- * the new style.<br />
- * Prefer `scheduleUpdate` over `update` because of performance reasons.
- * @method
- * @memberof Popper
- */
-function update() {
-  // if popper is destroyed, don't perform any further update
-  if (this.state.isDestroyed) {
-    return;
-  }
-
-  var data = {
-    instance: this,
-    styles: {},
-    arrowStyles: {},
-    attributes: {},
-    flipped: false,
-    offsets: {}
-  };
-
-  // compute reference element offsets
-  data.offsets.reference = getReferenceOffsets(this.state, this.popper, this.reference, this.options.positionFixed);
-
-  // compute auto placement, store placement inside the data object,
-  // modifiers will be able to edit `placement` if needed
-  // and refer to originalPlacement to know the original value
-  data.placement = computeAutoPlacement(this.options.placement, data.offsets.reference, this.popper, this.reference, this.options.modifiers.flip.boundariesElement, this.options.modifiers.flip.padding);
-
-  // store the computed placement inside `originalPlacement`
-  data.originalPlacement = data.placement;
-
-  data.positionFixed = this.options.positionFixed;
-
-  // compute the popper offsets
-  data.offsets.popper = getPopperOffsets(this.popper, data.offsets.reference, data.placement);
-
-  data.offsets.popper.position = this.options.positionFixed ? 'fixed' : 'absolute';
-
-  // run the modifiers
-  data = runModifiers(this.modifiers, data);
-
-  // the first `update` will call `onCreate` callback
-  // the other ones will call `onUpdate` callback
-  if (!this.state.isCreated) {
-    this.state.isCreated = true;
-    this.options.onCreate(data);
-  } else {
-    this.options.onUpdate(data);
-  }
-}
-
-/**
- * Helper used to know if the given modifier is enabled.
- * @method
- * @memberof Popper.Utils
- * @returns {Boolean}
- */
-function isModifierEnabled(modifiers, modifierName) {
-  return modifiers.some(function (_ref) {
-    var name = _ref.name,
-        enabled = _ref.enabled;
-    return enabled && name === modifierName;
-  });
-}
-
-/**
- * Get the prefixed supported property name
- * @method
- * @memberof Popper.Utils
- * @argument {String} property (camelCase)
- * @returns {String} prefixed property (camelCase or PascalCase, depending on the vendor prefix)
- */
-function getSupportedPropertyName(property) {
-  var prefixes = [false, 'ms', 'Webkit', 'Moz', 'O'];
-  var upperProp = property.charAt(0).toUpperCase() + property.slice(1);
-
-  for (var i = 0; i < prefixes.length; i++) {
-    var prefix = prefixes[i];
-    var toCheck = prefix ? '' + prefix + upperProp : property;
-    if (typeof document.body.style[toCheck] !== 'undefined') {
-      return toCheck;
-    }
-  }
-  return null;
-}
-
-/**
- * Destroys the popper.
- * @method
- * @memberof Popper
- */
-function destroy() {
-  this.state.isDestroyed = true;
-
-  // touch DOM only if `applyStyle` modifier is enabled
-  if (isModifierEnabled(this.modifiers, 'applyStyle')) {
-    this.popper.removeAttribute('x-placement');
-    this.popper.style.position = '';
-    this.popper.style.top = '';
-    this.popper.style.left = '';
-    this.popper.style.right = '';
-    this.popper.style.bottom = '';
-    this.popper.style.willChange = '';
-    this.popper.style[getSupportedPropertyName('transform')] = '';
-  }
-
-  this.disableEventListeners();
-
-  // remove the popper if user explicitly asked for the deletion on destroy
-  // do not use `remove` because IE11 doesn't support it
-  if (this.options.removeOnDestroy) {
-    this.popper.parentNode.removeChild(this.popper);
-  }
-  return this;
-}
-
-/**
- * Get the window associated with the element
- * @argument {Element} element
- * @returns {Window}
- */
-function getWindow(element) {
-  var ownerDocument = element.ownerDocument;
-  return ownerDocument ? ownerDocument.defaultView : window;
-}
-
-function attachToScrollParents(scrollParent, event, callback, scrollParents) {
-  var isBody = scrollParent.nodeName === 'BODY';
-  var target = isBody ? scrollParent.ownerDocument.defaultView : scrollParent;
-  target.addEventListener(event, callback, { passive: true });
-
-  if (!isBody) {
-    attachToScrollParents(getScrollParent(target.parentNode), event, callback, scrollParents);
-  }
-  scrollParents.push(target);
-}
-
-/**
- * Setup needed event listeners used to update the popper position
- * @method
- * @memberof Popper.Utils
- * @private
- */
-function setupEventListeners(reference, options, state, updateBound) {
-  // Resize event listener on window
-  state.updateBound = updateBound;
-  getWindow(reference).addEventListener('resize', state.updateBound, { passive: true });
-
-  // Scroll event listener on scroll parents
-  var scrollElement = getScrollParent(reference);
-  attachToScrollParents(scrollElement, 'scroll', state.updateBound, state.scrollParents);
-  state.scrollElement = scrollElement;
-  state.eventsEnabled = true;
-
-  return state;
-}
-
-/**
- * It will add resize/scroll events and start recalculating
- * position of the popper element when they are triggered.
- * @method
- * @memberof Popper
- */
-function enableEventListeners() {
-  if (!this.state.eventsEnabled) {
-    this.state = setupEventListeners(this.reference, this.options, this.state, this.scheduleUpdate);
-  }
-}
-
-/**
- * Remove event listeners used to update the popper position
- * @method
- * @memberof Popper.Utils
- * @private
- */
-function removeEventListeners(reference, state) {
-  // Remove resize event listener on window
-  getWindow(reference).removeEventListener('resize', state.updateBound);
-
-  // Remove scroll event listener on scroll parents
-  state.scrollParents.forEach(function (target) {
-    target.removeEventListener('scroll', state.updateBound);
-  });
-
-  // Reset state
-  state.updateBound = null;
-  state.scrollParents = [];
-  state.scrollElement = null;
-  state.eventsEnabled = false;
-  return state;
-}
-
-/**
- * It will remove resize/scroll events and won't recalculate popper position
- * when they are triggered. It also won't trigger `onUpdate` callback anymore,
- * unless you call `update` method manually.
- * @method
- * @memberof Popper
- */
-function disableEventListeners() {
-  if (this.state.eventsEnabled) {
-    cancelAnimationFrame(this.scheduleUpdate);
-    this.state = removeEventListeners(this.reference, this.state);
-  }
-}
-
-/**
- * Tells if a given input is a number
- * @method
- * @memberof Popper.Utils
- * @param {*} input to check
- * @return {Boolean}
- */
-function isNumeric(n) {
-  return n !== '' && !isNaN(parseFloat(n)) && isFinite(n);
-}
-
-/**
- * Set the style to the given popper
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element - Element to apply the style to
- * @argument {Object} styles
- * Object with a list of properties and values which will be applied to the element
- */
-function setStyles(element, styles) {
-  Object.keys(styles).forEach(function (prop) {
-    var unit = '';
-    // add unit if the value is numeric and is one of the following
-    if (['width', 'height', 'top', 'right', 'bottom', 'left'].indexOf(prop) !== -1 && isNumeric(styles[prop])) {
-      unit = 'px';
-    }
-    element.style[prop] = styles[prop] + unit;
-  });
-}
-
-/**
- * Set the attributes to the given popper
- * @method
- * @memberof Popper.Utils
- * @argument {Element} element - Element to apply the attributes to
- * @argument {Object} styles
- * Object with a list of properties and values which will be applied to the element
- */
-function setAttributes(element, attributes) {
-  Object.keys(attributes).forEach(function (prop) {
-    var value = attributes[prop];
-    if (value !== false) {
-      element.setAttribute(prop, attributes[prop]);
-    } else {
-      element.removeAttribute(prop);
-    }
-  });
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Object} data.styles - List of style properties - values to apply to popper element
- * @argument {Object} data.attributes - List of attribute properties - values to apply to popper element
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The same data object
- */
-function applyStyle(data) {
-  // any property present in `data.styles` will be applied to the popper,
-  // in this way we can make the 3rd party modifiers add custom styles to it
-  // Be aware, modifiers could override the properties defined in the previous
-  // lines of this modifier!
-  setStyles(data.instance.popper, data.styles);
-
-  // any property present in `data.attributes` will be applied to the popper,
-  // they will be set as HTML attributes of the element
-  setAttributes(data.instance.popper, data.attributes);
-
-  // if arrowElement is defined and arrowStyles has some properties
-  if (data.arrowElement && Object.keys(data.arrowStyles).length) {
-    setStyles(data.arrowElement, data.arrowStyles);
-  }
-
-  return data;
-}
-
-/**
- * Set the x-placement attribute before everything else because it could be used
- * to add margins to the popper margins needs to be calculated to get the
- * correct popper offsets.
- * @method
- * @memberof Popper.modifiers
- * @param {HTMLElement} reference - The reference element used to position the popper
- * @param {HTMLElement} popper - The HTML element used as popper
- * @param {Object} options - Popper.js options
- */
-function applyStyleOnLoad(reference, popper, options, modifierOptions, state) {
-  // compute reference element offsets
-  var referenceOffsets = getReferenceOffsets(state, popper, reference, options.positionFixed);
-
-  // compute auto placement, store placement inside the data object,
-  // modifiers will be able to edit `placement` if needed
-  // and refer to originalPlacement to know the original value
-  var placement = computeAutoPlacement(options.placement, referenceOffsets, popper, reference, options.modifiers.flip.boundariesElement, options.modifiers.flip.padding);
-
-  popper.setAttribute('x-placement', placement);
-
-  // Apply `position` to popper before anything else because
-  // without the position applied we can't guarantee correct computations
-  setStyles(popper, { position: options.positionFixed ? 'fixed' : 'absolute' });
-
-  return options;
-}
-
-/**
- * @function
- * @memberof Popper.Utils
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Boolean} shouldRound - If the offsets should be rounded at all
- * @returns {Object} The popper's position offsets rounded
- *
- * The tale of pixel-perfect positioning. It's still not 100% perfect, but as
- * good as it can be within reason.
- * Discussion here: https://github.com/FezVrasta/popper.js/pull/715
- *
- * Low DPI screens cause a popper to be blurry if not using full pixels (Safari
- * as well on High DPI screens).
- *
- * Firefox prefers no rounding for positioning and does not have blurriness on
- * high DPI screens.
- *
- * Only horizontal placement and left/right values need to be considered.
- */
-function getRoundedOffsets(data, shouldRound) {
-  var _data$offsets = data.offsets,
-      popper = _data$offsets.popper,
-      reference = _data$offsets.reference;
-  var round = Math.round,
-      floor = Math.floor;
-
-  var noRound = function noRound(v) {
-    return v;
-  };
-
-  var referenceWidth = round(reference.width);
-  var popperWidth = round(popper.width);
-
-  var isVertical = ['left', 'right'].indexOf(data.placement) !== -1;
-  var isVariation = data.placement.indexOf('-') !== -1;
-  var sameWidthParity = referenceWidth % 2 === popperWidth % 2;
-  var bothOddWidth = referenceWidth % 2 === 1 && popperWidth % 2 === 1;
-
-  var horizontalToInteger = !shouldRound ? noRound : isVertical || isVariation || sameWidthParity ? round : floor;
-  var verticalToInteger = !shouldRound ? noRound : round;
-
-  return {
-    left: horizontalToInteger(bothOddWidth && !isVariation && shouldRound ? popper.left - 1 : popper.left),
-    top: verticalToInteger(popper.top),
-    bottom: verticalToInteger(popper.bottom),
-    right: horizontalToInteger(popper.right)
-  };
-}
-
-var isFirefox = isBrowser && /Firefox/i.test(navigator.userAgent);
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function computeStyle(data, options) {
-  var x = options.x,
-      y = options.y;
-  var popper = data.offsets.popper;
-
-  // Remove this legacy support in Popper.js v2
-
-  var legacyGpuAccelerationOption = find(data.instance.modifiers, function (modifier) {
-    return modifier.name === 'applyStyle';
-  }).gpuAcceleration;
-  if (legacyGpuAccelerationOption !== undefined) {
-    console.warn('WARNING: `gpuAcceleration` option moved to `computeStyle` modifier and will not be supported in future versions of Popper.js!');
-  }
-  var gpuAcceleration = legacyGpuAccelerationOption !== undefined ? legacyGpuAccelerationOption : options.gpuAcceleration;
-
-  var offsetParent = getOffsetParent(data.instance.popper);
-  var offsetParentRect = getBoundingClientRect(offsetParent);
-
-  // Styles
-  var styles = {
-    position: popper.position
-  };
-
-  var offsets = getRoundedOffsets(data, window.devicePixelRatio < 2 || !isFirefox);
-
-  var sideA = x === 'bottom' ? 'top' : 'bottom';
-  var sideB = y === 'right' ? 'left' : 'right';
-
-  // if gpuAcceleration is set to `true` and transform is supported,
-  //  we use `translate3d` to apply the position to the popper we
-  // automatically use the supported prefixed version if needed
-  var prefixedProperty = getSupportedPropertyName('transform');
-
-  // now, let's make a step back and look at this code closely (wtf?)
-  // If the content of the popper grows once it's been positioned, it
-  // may happen that the popper gets misplaced because of the new content
-  // overflowing its reference element
-  // To avoid this problem, we provide two options (x and y), which allow
-  // the consumer to define the offset origin.
-  // If we position a popper on top of a reference element, we can set
-  // `x` to `top` to make the popper grow towards its top instead of
-  // its bottom.
-  var left = void 0,
-      top = void 0;
-  if (sideA === 'bottom') {
-    // when offsetParent is <html> the positioning is relative to the bottom of the screen (excluding the scrollbar)
-    // and not the bottom of the html element
-    if (offsetParent.nodeName === 'HTML') {
-      top = -offsetParent.clientHeight + offsets.bottom;
-    } else {
-      top = -offsetParentRect.height + offsets.bottom;
-    }
-  } else {
-    top = offsets.top;
-  }
-  if (sideB === 'right') {
-    if (offsetParent.nodeName === 'HTML') {
-      left = -offsetParent.clientWidth + offsets.right;
-    } else {
-      left = -offsetParentRect.width + offsets.right;
-    }
-  } else {
-    left = offsets.left;
-  }
-  if (gpuAcceleration && prefixedProperty) {
-    styles[prefixedProperty] = 'translate3d(' + left + 'px, ' + top + 'px, 0)';
-    styles[sideA] = 0;
-    styles[sideB] = 0;
-    styles.willChange = 'transform';
-  } else {
-    // othwerise, we use the standard `top`, `left`, `bottom` and `right` properties
-    var invertTop = sideA === 'bottom' ? -1 : 1;
-    var invertLeft = sideB === 'right' ? -1 : 1;
-    styles[sideA] = top * invertTop;
-    styles[sideB] = left * invertLeft;
-    styles.willChange = sideA + ', ' + sideB;
-  }
-
-  // Attributes
-  var attributes = {
-    'x-placement': data.placement
-  };
-
-  // Update `data` attributes, styles and arrowStyles
-  data.attributes = _extends({}, attributes, data.attributes);
-  data.styles = _extends({}, styles, data.styles);
-  data.arrowStyles = _extends({}, data.offsets.arrow, data.arrowStyles);
-
-  return data;
-}
-
-/**
- * Helper used to know if the given modifier depends from another one.<br />
- * It checks if the needed modifier is listed and enabled.
- * @method
- * @memberof Popper.Utils
- * @param {Array} modifiers - list of modifiers
- * @param {String} requestingName - name of requesting modifier
- * @param {String} requestedName - name of requested modifier
- * @returns {Boolean}
- */
-function isModifierRequired(modifiers, requestingName, requestedName) {
-  var requesting = find(modifiers, function (_ref) {
-    var name = _ref.name;
-    return name === requestingName;
-  });
-
-  var isRequired = !!requesting && modifiers.some(function (modifier) {
-    return modifier.name === requestedName && modifier.enabled && modifier.order < requesting.order;
-  });
-
-  if (!isRequired) {
-    var _requesting = '`' + requestingName + '`';
-    var requested = '`' + requestedName + '`';
-    console.warn(requested + ' modifier is required by ' + _requesting + ' modifier in order to work, be sure to include it before ' + _requesting + '!');
-  }
-  return isRequired;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function arrow(data, options) {
-  var _data$offsets$arrow;
-
-  // arrow depends on keepTogether in order to work
-  if (!isModifierRequired(data.instance.modifiers, 'arrow', 'keepTogether')) {
-    return data;
-  }
-
-  var arrowElement = options.element;
-
-  // if arrowElement is a string, suppose it's a CSS selector
-  if (typeof arrowElement === 'string') {
-    arrowElement = data.instance.popper.querySelector(arrowElement);
-
-    // if arrowElement is not found, don't run the modifier
-    if (!arrowElement) {
-      return data;
-    }
-  } else {
-    // if the arrowElement isn't a query selector we must check that the
-    // provided DOM node is child of its popper node
-    if (!data.instance.popper.contains(arrowElement)) {
-      console.warn('WARNING: `arrow.element` must be child of its popper element!');
-      return data;
-    }
-  }
-
-  var placement = data.placement.split('-')[0];
-  var _data$offsets = data.offsets,
-      popper = _data$offsets.popper,
-      reference = _data$offsets.reference;
-
-  var isVertical = ['left', 'right'].indexOf(placement) !== -1;
-
-  var len = isVertical ? 'height' : 'width';
-  var sideCapitalized = isVertical ? 'Top' : 'Left';
-  var side = sideCapitalized.toLowerCase();
-  var altSide = isVertical ? 'left' : 'top';
-  var opSide = isVertical ? 'bottom' : 'right';
-  var arrowElementSize = getOuterSizes(arrowElement)[len];
-
-  //
-  // extends keepTogether behavior making sure the popper and its
-  // reference have enough pixels in conjunction
-  //
-
-  // top/left side
-  if (reference[opSide] - arrowElementSize < popper[side]) {
-    data.offsets.popper[side] -= popper[side] - (reference[opSide] - arrowElementSize);
-  }
-  // bottom/right side
-  if (reference[side] + arrowElementSize > popper[opSide]) {
-    data.offsets.popper[side] += reference[side] + arrowElementSize - popper[opSide];
-  }
-  data.offsets.popper = getClientRect(data.offsets.popper);
-
-  // compute center of the popper
-  var center = reference[side] + reference[len] / 2 - arrowElementSize / 2;
-
-  // Compute the sideValue using the updated popper offsets
-  // take popper margin in account because we don't have this info available
-  var css = getStyleComputedProperty(data.instance.popper);
-  var popperMarginSide = parseFloat(css['margin' + sideCapitalized]);
-  var popperBorderSide = parseFloat(css['border' + sideCapitalized + 'Width']);
-  var sideValue = center - data.offsets.popper[side] - popperMarginSide - popperBorderSide;
-
-  // prevent arrowElement from being placed not contiguously to its popper
-  sideValue = Math.max(Math.min(popper[len] - arrowElementSize, sideValue), 0);
-
-  data.arrowElement = arrowElement;
-  data.offsets.arrow = (_data$offsets$arrow = {}, defineProperty(_data$offsets$arrow, side, Math.round(sideValue)), defineProperty(_data$offsets$arrow, altSide, ''), _data$offsets$arrow);
-
-  return data;
-}
-
-/**
- * Get the opposite placement variation of the given one
- * @method
- * @memberof Popper.Utils
- * @argument {String} placement variation
- * @returns {String} flipped placement variation
- */
-function getOppositeVariation(variation) {
-  if (variation === 'end') {
-    return 'start';
-  } else if (variation === 'start') {
-    return 'end';
-  }
-  return variation;
-}
-
-/**
- * List of accepted placements to use as values of the `placement` option.<br />
- * Valid placements are:
- * - `auto`
- * - `top`
- * - `right`
- * - `bottom`
- * - `left`
- *
- * Each placement can have a variation from this list:
- * - `-start`
- * - `-end`
- *
- * Variations are interpreted easily if you think of them as the left to right
- * written languages. Horizontally (`top` and `bottom`), `start` is left and `end`
- * is right.<br />
- * Vertically (`left` and `right`), `start` is top and `end` is bottom.
- *
- * Some valid examples are:
- * - `top-end` (on top of reference, right aligned)
- * - `right-start` (on right of reference, top aligned)
- * - `bottom` (on bottom, centered)
- * - `auto-end` (on the side with more space available, alignment depends by placement)
- *
- * @static
- * @type {Array}
- * @enum {String}
- * @readonly
- * @method placements
- * @memberof Popper
- */
-var placements = ['auto-start', 'auto', 'auto-end', 'top-start', 'top', 'top-end', 'right-start', 'right', 'right-end', 'bottom-end', 'bottom', 'bottom-start', 'left-end', 'left', 'left-start'];
-
-// Get rid of `auto` `auto-start` and `auto-end`
-var validPlacements = placements.slice(3);
-
-/**
- * Given an initial placement, returns all the subsequent placements
- * clockwise (or counter-clockwise).
- *
- * @method
- * @memberof Popper.Utils
- * @argument {String} placement - A valid placement (it accepts variations)
- * @argument {Boolean} counter - Set to true to walk the placements counterclockwise
- * @returns {Array} placements including their variations
- */
-function clockwise(placement) {
-  var counter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-  var index = validPlacements.indexOf(placement);
-  var arr = validPlacements.slice(index + 1).concat(validPlacements.slice(0, index));
-  return counter ? arr.reverse() : arr;
-}
-
-var BEHAVIORS = {
-  FLIP: 'flip',
-  CLOCKWISE: 'clockwise',
-  COUNTERCLOCKWISE: 'counterclockwise'
-};
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function flip(data, options) {
-  // if `inner` modifier is enabled, we can't use the `flip` modifier
-  if (isModifierEnabled(data.instance.modifiers, 'inner')) {
-    return data;
-  }
-
-  if (data.flipped && data.placement === data.originalPlacement) {
-    // seems like flip is trying to loop, probably there's not enough space on any of the flippable sides
-    return data;
-  }
-
-  var boundaries = getBoundaries(data.instance.popper, data.instance.reference, options.padding, options.boundariesElement, data.positionFixed);
-
-  var placement = data.placement.split('-')[0];
-  var placementOpposite = getOppositePlacement(placement);
-  var variation = data.placement.split('-')[1] || '';
-
-  var flipOrder = [];
-
-  switch (options.behavior) {
-    case BEHAVIORS.FLIP:
-      flipOrder = [placement, placementOpposite];
-      break;
-    case BEHAVIORS.CLOCKWISE:
-      flipOrder = clockwise(placement);
-      break;
-    case BEHAVIORS.COUNTERCLOCKWISE:
-      flipOrder = clockwise(placement, true);
-      break;
-    default:
-      flipOrder = options.behavior;
-  }
-
-  flipOrder.forEach(function (step, index) {
-    if (placement !== step || flipOrder.length === index + 1) {
-      return data;
-    }
-
-    placement = data.placement.split('-')[0];
-    placementOpposite = getOppositePlacement(placement);
-
-    var popperOffsets = data.offsets.popper;
-    var refOffsets = data.offsets.reference;
-
-    // using floor because the reference offsets may contain decimals we are not going to consider here
-    var floor = Math.floor;
-    var overlapsRef = placement === 'left' && floor(popperOffsets.right) > floor(refOffsets.left) || placement === 'right' && floor(popperOffsets.left) < floor(refOffsets.right) || placement === 'top' && floor(popperOffsets.bottom) > floor(refOffsets.top) || placement === 'bottom' && floor(popperOffsets.top) < floor(refOffsets.bottom);
-
-    var overflowsLeft = floor(popperOffsets.left) < floor(boundaries.left);
-    var overflowsRight = floor(popperOffsets.right) > floor(boundaries.right);
-    var overflowsTop = floor(popperOffsets.top) < floor(boundaries.top);
-    var overflowsBottom = floor(popperOffsets.bottom) > floor(boundaries.bottom);
-
-    var overflowsBoundaries = placement === 'left' && overflowsLeft || placement === 'right' && overflowsRight || placement === 'top' && overflowsTop || placement === 'bottom' && overflowsBottom;
-
-    // flip the variation if required
-    var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
-
-    // flips variation if reference element overflows boundaries
-    var flippedVariationByRef = !!options.flipVariations && (isVertical && variation === 'start' && overflowsLeft || isVertical && variation === 'end' && overflowsRight || !isVertical && variation === 'start' && overflowsTop || !isVertical && variation === 'end' && overflowsBottom);
-
-    // flips variation if popper content overflows boundaries
-    var flippedVariationByContent = !!options.flipVariationsByContent && (isVertical && variation === 'start' && overflowsRight || isVertical && variation === 'end' && overflowsLeft || !isVertical && variation === 'start' && overflowsBottom || !isVertical && variation === 'end' && overflowsTop);
-
-    var flippedVariation = flippedVariationByRef || flippedVariationByContent;
-
-    if (overlapsRef || overflowsBoundaries || flippedVariation) {
-      // this boolean to detect any flip loop
-      data.flipped = true;
-
-      if (overlapsRef || overflowsBoundaries) {
-        placement = flipOrder[index + 1];
-      }
-
-      if (flippedVariation) {
-        variation = getOppositeVariation(variation);
-      }
-
-      data.placement = placement + (variation ? '-' + variation : '');
-
-      // this object contains `position`, we want to preserve it along with
-      // any additional property we may add in the future
-      data.offsets.popper = _extends({}, data.offsets.popper, getPopperOffsets(data.instance.popper, data.offsets.reference, data.placement));
-
-      data = runModifiers(data.instance.modifiers, data, 'flip');
-    }
-  });
-  return data;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function keepTogether(data) {
-  var _data$offsets = data.offsets,
-      popper = _data$offsets.popper,
-      reference = _data$offsets.reference;
-
-  var placement = data.placement.split('-')[0];
-  var floor = Math.floor;
-  var isVertical = ['top', 'bottom'].indexOf(placement) !== -1;
-  var side = isVertical ? 'right' : 'bottom';
-  var opSide = isVertical ? 'left' : 'top';
-  var measurement = isVertical ? 'width' : 'height';
-
-  if (popper[side] < floor(reference[opSide])) {
-    data.offsets.popper[opSide] = floor(reference[opSide]) - popper[measurement];
-  }
-  if (popper[opSide] > floor(reference[side])) {
-    data.offsets.popper[opSide] = floor(reference[side]);
-  }
-
-  return data;
-}
-
-/**
- * Converts a string containing value + unit into a px value number
- * @function
- * @memberof {modifiers~offset}
- * @private
- * @argument {String} str - Value + unit string
- * @argument {String} measurement - `height` or `width`
- * @argument {Object} popperOffsets
- * @argument {Object} referenceOffsets
- * @returns {Number|String}
- * Value in pixels, or original string if no values were extracted
- */
-function toValue(str, measurement, popperOffsets, referenceOffsets) {
-  // separate value from unit
-  var split = str.match(/((?:\-|\+)?\d*\.?\d*)(.*)/);
-  var value = +split[1];
-  var unit = split[2];
-
-  // If it's not a number it's an operator, I guess
-  if (!value) {
-    return str;
-  }
-
-  if (unit.indexOf('%') === 0) {
-    var element = void 0;
-    switch (unit) {
-      case '%p':
-        element = popperOffsets;
-        break;
-      case '%':
-      case '%r':
-      default:
-        element = referenceOffsets;
-    }
-
-    var rect = getClientRect(element);
-    return rect[measurement] / 100 * value;
-  } else if (unit === 'vh' || unit === 'vw') {
-    // if is a vh or vw, we calculate the size based on the viewport
-    var size = void 0;
-    if (unit === 'vh') {
-      size = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    } else {
-      size = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    }
-    return size / 100 * value;
-  } else {
-    // if is an explicit pixel unit, we get rid of the unit and keep the value
-    // if is an implicit unit, it's px, and we return just the value
-    return value;
-  }
-}
-
-/**
- * Parse an `offset` string to extrapolate `x` and `y` numeric offsets.
- * @function
- * @memberof {modifiers~offset}
- * @private
- * @argument {String} offset
- * @argument {Object} popperOffsets
- * @argument {Object} referenceOffsets
- * @argument {String} basePlacement
- * @returns {Array} a two cells array with x and y offsets in numbers
- */
-function parseOffset(offset, popperOffsets, referenceOffsets, basePlacement) {
-  var offsets = [0, 0];
-
-  // Use height if placement is left or right and index is 0 otherwise use width
-  // in this way the first offset will use an axis and the second one
-  // will use the other one
-  var useHeight = ['right', 'left'].indexOf(basePlacement) !== -1;
-
-  // Split the offset string to obtain a list of values and operands
-  // The regex addresses values with the plus or minus sign in front (+10, -20, etc)
-  var fragments = offset.split(/(\+|\-)/).map(function (frag) {
-    return frag.trim();
-  });
-
-  // Detect if the offset string contains a pair of values or a single one
-  // they could be separated by comma or space
-  var divider = fragments.indexOf(find(fragments, function (frag) {
-    return frag.search(/,|\s/) !== -1;
-  }));
-
-  if (fragments[divider] && fragments[divider].indexOf(',') === -1) {
-    console.warn('Offsets separated by white space(s) are deprecated, use a comma (,) instead.');
-  }
-
-  // If divider is found, we divide the list of values and operands to divide
-  // them by ofset X and Y.
-  var splitRegex = /\s*,\s*|\s+/;
-  var ops = divider !== -1 ? [fragments.slice(0, divider).concat([fragments[divider].split(splitRegex)[0]]), [fragments[divider].split(splitRegex)[1]].concat(fragments.slice(divider + 1))] : [fragments];
-
-  // Convert the values with units to absolute pixels to allow our computations
-  ops = ops.map(function (op, index) {
-    // Most of the units rely on the orientation of the popper
-    var measurement = (index === 1 ? !useHeight : useHeight) ? 'height' : 'width';
-    var mergeWithPrevious = false;
-    return op
-    // This aggregates any `+` or `-` sign that aren't considered operators
-    // e.g.: 10 + +5 => [10, +, +5]
-    .reduce(function (a, b) {
-      if (a[a.length - 1] === '' && ['+', '-'].indexOf(b) !== -1) {
-        a[a.length - 1] = b;
-        mergeWithPrevious = true;
-        return a;
-      } else if (mergeWithPrevious) {
-        a[a.length - 1] += b;
-        mergeWithPrevious = false;
-        return a;
-      } else {
-        return a.concat(b);
-      }
-    }, [])
-    // Here we convert the string values into number values (in px)
-    .map(function (str) {
-      return toValue(str, measurement, popperOffsets, referenceOffsets);
-    });
-  });
-
-  // Loop trough the offsets arrays and execute the operations
-  ops.forEach(function (op, index) {
-    op.forEach(function (frag, index2) {
-      if (isNumeric(frag)) {
-        offsets[index] += frag * (op[index2 - 1] === '-' ? -1 : 1);
-      }
-    });
-  });
-  return offsets;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @argument {Number|String} options.offset=0
- * The offset value as described in the modifier description
- * @returns {Object} The data object, properly modified
- */
-function offset(data, _ref) {
-  var offset = _ref.offset;
-  var placement = data.placement,
-      _data$offsets = data.offsets,
-      popper = _data$offsets.popper,
-      reference = _data$offsets.reference;
-
-  var basePlacement = placement.split('-')[0];
-
-  var offsets = void 0;
-  if (isNumeric(+offset)) {
-    offsets = [+offset, 0];
-  } else {
-    offsets = parseOffset(offset, popper, reference, basePlacement);
-  }
-
-  if (basePlacement === 'left') {
-    popper.top += offsets[0];
-    popper.left -= offsets[1];
-  } else if (basePlacement === 'right') {
-    popper.top += offsets[0];
-    popper.left += offsets[1];
-  } else if (basePlacement === 'top') {
-    popper.left += offsets[0];
-    popper.top -= offsets[1];
-  } else if (basePlacement === 'bottom') {
-    popper.left += offsets[0];
-    popper.top += offsets[1];
-  }
-
-  data.popper = popper;
-  return data;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function preventOverflow(data, options) {
-  var boundariesElement = options.boundariesElement || getOffsetParent(data.instance.popper);
-
-  // If offsetParent is the reference element, we really want to
-  // go one step up and use the next offsetParent as reference to
-  // avoid to make this modifier completely useless and look like broken
-  if (data.instance.reference === boundariesElement) {
-    boundariesElement = getOffsetParent(boundariesElement);
-  }
-
-  // NOTE: DOM access here
-  // resets the popper's position so that the document size can be calculated excluding
-  // the size of the popper element itself
-  var transformProp = getSupportedPropertyName('transform');
-  var popperStyles = data.instance.popper.style; // assignment to help minification
-  var top = popperStyles.top,
-      left = popperStyles.left,
-      transform = popperStyles[transformProp];
-
-  popperStyles.top = '';
-  popperStyles.left = '';
-  popperStyles[transformProp] = '';
-
-  var boundaries = getBoundaries(data.instance.popper, data.instance.reference, options.padding, boundariesElement, data.positionFixed);
-
-  // NOTE: DOM access here
-  // restores the original style properties after the offsets have been computed
-  popperStyles.top = top;
-  popperStyles.left = left;
-  popperStyles[transformProp] = transform;
-
-  options.boundaries = boundaries;
-
-  var order = options.priority;
-  var popper = data.offsets.popper;
-
-  var check = {
-    primary: function primary(placement) {
-      var value = popper[placement];
-      if (popper[placement] < boundaries[placement] && !options.escapeWithReference) {
-        value = Math.max(popper[placement], boundaries[placement]);
-      }
-      return defineProperty({}, placement, value);
-    },
-    secondary: function secondary(placement) {
-      var mainSide = placement === 'right' ? 'left' : 'top';
-      var value = popper[mainSide];
-      if (popper[placement] > boundaries[placement] && !options.escapeWithReference) {
-        value = Math.min(popper[mainSide], boundaries[placement] - (placement === 'right' ? popper.width : popper.height));
-      }
-      return defineProperty({}, mainSide, value);
-    }
-  };
-
-  order.forEach(function (placement) {
-    var side = ['left', 'top'].indexOf(placement) !== -1 ? 'primary' : 'secondary';
-    popper = _extends({}, popper, check[side](placement));
-  });
-
-  data.offsets.popper = popper;
-
-  return data;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function shift(data) {
-  var placement = data.placement;
-  var basePlacement = placement.split('-')[0];
-  var shiftvariation = placement.split('-')[1];
-
-  // if shift shiftvariation is specified, run the modifier
-  if (shiftvariation) {
-    var _data$offsets = data.offsets,
-        reference = _data$offsets.reference,
-        popper = _data$offsets.popper;
-
-    var isVertical = ['bottom', 'top'].indexOf(basePlacement) !== -1;
-    var side = isVertical ? 'left' : 'top';
-    var measurement = isVertical ? 'width' : 'height';
-
-    var shiftOffsets = {
-      start: defineProperty({}, side, reference[side]),
-      end: defineProperty({}, side, reference[side] + reference[measurement] - popper[measurement])
-    };
-
-    data.offsets.popper = _extends({}, popper, shiftOffsets[shiftvariation]);
-  }
-
-  return data;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by update method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function hide(data) {
-  if (!isModifierRequired(data.instance.modifiers, 'hide', 'preventOverflow')) {
-    return data;
-  }
-
-  var refRect = data.offsets.reference;
-  var bound = find(data.instance.modifiers, function (modifier) {
-    return modifier.name === 'preventOverflow';
-  }).boundaries;
-
-  if (refRect.bottom < bound.top || refRect.left > bound.right || refRect.top > bound.bottom || refRect.right < bound.left) {
-    // Avoid unnecessary DOM access if visibility hasn't changed
-    if (data.hide === true) {
-      return data;
-    }
-
-    data.hide = true;
-    data.attributes['x-out-of-boundaries'] = '';
-  } else {
-    // Avoid unnecessary DOM access if visibility hasn't changed
-    if (data.hide === false) {
-      return data;
-    }
-
-    data.hide = false;
-    data.attributes['x-out-of-boundaries'] = false;
-  }
-
-  return data;
-}
-
-/**
- * @function
- * @memberof Modifiers
- * @argument {Object} data - The data object generated by `update` method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {Object} The data object, properly modified
- */
-function inner(data) {
-  var placement = data.placement;
-  var basePlacement = placement.split('-')[0];
-  var _data$offsets = data.offsets,
-      popper = _data$offsets.popper,
-      reference = _data$offsets.reference;
-
-  var isHoriz = ['left', 'right'].indexOf(basePlacement) !== -1;
-
-  var subtractLength = ['top', 'left'].indexOf(basePlacement) === -1;
-
-  popper[isHoriz ? 'left' : 'top'] = reference[basePlacement] - (subtractLength ? popper[isHoriz ? 'width' : 'height'] : 0);
-
-  data.placement = getOppositePlacement(placement);
-  data.offsets.popper = getClientRect(popper);
-
-  return data;
-}
-
-/**
- * Modifier function, each modifier can have a function of this type assigned
- * to its `fn` property.<br />
- * These functions will be called on each update, this means that you must
- * make sure they are performant enough to avoid performance bottlenecks.
- *
- * @function ModifierFn
- * @argument {dataObject} data - The data object generated by `update` method
- * @argument {Object} options - Modifiers configuration and options
- * @returns {dataObject} The data object, properly modified
- */
-
-/**
- * Modifiers are plugins used to alter the behavior of your poppers.<br />
- * Popper.js uses a set of 9 modifiers to provide all the basic functionalities
- * needed by the library.
- *
- * Usually you don't want to override the `order`, `fn` and `onLoad` props.
- * All the other properties are configurations that could be tweaked.
- * @namespace modifiers
- */
-var modifiers = {
-  /**
-   * Modifier used to shift the popper on the start or end of its reference
-   * element.<br />
-   * It will read the variation of the `placement` property.<br />
-   * It can be one either `-end` or `-start`.
-   * @memberof modifiers
-   * @inner
-   */
-  shift: {
-    /** @prop {number} order=100 - Index used to define the order of execution */
-    order: 100,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: shift
-  },
-
-  /**
-   * The `offset` modifier can shift your popper on both its axis.
-   *
-   * It accepts the following units:
-   * - `px` or unit-less, interpreted as pixels
-   * - `%` or `%r`, percentage relative to the length of the reference element
-   * - `%p`, percentage relative to the length of the popper element
-   * - `vw`, CSS viewport width unit
-   * - `vh`, CSS viewport height unit
-   *
-   * For length is intended the main axis relative to the placement of the popper.<br />
-   * This means that if the placement is `top` or `bottom`, the length will be the
-   * `width`. In case of `left` or `right`, it will be the `height`.
-   *
-   * You can provide a single value (as `Number` or `String`), or a pair of values
-   * as `String` divided by a comma or one (or more) white spaces.<br />
-   * The latter is a deprecated method because it leads to confusion and will be
-   * removed in v2.<br />
-   * Additionally, it accepts additions and subtractions between different units.
-   * Note that multiplications and divisions aren't supported.
-   *
-   * Valid examples are:
-   * ```
-   * 10
-   * '10%'
-   * '10, 10'
-   * '10%, 10'
-   * '10 + 10%'
-   * '10 - 5vh + 3%'
-   * '-10px + 5vh, 5px - 6%'
-   * ```
-   * > **NB**: If you desire to apply offsets to your poppers in a way that may make them overlap
-   * > with their reference element, unfortunately, you will have to disable the `flip` modifier.
-   * > You can read more on this at this [issue](https://github.com/FezVrasta/popper.js/issues/373).
-   *
-   * @memberof modifiers
-   * @inner
-   */
-  offset: {
-    /** @prop {number} order=200 - Index used to define the order of execution */
-    order: 200,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: offset,
-    /** @prop {Number|String} offset=0
-     * The offset value as described in the modifier description
-     */
-    offset: 0
-  },
-
-  /**
-   * Modifier used to prevent the popper from being positioned outside the boundary.
-   *
-   * A scenario exists where the reference itself is not within the boundaries.<br />
-   * We can say it has "escaped the boundaries" — or just "escaped".<br />
-   * In this case we need to decide whether the popper should either:
-   *
-   * - detach from the reference and remain "trapped" in the boundaries, or
-   * - if it should ignore the boundary and "escape with its reference"
-   *
-   * When `escapeWithReference` is set to`true` and reference is completely
-   * outside its boundaries, the popper will overflow (or completely leave)
-   * the boundaries in order to remain attached to the edge of the reference.
-   *
-   * @memberof modifiers
-   * @inner
-   */
-  preventOverflow: {
-    /** @prop {number} order=300 - Index used to define the order of execution */
-    order: 300,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: preventOverflow,
-    /**
-     * @prop {Array} [priority=['left','right','top','bottom']]
-     * Popper will try to prevent overflow following these priorities by default,
-     * then, it could overflow on the left and on top of the `boundariesElement`
-     */
-    priority: ['left', 'right', 'top', 'bottom'],
-    /**
-     * @prop {number} padding=5
-     * Amount of pixel used to define a minimum distance between the boundaries
-     * and the popper. This makes sure the popper always has a little padding
-     * between the edges of its container
-     */
-    padding: 5,
-    /**
-     * @prop {String|HTMLElement} boundariesElement='scrollParent'
-     * Boundaries used by the modifier. Can be `scrollParent`, `window`,
-     * `viewport` or any DOM element.
-     */
-    boundariesElement: 'scrollParent'
-  },
-
-  /**
-   * Modifier used to make sure the reference and its popper stay near each other
-   * without leaving any gap between the two. Especially useful when the arrow is
-   * enabled and you want to ensure that it points to its reference element.
-   * It cares only about the first axis. You can still have poppers with margin
-   * between the popper and its reference element.
-   * @memberof modifiers
-   * @inner
-   */
-  keepTogether: {
-    /** @prop {number} order=400 - Index used to define the order of execution */
-    order: 400,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: keepTogether
-  },
-
-  /**
-   * This modifier is used to move the `arrowElement` of the popper to make
-   * sure it is positioned between the reference element and its popper element.
-   * It will read the outer size of the `arrowElement` node to detect how many
-   * pixels of conjunction are needed.
-   *
-   * It has no effect if no `arrowElement` is provided.
-   * @memberof modifiers
-   * @inner
-   */
-  arrow: {
-    /** @prop {number} order=500 - Index used to define the order of execution */
-    order: 500,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: arrow,
-    /** @prop {String|HTMLElement} element='[x-arrow]' - Selector or node used as arrow */
-    element: '[x-arrow]'
-  },
-
-  /**
-   * Modifier used to flip the popper's placement when it starts to overlap its
-   * reference element.
-   *
-   * Requires the `preventOverflow` modifier before it in order to work.
-   *
-   * **NOTE:** this modifier will interrupt the current update cycle and will
-   * restart it if it detects the need to flip the placement.
-   * @memberof modifiers
-   * @inner
-   */
-  flip: {
-    /** @prop {number} order=600 - Index used to define the order of execution */
-    order: 600,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: flip,
-    /**
-     * @prop {String|Array} behavior='flip'
-     * The behavior used to change the popper's placement. It can be one of
-     * `flip`, `clockwise`, `counterclockwise` or an array with a list of valid
-     * placements (with optional variations)
-     */
-    behavior: 'flip',
-    /**
-     * @prop {number} padding=5
-     * The popper will flip if it hits the edges of the `boundariesElement`
-     */
-    padding: 5,
-    /**
-     * @prop {String|HTMLElement} boundariesElement='viewport'
-     * The element which will define the boundaries of the popper position.
-     * The popper will never be placed outside of the defined boundaries
-     * (except if `keepTogether` is enabled)
-     */
-    boundariesElement: 'viewport',
-    /**
-     * @prop {Boolean} flipVariations=false
-     * The popper will switch placement variation between `-start` and `-end` when
-     * the reference element overlaps its boundaries.
-     *
-     * The original placement should have a set variation.
-     */
-    flipVariations: false,
-    /**
-     * @prop {Boolean} flipVariationsByContent=false
-     * The popper will switch placement variation between `-start` and `-end` when
-     * the popper element overlaps its reference boundaries.
-     *
-     * The original placement should have a set variation.
-     */
-    flipVariationsByContent: false
-  },
-
-  /**
-   * Modifier used to make the popper flow toward the inner of the reference element.
-   * By default, when this modifier is disabled, the popper will be placed outside
-   * the reference element.
-   * @memberof modifiers
-   * @inner
-   */
-  inner: {
-    /** @prop {number} order=700 - Index used to define the order of execution */
-    order: 700,
-    /** @prop {Boolean} enabled=false - Whether the modifier is enabled or not */
-    enabled: false,
-    /** @prop {ModifierFn} */
-    fn: inner
-  },
-
-  /**
-   * Modifier used to hide the popper when its reference element is outside of the
-   * popper boundaries. It will set a `x-out-of-boundaries` attribute which can
-   * be used to hide with a CSS selector the popper when its reference is
-   * out of boundaries.
-   *
-   * Requires the `preventOverflow` modifier before it in order to work.
-   * @memberof modifiers
-   * @inner
-   */
-  hide: {
-    /** @prop {number} order=800 - Index used to define the order of execution */
-    order: 800,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: hide
-  },
-
-  /**
-   * Computes the style that will be applied to the popper element to gets
-   * properly positioned.
-   *
-   * Note that this modifier will not touch the DOM, it just prepares the styles
-   * so that `applyStyle` modifier can apply it. This separation is useful
-   * in case you need to replace `applyStyle` with a custom implementation.
-   *
-   * This modifier has `850` as `order` value to maintain backward compatibility
-   * with previous versions of Popper.js. Expect the modifiers ordering method
-   * to change in future major versions of the library.
-   *
-   * @memberof modifiers
-   * @inner
-   */
-  computeStyle: {
-    /** @prop {number} order=850 - Index used to define the order of execution */
-    order: 850,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: computeStyle,
-    /**
-     * @prop {Boolean} gpuAcceleration=true
-     * If true, it uses the CSS 3D transformation to position the popper.
-     * Otherwise, it will use the `top` and `left` properties
-     */
-    gpuAcceleration: true,
-    /**
-     * @prop {string} [x='bottom']
-     * Where to anchor the X axis (`bottom` or `top`). AKA X offset origin.
-     * Change this if your popper should grow in a direction different from `bottom`
-     */
-    x: 'bottom',
-    /**
-     * @prop {string} [x='left']
-     * Where to anchor the Y axis (`left` or `right`). AKA Y offset origin.
-     * Change this if your popper should grow in a direction different from `right`
-     */
-    y: 'right'
-  },
-
-  /**
-   * Applies the computed styles to the popper element.
-   *
-   * All the DOM manipulations are limited to this modifier. This is useful in case
-   * you want to integrate Popper.js inside a framework or view library and you
-   * want to delegate all the DOM manipulations to it.
-   *
-   * Note that if you disable this modifier, you must make sure the popper element
-   * has its position set to `absolute` before Popper.js can do its work!
-   *
-   * Just disable this modifier and define your own to achieve the desired effect.
-   *
-   * @memberof modifiers
-   * @inner
-   */
-  applyStyle: {
-    /** @prop {number} order=900 - Index used to define the order of execution */
-    order: 900,
-    /** @prop {Boolean} enabled=true - Whether the modifier is enabled or not */
-    enabled: true,
-    /** @prop {ModifierFn} */
-    fn: applyStyle,
-    /** @prop {Function} */
-    onLoad: applyStyleOnLoad,
-    /**
-     * @deprecated since version 1.10.0, the property moved to `computeStyle` modifier
-     * @prop {Boolean} gpuAcceleration=true
-     * If true, it uses the CSS 3D transformation to position the popper.
-     * Otherwise, it will use the `top` and `left` properties
-     */
-    gpuAcceleration: undefined
-  }
-};
-
-/**
- * The `dataObject` is an object containing all the information used by Popper.js.
- * This object is passed to modifiers and to the `onCreate` and `onUpdate` callbacks.
- * @name dataObject
- * @property {Object} data.instance The Popper.js instance
- * @property {String} data.placement Placement applied to popper
- * @property {String} data.originalPlacement Placement originally defined on init
- * @property {Boolean} data.flipped True if popper has been flipped by flip modifier
- * @property {Boolean} data.hide True if the reference element is out of boundaries, useful to know when to hide the popper
- * @property {HTMLElement} data.arrowElement Node used as arrow by arrow modifier
- * @property {Object} data.styles Any CSS property defined here will be applied to the popper. It expects the JavaScript nomenclature (eg. `marginBottom`)
- * @property {Object} data.arrowStyles Any CSS property defined here will be applied to the popper arrow. It expects the JavaScript nomenclature (eg. `marginBottom`)
- * @property {Object} data.boundaries Offsets of the popper boundaries
- * @property {Object} data.offsets The measurements of popper, reference and arrow elements
- * @property {Object} data.offsets.popper `top`, `left`, `width`, `height` values
- * @property {Object} data.offsets.reference `top`, `left`, `width`, `height` values
- * @property {Object} data.offsets.arrow] `top` and `left` offsets, only one of them will be different from 0
- */
-
-/**
- * Default options provided to Popper.js constructor.<br />
- * These can be overridden using the `options` argument of Popper.js.<br />
- * To override an option, simply pass an object with the same
- * structure of the `options` object, as the 3rd argument. For example:
- * ```
- * new Popper(ref, pop, {
- *   modifiers: {
- *     preventOverflow: { enabled: false }
- *   }
- * })
- * ```
- * @type {Object}
- * @static
- * @memberof Popper
- */
-var Defaults = {
-  /**
-   * Popper's placement.
-   * @prop {Popper.placements} placement='bottom'
-   */
-  placement: 'bottom',
-
-  /**
-   * Set this to true if you want popper to position it self in 'fixed' mode
-   * @prop {Boolean} positionFixed=false
-   */
-  positionFixed: false,
-
-  /**
-   * Whether events (resize, scroll) are initially enabled.
-   * @prop {Boolean} eventsEnabled=true
-   */
-  eventsEnabled: true,
-
-  /**
-   * Set to true if you want to automatically remove the popper when
-   * you call the `destroy` method.
-   * @prop {Boolean} removeOnDestroy=false
-   */
-  removeOnDestroy: false,
-
-  /**
-   * Callback called when the popper is created.<br />
-   * By default, it is set to no-op.<br />
-   * Access Popper.js instance with `data.instance`.
-   * @prop {onCreate}
-   */
-  onCreate: function onCreate() {},
-
-  /**
-   * Callback called when the popper is updated. This callback is not called
-   * on the initialization/creation of the popper, but only on subsequent
-   * updates.<br />
-   * By default, it is set to no-op.<br />
-   * Access Popper.js instance with `data.instance`.
-   * @prop {onUpdate}
-   */
-  onUpdate: function onUpdate() {},
-
-  /**
-   * List of modifiers used to modify the offsets before they are applied to the popper.
-   * They provide most of the functionalities of Popper.js.
-   * @prop {modifiers}
-   */
-  modifiers: modifiers
-};
-
-/**
- * @callback onCreate
- * @param {dataObject} data
- */
-
-/**
- * @callback onUpdate
- * @param {dataObject} data
- */
-
-// Utils
-// Methods
-var Popper = function () {
-  /**
-   * Creates a new Popper.js instance.
-   * @class Popper
-   * @param {Element|referenceObject} reference - The reference element used to position the popper
-   * @param {Element} popper - The HTML / XML element used as the popper
-   * @param {Object} options - Your custom options to override the ones defined in [Defaults](#defaults)
-   * @return {Object} instance - The generated Popper.js instance
-   */
-  function Popper(reference, popper) {
-    var _this = this;
-
-    var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    classCallCheck(this, Popper);
-
-    this.scheduleUpdate = function () {
-      return requestAnimationFrame(_this.update);
-    };
-
-    // make update() debounced, so that it only runs at most once-per-tick
-    this.update = debounce(this.update.bind(this));
-
-    // with {} we create a new object with the options inside it
-    this.options = _extends({}, Popper.Defaults, options);
-
-    // init state
-    this.state = {
-      isDestroyed: false,
-      isCreated: false,
-      scrollParents: []
-    };
-
-    // get reference and popper elements (allow jQuery wrappers)
-    this.reference = reference && reference.jquery ? reference[0] : reference;
-    this.popper = popper && popper.jquery ? popper[0] : popper;
-
-    // Deep merge modifiers options
-    this.options.modifiers = {};
-    Object.keys(_extends({}, Popper.Defaults.modifiers, options.modifiers)).forEach(function (name) {
-      _this.options.modifiers[name] = _extends({}, Popper.Defaults.modifiers[name] || {}, options.modifiers ? options.modifiers[name] : {});
-    });
-
-    // Refactoring modifiers' list (Object => Array)
-    this.modifiers = Object.keys(this.options.modifiers).map(function (name) {
-      return _extends({
-        name: name
-      }, _this.options.modifiers[name]);
-    })
-    // sort the modifiers by order
-    .sort(function (a, b) {
-      return a.order - b.order;
-    });
-
-    // modifiers have the ability to execute arbitrary code when Popper.js get inited
-    // such code is executed in the same order of its modifier
-    // they could add new properties to their options configuration
-    // BE AWARE: don't add options to `options.modifiers.name` but to `modifierOptions`!
-    this.modifiers.forEach(function (modifierOptions) {
-      if (modifierOptions.enabled && isFunction(modifierOptions.onLoad)) {
-        modifierOptions.onLoad(_this.reference, _this.popper, _this.options, modifierOptions, _this.state);
-      }
-    });
-
-    // fire the first update to position the popper in the right place
-    this.update();
-
-    var eventsEnabled = this.options.eventsEnabled;
-    if (eventsEnabled) {
-      // setup event listeners, they will take care of update the position in specific situations
-      this.enableEventListeners();
-    }
-
-    this.state.eventsEnabled = eventsEnabled;
-  }
-
-  // We can't use class properties because they don't get listed in the
-  // class prototype and break stuff like Sinon stubs
-
-
-  createClass(Popper, [{
-    key: 'update',
-    value: function update$$1() {
-      return update.call(this);
-    }
-  }, {
-    key: 'destroy',
-    value: function destroy$$1() {
-      return destroy.call(this);
-    }
-  }, {
-    key: 'enableEventListeners',
-    value: function enableEventListeners$$1() {
-      return enableEventListeners.call(this);
-    }
-  }, {
-    key: 'disableEventListeners',
-    value: function disableEventListeners$$1() {
-      return disableEventListeners.call(this);
-    }
-
-    /**
-     * Schedules an update. It will run on the next UI update available.
-     * @method scheduleUpdate
-     * @memberof Popper
-     */
-
-
-    /**
-     * Collection of utilities useful when writing custom modifiers.
-     * Starting from version 1.7, this method is available only if you
-     * include `popper-utils.js` before `popper.js`.
-     *
-     * **DEPRECATION**: This way to access PopperUtils is deprecated
-     * and will be removed in v2! Use the PopperUtils module directly instead.
-     * Due to the high instability of the methods contained in Utils, we can't
-     * guarantee them to follow semver. Use them at your own risk!
-     * @static
-     * @private
-     * @type {Object}
-     * @deprecated since version 1.8
-     * @member Utils
-     * @memberof Popper
-     */
-
-  }]);
-  return Popper;
-}();
-
-/**
- * The `referenceObject` is an object that provides an interface compatible with Popper.js
- * and lets you use it as replacement of a real DOM node.<br />
- * You can use this method to position a popper relatively to a set of coordinates
- * in case you don't have a DOM node to use as reference.
- *
- * ```
- * new Popper(referenceObject, popperNode);
- * ```
- *
- * NB: This feature isn't supported in Internet Explorer 10.
- * @name referenceObject
- * @property {Function} data.getBoundingClientRect
- * A function that returns a set of coordinates compatible with the native `getBoundingClientRect` method.
- * @property {number} data.clientWidth
- * An ES6 getter that will return the width of the virtual reference element.
- * @property {number} data.clientHeight
- * An ES6 getter that will return the height of the virtual reference element.
- */
-
-
-Popper.Utils = (typeof window !== 'undefined' ? window : global).PopperUtils;
-Popper.placements = placements;
-Popper.Defaults = Defaults;
-
-/* harmony default export */ __webpack_exports__["default"] = (Popper);
-//# sourceMappingURL=popper.js.map
-
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(2)))
-
-/***/ }),
-/* 14 */,
-/* 15 */,
-/* 16 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /*!
@@ -35661,22 +40148,22 @@ if (typeof jQuery === 'undefined') {
 
 
 /***/ }),
-/* 17 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(18);
+module.exports = __webpack_require__(23);
 
 /***/ }),
-/* 18 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
-var bind = __webpack_require__(5);
-var Axios = __webpack_require__(20);
-var defaults = __webpack_require__(3);
+var utils = __webpack_require__(1);
+var bind = __webpack_require__(10);
+var Axios = __webpack_require__(25);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -35709,15 +40196,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(9);
-axios.CancelToken = __webpack_require__(35);
-axios.isCancel = __webpack_require__(8);
+axios.Cancel = __webpack_require__(14);
+axios.CancelToken = __webpack_require__(40);
+axios.isCancel = __webpack_require__(13);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(36);
+axios.spread = __webpack_require__(41);
 
 module.exports = axios;
 
@@ -35726,7 +40213,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 19 */
+/* 24 */
 /***/ (function(module, exports) {
 
 /*!
@@ -35753,18 +40240,18 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 20 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(3);
-var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(30);
-var dispatchRequest = __webpack_require__(31);
-var isAbsoluteURL = __webpack_require__(33);
-var combineURLs = __webpack_require__(34);
+var defaults = __webpack_require__(5);
+var utils = __webpack_require__(1);
+var InterceptorManager = __webpack_require__(35);
+var dispatchRequest = __webpack_require__(36);
+var isAbsoluteURL = __webpack_require__(38);
+var combineURLs = __webpack_require__(39);
 
 /**
  * Create a new instance of Axios
@@ -35846,7 +40333,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 21 */
+/* 26 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -36036,13 +40523,13 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 22 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
@@ -36055,13 +40542,13 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 23 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(7);
+var createError = __webpack_require__(12);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -36088,7 +40575,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 24 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36116,13 +40603,13 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 25 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 function encode(val) {
   return encodeURIComponent(val).
@@ -36191,13 +40678,13 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 26 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 /**
  * Parse headers into an object
@@ -36235,13 +40722,13 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 27 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -36310,7 +40797,7 @@ module.exports = (
 
 
 /***/ }),
-/* 28 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36353,13 +40840,13 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 29 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -36413,13 +40900,13 @@ module.exports = (
 
 
 /***/ }),
-/* 30 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 function InterceptorManager() {
   this.handlers = [];
@@ -36472,16 +40959,16 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 31 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
-var transformData = __webpack_require__(32);
-var isCancel = __webpack_require__(8);
-var defaults = __webpack_require__(3);
+var utils = __webpack_require__(1);
+var transformData = __webpack_require__(37);
+var isCancel = __webpack_require__(13);
+var defaults = __webpack_require__(5);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -36558,13 +41045,13 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 32 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(0);
+var utils = __webpack_require__(1);
 
 /**
  * Transform the data for a request or a response
@@ -36585,7 +41072,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 33 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36606,7 +41093,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 34 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36627,13 +41114,13 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 35 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(9);
+var Cancel = __webpack_require__(14);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -36691,7 +41178,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 36 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36725,4496 +41212,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/*!
- * jQuery Validation Plugin v1.15.1
- *
- * http://jqueryvalidation.org/
- *
- * Copyright (c) 2016 Jörn Zaefferer
- * Released under the MIT license
- */
-(function (factory) {
-	if (true) {
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else if ((typeof module === "undefined" ? "undefined" : _typeof(module)) === "object" && module.exports) {
-		module.exports = factory(require("jquery"));
-	} else {
-		factory(jQuery);
-	}
-})(function ($) {
-
-	(function () {
-
-		function stripHtml(value) {
-
-			// Remove html tags and space chars
-			return value.replace(/<.[^<>]*?>/g, " ").replace(/&nbsp;|&#160;/gi, " ")
-
-			// Remove punctuation
-			.replace(/[.(),;:!?%#$'\"_+=\/\-“”’]*/g, "");
-		}
-
-		$.validator.addMethod("maxWords", function (value, element, params) {
-			return this.optional(element) || stripHtml(value).match(/\b\w+\b/g).length <= params;
-		}, $.validator.format("Please enter {0} words or less."));
-
-		$.validator.addMethod("minWords", function (value, element, params) {
-			return this.optional(element) || stripHtml(value).match(/\b\w+\b/g).length >= params;
-		}, $.validator.format("Please enter at least {0} words."));
-
-		$.validator.addMethod("rangeWords", function (value, element, params) {
-			var valueStripped = stripHtml(value),
-			    regex = /\b\w+\b/g;
-			return this.optional(element) || valueStripped.match(regex).length >= params[0] && valueStripped.match(regex).length <= params[1];
-		}, $.validator.format("Please enter between {0} and {1} words."));
-	})();
-
-	// Accept a value from a file input based on a required mimetype
-	$.validator.addMethod("accept", function (value, element, param) {
-
-		// Split mime on commas in case we have multiple types we can accept
-		var typeParam = typeof param === "string" ? param.replace(/\s/g, "") : "image/*",
-		    optionalValue = this.optional(element),
-		    i,
-		    file,
-		    regex;
-
-		// Element is optional
-		if (optionalValue) {
-			return optionalValue;
-		}
-
-		if ($(element).attr("type") === "file") {
-
-			// Escape string to be used in the regex
-			// see: http://stackoverflow.com/questions/3446170/escape-string-for-use-in-javascript-regex
-			// Escape also "/*" as "/.*" as a wildcard
-			typeParam = typeParam.replace(/[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g, "\\$&").replace(/,/g, "|").replace(/\/\*/g, "/.*");
-
-			// Check if the element has a FileList before checking each file
-			if (element.files && element.files.length) {
-				regex = new RegExp(".?(" + typeParam + ")$", "i");
-				for (i = 0; i < element.files.length; i++) {
-					file = element.files[i];
-
-					// Grab the mimetype from the loaded file, verify it matches
-					if (!file.type.match(regex)) {
-						return false;
-					}
-				}
-			}
-		}
-
-		// Either return true because we've validated each file, or because the
-		// browser does not support element.files and the FileList feature
-		return true;
-	}, $.validator.format("Please enter a value with a valid mimetype."));
-
-	$.validator.addMethod("alphanumeric", function (value, element) {
-		return this.optional(element) || /^\w+$/i.test(value);
-	}, "Letters, numbers, and underscores only please");
-
-	/*
-  * Dutch bank account numbers (not 'giro' numbers) have 9 digits
-  * and pass the '11 check'.
-  * We accept the notation with spaces, as that is common.
-  * acceptable: 123456789 or 12 34 56 789
-  */
-	$.validator.addMethod("bankaccountNL", function (value, element) {
-		if (this.optional(element)) {
-			return true;
-		}
-		if (!/^[0-9]{9}|([0-9]{2} ){3}[0-9]{3}$/.test(value)) {
-			return false;
-		}
-
-		// Now '11 check'
-		var account = value.replace(/ /g, ""),
-		    // Remove spaces
-		sum = 0,
-		    len = account.length,
-		    pos,
-		    factor,
-		    digit;
-		for (pos = 0; pos < len; pos++) {
-			factor = len - pos;
-			digit = account.substring(pos, pos + 1);
-			sum = sum + factor * digit;
-		}
-		return sum % 11 === 0;
-	}, "Please specify a valid bank account number");
-
-	$.validator.addMethod("bankorgiroaccountNL", function (value, element) {
-		return this.optional(element) || $.validator.methods.bankaccountNL.call(this, value, element) || $.validator.methods.giroaccountNL.call(this, value, element);
-	}, "Please specify a valid bank or giro account number");
-
-	/**
-  * BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.
-  *
-  * BIC pattern: BBBBCCLLbbb (8 or 11 characters long; bbb is optional)
-  *
-  * Validation is case-insensitive. Please make sure to normalize input yourself.
-  *
-  * BIC definition in detail:
-  * - First 4 characters - bank code (only letters)
-  * - Next 2 characters - ISO 3166-1 alpha-2 country code (only letters)
-  * - Next 2 characters - location code (letters and digits)
-  *   a. shall not start with '0' or '1'
-  *   b. second character must be a letter ('O' is not allowed) or digit ('0' for test (therefore not allowed), '1' denoting passive participant, '2' typically reverse-billing)
-  * - Last 3 characters - branch code, optional (shall not start with 'X' except in case of 'XXX' for primary office) (letters and digits)
-  */
-	$.validator.addMethod("bic", function (value, element) {
-		return this.optional(element) || /^([A-Z]{6}[A-Z2-9][A-NP-Z1-9])(X{3}|[A-WY-Z0-9][A-Z0-9]{2})?$/.test(value.toUpperCase());
-	}, "Please specify a valid BIC code");
-
-	/*
-  * Código de identificación fiscal ( CIF ) is the tax identification code for Spanish legal entities
-  * Further rules can be found in Spanish on http://es.wikipedia.org/wiki/C%C3%B3digo_de_identificaci%C3%B3n_fiscal
-  */
-	$.validator.addMethod("cifES", function (value) {
-		"use strict";
-
-		var num = [],
-		    controlDigit,
-		    sum,
-		    i,
-		    count,
-		    tmp,
-		    secondDigit;
-
-		value = value.toUpperCase();
-
-		// Quick format test
-		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
-			return false;
-		}
-
-		for (i = 0; i < 9; i++) {
-			num[i] = parseInt(value.charAt(i), 10);
-		}
-
-		// Algorithm for checking CIF codes
-		sum = num[2] + num[4] + num[6];
-		for (count = 1; count < 8; count += 2) {
-			tmp = (2 * num[count]).toString();
-			secondDigit = tmp.charAt(1);
-
-			sum += parseInt(tmp.charAt(0), 10) + (secondDigit === "" ? 0 : parseInt(secondDigit, 10));
-		}
-
-		/* The first (position 1) is a letter following the following criteria:
-   *	A. Corporations
-   *	B. LLCs
-   *	C. General partnerships
-   *	D. Companies limited partnerships
-   *	E. Communities of goods
-   *	F. Cooperative Societies
-   *	G. Associations
-   *	H. Communities of homeowners in horizontal property regime
-   *	J. Civil Societies
-   *	K. Old format
-   *	L. Old format
-   *	M. Old format
-   *	N. Nonresident entities
-   *	P. Local authorities
-   *	Q. Autonomous bodies, state or not, and the like, and congregations and religious institutions
-   *	R. Congregations and religious institutions (since 2008 ORDER EHA/451/2008)
-   *	S. Organs of State Administration and regions
-   *	V. Agrarian Transformation
-   *	W. Permanent establishments of non-resident in Spain
-   */
-		if (/^[ABCDEFGHJNPQRSUVW]{1}/.test(value)) {
-			sum += "";
-			controlDigit = 10 - parseInt(sum.charAt(sum.length - 1), 10);
-			value += controlDigit;
-			return num[8].toString() === String.fromCharCode(64 + controlDigit) || num[8].toString() === value.charAt(value.length - 1);
-		}
-
-		return false;
-	}, "Please specify a valid CIF number.");
-
-	/*
-  * Brazillian CPF number (Cadastrado de Pessoas Físicas) is the equivalent of a Brazilian tax registration number.
-  * CPF numbers have 11 digits in total: 9 numbers followed by 2 check numbers that are being used for validation.
-  */
-	$.validator.addMethod("cpfBR", function (value) {
-
-		// Removing special characters from value
-		value = value.replace(/([~!@#$%^&*()_+=`{}\[\]\-|\\:;'<>,.\/? ])+/g, "");
-
-		// Checking value to have 11 digits only
-		if (value.length !== 11) {
-			return false;
-		}
-
-		var sum = 0,
-		    firstCN,
-		    secondCN,
-		    checkResult,
-		    i;
-
-		firstCN = parseInt(value.substring(9, 10), 10);
-		secondCN = parseInt(value.substring(10, 11), 10);
-
-		checkResult = function checkResult(sum, cn) {
-			var result = sum * 10 % 11;
-			if (result === 10 || result === 11) {
-				result = 0;
-			}
-			return result === cn;
-		};
-
-		// Checking for dump data
-		if (value === "" || value === "00000000000" || value === "11111111111" || value === "22222222222" || value === "33333333333" || value === "44444444444" || value === "55555555555" || value === "66666666666" || value === "77777777777" || value === "88888888888" || value === "99999999999") {
-			return false;
-		}
-
-		// Step 1 - using first Check Number:
-		for (i = 1; i <= 9; i++) {
-			sum = sum + parseInt(value.substring(i - 1, i), 10) * (11 - i);
-		}
-
-		// If first Check Number (CN) is valid, move to Step 2 - using second Check Number:
-		if (checkResult(sum, firstCN)) {
-			sum = 0;
-			for (i = 1; i <= 10; i++) {
-				sum = sum + parseInt(value.substring(i - 1, i), 10) * (12 - i);
-			}
-			return checkResult(sum, secondCN);
-		}
-		return false;
-	}, "Please specify a valid CPF number");
-
-	// http://jqueryvalidation.org/creditcard-method/
-	// based on http://en.wikipedia.org/wiki/Luhn_algorithm
-	$.validator.addMethod("creditcard", function (value, element) {
-		if (this.optional(element)) {
-			return "dependency-mismatch";
-		}
-
-		// Accept only spaces, digits and dashes
-		if (/[^0-9 \-]+/.test(value)) {
-			return false;
-		}
-
-		var nCheck = 0,
-		    nDigit = 0,
-		    bEven = false,
-		    n,
-		    cDigit;
-
-		value = value.replace(/\D/g, "");
-
-		// Basing min and max length on
-		// http://developer.ean.com/general_info/Valid_Credit_Card_Types
-		if (value.length < 13 || value.length > 19) {
-			return false;
-		}
-
-		for (n = value.length - 1; n >= 0; n--) {
-			cDigit = value.charAt(n);
-			nDigit = parseInt(cDigit, 10);
-			if (bEven) {
-				if ((nDigit *= 2) > 9) {
-					nDigit -= 9;
-				}
-			}
-
-			nCheck += nDigit;
-			bEven = !bEven;
-		}
-
-		return nCheck % 10 === 0;
-	}, "Please enter a valid credit card number.");
-
-	/* NOTICE: Modified version of Castle.Components.Validator.CreditCardValidator
-  * Redistributed under the the Apache License 2.0 at http://www.apache.org/licenses/LICENSE-2.0
-  * Valid Types: mastercard, visa, amex, dinersclub, enroute, discover, jcb, unknown, all (overrides all other settings)
-  */
-	$.validator.addMethod("creditcardtypes", function (value, element, param) {
-		if (/[^0-9\-]+/.test(value)) {
-			return false;
-		}
-
-		value = value.replace(/\D/g, "");
-
-		var validTypes = 0x0000;
-
-		if (param.mastercard) {
-			validTypes |= 0x0001;
-		}
-		if (param.visa) {
-			validTypes |= 0x0002;
-		}
-		if (param.amex) {
-			validTypes |= 0x0004;
-		}
-		if (param.dinersclub) {
-			validTypes |= 0x0008;
-		}
-		if (param.enroute) {
-			validTypes |= 0x0010;
-		}
-		if (param.discover) {
-			validTypes |= 0x0020;
-		}
-		if (param.jcb) {
-			validTypes |= 0x0040;
-		}
-		if (param.unknown) {
-			validTypes |= 0x0080;
-		}
-		if (param.all) {
-			validTypes = 0x0001 | 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080;
-		}
-		if (validTypes & 0x0001 && /^(5[12345])/.test(value)) {
-			// Mastercard
-			return value.length === 16;
-		}
-		if (validTypes & 0x0002 && /^(4)/.test(value)) {
-			// Visa
-			return value.length === 16;
-		}
-		if (validTypes & 0x0004 && /^(3[47])/.test(value)) {
-			// Amex
-			return value.length === 15;
-		}
-		if (validTypes & 0x0008 && /^(3(0[012345]|[68]))/.test(value)) {
-			// Dinersclub
-			return value.length === 14;
-		}
-		if (validTypes & 0x0010 && /^(2(014|149))/.test(value)) {
-			// Enroute
-			return value.length === 15;
-		}
-		if (validTypes & 0x0020 && /^(6011)/.test(value)) {
-			// Discover
-			return value.length === 16;
-		}
-		if (validTypes & 0x0040 && /^(3)/.test(value)) {
-			// Jcb
-			return value.length === 16;
-		}
-		if (validTypes & 0x0040 && /^(2131|1800)/.test(value)) {
-			// Jcb
-			return value.length === 15;
-		}
-		if (validTypes & 0x0080) {
-			// Unknown
-			return true;
-		}
-		return false;
-	}, "Please enter a valid credit card number.");
-
-	/**
-  * Validates currencies with any given symbols by @jameslouiz
-  * Symbols can be optional or required. Symbols required by default
-  *
-  * Usage examples:
-  *  currency: ["£", false] - Use false for soft currency validation
-  *  currency: ["$", false]
-  *  currency: ["RM", false] - also works with text based symbols such as "RM" - Malaysia Ringgit etc
-  *
-  *  <input class="currencyInput" name="currencyInput">
-  *
-  * Soft symbol checking
-  *  currencyInput: {
-  *     currency: ["$", false]
-  *  }
-  *
-  * Strict symbol checking (default)
-  *  currencyInput: {
-  *     currency: "$"
-  *     //OR
-  *     currency: ["$", true]
-  *  }
-  *
-  * Multiple Symbols
-  *  currencyInput: {
-  *     currency: "$,£,¢"
-  *  }
-  */
-	$.validator.addMethod("currency", function (value, element, param) {
-		var isParamString = typeof param === "string",
-		    symbol = isParamString ? param : param[0],
-		    soft = isParamString ? true : param[1],
-		    regex;
-
-		symbol = symbol.replace(/,/g, "");
-		symbol = soft ? symbol + "]" : symbol + "]?";
-		regex = "^[" + symbol + "([1-9]{1}[0-9]{0,2}(\\,[0-9]{3})*(\\.[0-9]{0,2})?|[1-9]{1}[0-9]{0,}(\\.[0-9]{0,2})?|0(\\.[0-9]{0,2})?|(\\.[0-9]{1,2})?)$";
-		regex = new RegExp(regex);
-		return this.optional(element) || regex.test(value);
-	}, "Please specify a valid currency");
-
-	$.validator.addMethod("dateFA", function (value, element) {
-		return this.optional(element) || /^[1-4]\d{3}\/((0?[1-6]\/((3[0-1])|([1-2][0-9])|(0?[1-9])))|((1[0-2]|(0?[7-9]))\/(30|([1-2][0-9])|(0?[1-9]))))$/.test(value);
-	}, $.validator.messages.date);
-
-	/**
-  * Return true, if the value is a valid date, also making this formal check dd/mm/yyyy.
-  *
-  * @example $.validator.methods.date("01/01/1900")
-  * @result true
-  *
-  * @example $.validator.methods.date("01/13/1990")
-  * @result false
-  *
-  * @example $.validator.methods.date("01.01.1900")
-  * @result false
-  *
-  * @example <input name="pippo" class="{dateITA:true}" />
-  * @desc Declares an optional input element whose value must be a valid date.
-  *
-  * @name $.validator.methods.dateITA
-  * @type Boolean
-  * @cat Plugins/Validate/Methods
-  */
-	$.validator.addMethod("dateITA", function (value, element) {
-		var check = false,
-		    re = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
-		    adata,
-		    gg,
-		    mm,
-		    aaaa,
-		    xdata;
-		if (re.test(value)) {
-			adata = value.split("/");
-			gg = parseInt(adata[0], 10);
-			mm = parseInt(adata[1], 10);
-			aaaa = parseInt(adata[2], 10);
-			xdata = new Date(Date.UTC(aaaa, mm - 1, gg, 12, 0, 0, 0));
-			if (xdata.getUTCFullYear() === aaaa && xdata.getUTCMonth() === mm - 1 && xdata.getUTCDate() === gg) {
-				check = true;
-			} else {
-				check = false;
-			}
-		} else {
-			check = false;
-		}
-		return this.optional(element) || check;
-	}, $.validator.messages.date);
-
-	$.validator.addMethod("dateNL", function (value, element) {
-		return this.optional(element) || /^(0?[1-9]|[12]\d|3[01])[\.\/\-](0?[1-9]|1[012])[\.\/\-]([12]\d)?(\d\d)$/.test(value);
-	}, $.validator.messages.date);
-
-	// Older "accept" file extension method. Old docs: http://docs.jquery.com/Plugins/Validation/Methods/accept
-	$.validator.addMethod("extension", function (value, element, param) {
-		param = typeof param === "string" ? param.replace(/,/g, "|") : "png|jpe?g|gif";
-		return this.optional(element) || value.match(new RegExp("\\.(" + param + ")$", "i"));
-	}, $.validator.format("Please enter a value with a valid extension."));
-
-	/**
-  * Dutch giro account numbers (not bank numbers) have max 7 digits
-  */
-	$.validator.addMethod("giroaccountNL", function (value, element) {
-		return this.optional(element) || /^[0-9]{1,7}$/.test(value);
-	}, "Please specify a valid giro account number");
-
-	/**
-  * IBAN is the international bank account number.
-  * It has a country - specific format, that is checked here too
-  *
-  * Validation is case-insensitive. Please make sure to normalize input yourself.
-  */
-	$.validator.addMethod("iban", function (value, element) {
-
-		// Some quick simple tests to prevent needless work
-		if (this.optional(element)) {
-			return true;
-		}
-
-		// Remove spaces and to upper case
-		var iban = value.replace(/ /g, "").toUpperCase(),
-		    ibancheckdigits = "",
-		    leadingZeroes = true,
-		    cRest = "",
-		    cOperator = "",
-		    countrycode,
-		    ibancheck,
-		    charAt,
-		    cChar,
-		    bbanpattern,
-		    bbancountrypatterns,
-		    ibanregexp,
-		    i,
-		    p;
-
-		// Check for IBAN code length.
-		// It contains:
-		// country code ISO 3166-1 - two letters,
-		// two check digits,
-		// Basic Bank Account Number (BBAN) - up to 30 chars
-		var minimalIBANlength = 5;
-		if (iban.length < minimalIBANlength) {
-			return false;
-		}
-
-		// Check the country code and find the country specific format
-		countrycode = iban.substring(0, 2);
-		bbancountrypatterns = {
-			"AL": "\\d{8}[\\dA-Z]{16}",
-			"AD": "\\d{8}[\\dA-Z]{12}",
-			"AT": "\\d{16}",
-			"AZ": "[\\dA-Z]{4}\\d{20}",
-			"BE": "\\d{12}",
-			"BH": "[A-Z]{4}[\\dA-Z]{14}",
-			"BA": "\\d{16}",
-			"BR": "\\d{23}[A-Z][\\dA-Z]",
-			"BG": "[A-Z]{4}\\d{6}[\\dA-Z]{8}",
-			"CR": "\\d{17}",
-			"HR": "\\d{17}",
-			"CY": "\\d{8}[\\dA-Z]{16}",
-			"CZ": "\\d{20}",
-			"DK": "\\d{14}",
-			"DO": "[A-Z]{4}\\d{20}",
-			"EE": "\\d{16}",
-			"FO": "\\d{14}",
-			"FI": "\\d{14}",
-			"FR": "\\d{10}[\\dA-Z]{11}\\d{2}",
-			"GE": "[\\dA-Z]{2}\\d{16}",
-			"DE": "\\d{18}",
-			"GI": "[A-Z]{4}[\\dA-Z]{15}",
-			"GR": "\\d{7}[\\dA-Z]{16}",
-			"GL": "\\d{14}",
-			"GT": "[\\dA-Z]{4}[\\dA-Z]{20}",
-			"HU": "\\d{24}",
-			"IS": "\\d{22}",
-			"IE": "[\\dA-Z]{4}\\d{14}",
-			"IL": "\\d{19}",
-			"IT": "[A-Z]\\d{10}[\\dA-Z]{12}",
-			"KZ": "\\d{3}[\\dA-Z]{13}",
-			"KW": "[A-Z]{4}[\\dA-Z]{22}",
-			"LV": "[A-Z]{4}[\\dA-Z]{13}",
-			"LB": "\\d{4}[\\dA-Z]{20}",
-			"LI": "\\d{5}[\\dA-Z]{12}",
-			"LT": "\\d{16}",
-			"LU": "\\d{3}[\\dA-Z]{13}",
-			"MK": "\\d{3}[\\dA-Z]{10}\\d{2}",
-			"MT": "[A-Z]{4}\\d{5}[\\dA-Z]{18}",
-			"MR": "\\d{23}",
-			"MU": "[A-Z]{4}\\d{19}[A-Z]{3}",
-			"MC": "\\d{10}[\\dA-Z]{11}\\d{2}",
-			"MD": "[\\dA-Z]{2}\\d{18}",
-			"ME": "\\d{18}",
-			"NL": "[A-Z]{4}\\d{10}",
-			"NO": "\\d{11}",
-			"PK": "[\\dA-Z]{4}\\d{16}",
-			"PS": "[\\dA-Z]{4}\\d{21}",
-			"PL": "\\d{24}",
-			"PT": "\\d{21}",
-			"RO": "[A-Z]{4}[\\dA-Z]{16}",
-			"SM": "[A-Z]\\d{10}[\\dA-Z]{12}",
-			"SA": "\\d{2}[\\dA-Z]{18}",
-			"RS": "\\d{18}",
-			"SK": "\\d{20}",
-			"SI": "\\d{15}",
-			"ES": "\\d{20}",
-			"SE": "\\d{20}",
-			"CH": "\\d{5}[\\dA-Z]{12}",
-			"TN": "\\d{20}",
-			"TR": "\\d{5}[\\dA-Z]{17}",
-			"AE": "\\d{3}\\d{16}",
-			"GB": "[A-Z]{4}\\d{14}",
-			"VG": "[\\dA-Z]{4}\\d{16}"
-		};
-
-		bbanpattern = bbancountrypatterns[countrycode];
-
-		// As new countries will start using IBAN in the
-		// future, we only check if the countrycode is known.
-		// This prevents false negatives, while almost all
-		// false positives introduced by this, will be caught
-		// by the checksum validation below anyway.
-		// Strict checking should return FALSE for unknown
-		// countries.
-		if (typeof bbanpattern !== "undefined") {
-			ibanregexp = new RegExp("^[A-Z]{2}\\d{2}" + bbanpattern + "$", "");
-			if (!ibanregexp.test(iban)) {
-				return false; // Invalid country specific format
-			}
-		}
-
-		// Now check the checksum, first convert to digits
-		ibancheck = iban.substring(4, iban.length) + iban.substring(0, 4);
-		for (i = 0; i < ibancheck.length; i++) {
-			charAt = ibancheck.charAt(i);
-			if (charAt !== "0") {
-				leadingZeroes = false;
-			}
-			if (!leadingZeroes) {
-				ibancheckdigits += "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(charAt);
-			}
-		}
-
-		// Calculate the result of: ibancheckdigits % 97
-		for (p = 0; p < ibancheckdigits.length; p++) {
-			cChar = ibancheckdigits.charAt(p);
-			cOperator = "" + cRest + "" + cChar;
-			cRest = cOperator % 97;
-		}
-		return cRest === 1;
-	}, "Please specify a valid IBAN");
-
-	$.validator.addMethod("integer", function (value, element) {
-		return this.optional(element) || /^-?\d+$/.test(value);
-	}, "A positive or negative non-decimal number please");
-
-	$.validator.addMethod("decimal", function (value, element) {
-		return this.optional(element) || /^\d+(\.\d{1,2})?$/.test(value);
-	}, "A positive or negative decimal number please");
-
-	$.validator.addMethod("ipv4", function (value, element) {
-		return this.optional(element) || /^(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)\.(25[0-5]|2[0-4]\d|[01]?\d\d?)$/i.test(value);
-	}, "Please enter a valid IP v4 address.");
-
-	$.validator.addMethod("ipv6", function (value, element) {
-		return this.optional(element) || /^((([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}:[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){5}:([0-9A-Fa-f]{1,4}:)?[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){4}:([0-9A-Fa-f]{1,4}:){0,2}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){3}:([0-9A-Fa-f]{1,4}:){0,3}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){2}:([0-9A-Fa-f]{1,4}:){0,4}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){6}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(([0-9A-Fa-f]{1,4}:){0,5}:((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|(::([0-9A-Fa-f]{1,4}:){0,5}((\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b)\.){3}(\b((25[0-5])|(1\d{2})|(2[0-4]\d)|(\d{1,2}))\b))|([0-9A-Fa-f]{1,4}::([0-9A-Fa-f]{1,4}:){0,5}[0-9A-Fa-f]{1,4})|(::([0-9A-Fa-f]{1,4}:){0,6}[0-9A-Fa-f]{1,4})|(([0-9A-Fa-f]{1,4}:){1,7}:))$/i.test(value);
-	}, "Please enter a valid IP v6 address.");
-
-	$.validator.addMethod("lettersonly", function (value, element) {
-		return this.optional(element) || /^[a-z]+$/i.test(value);
-	}, "Letters only please");
-
-	$.validator.addMethod("letterswithbasicpunc", function (value, element) {
-		return this.optional(element) || /^[a-z\-.,()'"\s]+$/i.test(value);
-	}, "Letters or punctuation only please");
-
-	$.validator.addMethod("mobileNL", function (value, element) {
-		return this.optional(element) || /^((\+|00(\s|\s?\-\s?)?)31(\s|\s?\-\s?)?(\(0\)[\-\s]?)?|0)6((\s|\s?\-\s?)?[0-9]){8}$/.test(value);
-	}, "Please specify a valid mobile number");
-
-	/* For UK phone functions, do the following server side processing:
-  * Compare original input with this RegEx pattern:
-  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
-  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
-  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
-  * A number of very detailed GB telephone number RegEx patterns can also be found at:
-  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
-  */
-	$.validator.addMethod("mobileUK", function (phone_number, element) {
-		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
-		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)7(?:[1345789]\d{2}|624)\s?\d{3}\s?\d{3})$/);
-	}, "Please specify a valid mobile number");
-
-	/*
-  * The número de identidad de extranjero ( NIE )is a code used to identify the non-nationals in Spain
-  */
-	$.validator.addMethod("nieES", function (value) {
-		"use strict";
-
-		value = value.toUpperCase();
-
-		// Basic format test
-		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
-			return false;
-		}
-
-		// Test NIE
-		//T
-		if (/^[T]{1}/.test(value)) {
-			return value[8] === /^[T]{1}[A-Z0-9]{8}$/.test(value);
-		}
-
-		//XYZ
-		if (/^[XYZ]{1}/.test(value)) {
-			return value[8] === "TRWAGMYFPDXBNJZSQVHLCKE".charAt(value.replace("X", "0").replace("Y", "1").replace("Z", "2").substring(0, 8) % 23);
-		}
-
-		return false;
-	}, "Please specify a valid NIE number.");
-
-	/*
-  * The Número de Identificación Fiscal ( NIF ) is the way tax identification used in Spain for individuals
-  */
-	$.validator.addMethod("nifES", function (value) {
-		"use strict";
-
-		value = value.toUpperCase();
-
-		// Basic format test
-		if (!value.match("((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)")) {
-			return false;
-		}
-
-		// Test NIF
-		if (/^[0-9]{8}[A-Z]{1}$/.test(value)) {
-			return "TRWAGMYFPDXBNJZSQVHLCKE".charAt(value.substring(8, 0) % 23) === value.charAt(8);
-		}
-
-		// Test specials NIF (starts with K, L or M)
-		if (/^[KLM]{1}/.test(value)) {
-			return value[8] === String.fromCharCode(64);
-		}
-
-		return false;
-	}, "Please specify a valid NIF number.");
-
-	$.validator.addMethod("notEqualTo", function (value, element, param) {
-		return this.optional(element) || !$.validator.methods.equalTo.call(this, value, element, param);
-	}, "Please enter a different value, values must not be the same.");
-
-	$.validator.addMethod("nowhitespace", function (value, element) {
-		return this.optional(element) || /^\S+$/i.test(value);
-	}, "No white space please");
-
-	/**
- * Return true if the field value matches the given format RegExp
- *
- * @example $.validator.methods.pattern("AR1004",element,/^AR\d{4}$/)
- * @result true
- *
- * @example $.validator.methods.pattern("BR1004",element,/^AR\d{4}$/)
- * @result false
- *
- * @name $.validator.methods.pattern
- * @type Boolean
- * @cat Plugins/Validate/Methods
- */
-	$.validator.addMethod("pattern", function (value, element, param) {
-		if (this.optional(element)) {
-			return true;
-		}
-		if (typeof param === "string") {
-			param = new RegExp("^(?:" + param + ")$");
-		}
-		return param.test(value);
-	}, "Invalid format.");
-
-	/**
-  * Dutch phone numbers have 10 digits (or 11 and start with +31).
-  */
-	$.validator.addMethod("phoneNL", function (value, element) {
-		return this.optional(element) || /^((\+|00(\s|\s?\-\s?)?)31(\s|\s?\-\s?)?(\(0\)[\-\s]?)?|0)[1-9]((\s|\s?\-\s?)?[0-9]){8}$/.test(value);
-	}, "Please specify a valid phone number.");
-
-	/* For UK phone functions, do the following server side processing:
-  * Compare original input with this RegEx pattern:
-  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
-  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
-  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
-  * A number of very detailed GB telephone number RegEx patterns can also be found at:
-  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
-  */
-	$.validator.addMethod("phoneUK", function (phone_number, element) {
-		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
-		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?)|(?:\(?0))(?:\d{2}\)?\s?\d{4}\s?\d{4}|\d{3}\)?\s?\d{3}\s?\d{3,4}|\d{4}\)?\s?(?:\d{5}|\d{3}\s?\d{3})|\d{5}\)?\s?\d{4,5})$/);
-	}, "Please specify a valid phone number");
-
-	/**
-  * Matches US phone number format
-  *
-  * where the area code may not start with 1 and the prefix may not start with 1
-  * allows '-' or ' ' as a separator and allows parens around area code
-  * some people may want to put a '1' in front of their number
-  *
-  * 1(212)-999-2345 or
-  * 212 999 2344 or
-  * 212-999-0983
-  *
-  * but not
-  * 111-123-5434
-  * and not
-  * 212 123 4567
-  */
-	$.validator.addMethod("phoneUS", function (phone_number, element) {
-		phone_number = phone_number.replace(/\s+/g, "");
-		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(\+?1-?)?(\([2-9]([02-9]\d|1[02-9])\)|[2-9]([02-9]\d|1[02-9]))-?[2-9]([02-9]\d|1[02-9])-?\d{4}$/);
-	}, "Please specify a valid phone number");
-
-	/* For UK phone functions, do the following server side processing:
-  * Compare original input with this RegEx pattern:
-  * ^\(?(?:(?:00\)?[\s\-]?\(?|\+)(44)\)?[\s\-]?\(?(?:0\)?[\s\-]?\(?)?|0)([1-9]\d{1,4}\)?[\s\d\-]+)$
-  * Extract $1 and set $prefix to '+44<space>' if $1 is '44', otherwise set $prefix to '0'
-  * Extract $2 and remove hyphens, spaces and parentheses. Phone number is combined $prefix and $2.
-  * A number of very detailed GB telephone number RegEx patterns can also be found at:
-  * http://www.aa-asterisk.org.uk/index.php/Regular_Expressions_for_Validating_and_Formatting_GB_Telephone_Numbers
-  */
-
-	// Matches UK landline + mobile, accepting only 01-3 for landline or 07 for mobile to exclude many premium numbers
-	$.validator.addMethod("phonesUK", function (phone_number, element) {
-		phone_number = phone_number.replace(/\(|\)|\s+|-/g, "");
-		return this.optional(element) || phone_number.length > 9 && phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)(?:1\d{8,9}|[23]\d{9}|7(?:[1345789]\d{8}|624\d{6})))$/);
-	}, "Please specify a valid uk phone number");
-
-	/**
-  * Matches a valid Canadian Postal Code
-  *
-  * @example jQuery.validator.methods.postalCodeCA( "H0H 0H0", element )
-  * @result true
-  *
-  * @example jQuery.validator.methods.postalCodeCA( "H0H0H0", element )
-  * @result false
-  *
-  * @name jQuery.validator.methods.postalCodeCA
-  * @type Boolean
-  * @cat Plugins/Validate/Methods
-  */
-	$.validator.addMethod("postalCodeCA", function (value, element) {
-		return this.optional(element) || /^[ABCEGHJKLMNPRSTVXY]\d[ABCEGHJKLMNPRSTVWXYZ] *\d[ABCEGHJKLMNPRSTVWXYZ]\d$/i.test(value);
-	}, "Please specify a valid postal code");
-
-	/*
- * Valida CEPs do brasileiros:
- *
- * Formatos aceitos:
- * 99999-999
- * 99.999-999
- * 99999999
- */
-	$.validator.addMethod("postalcodeBR", function (cep_value, element) {
-		return this.optional(element) || /^\d{2}.\d{3}-\d{3}?$|^\d{5}-?\d{3}?$/.test(cep_value);
-	}, "Informe um CEP válido.");
-
-	/* Matches Italian postcode (CAP) */
-	$.validator.addMethod("postalcodeIT", function (value, element) {
-		return this.optional(element) || /^\d{5}$/.test(value);
-	}, "Please specify a valid postal code");
-
-	$.validator.addMethod("postalcodeNL", function (value, element) {
-		return this.optional(element) || /^[1-9][0-9]{3}\s?[a-zA-Z]{2}$/.test(value);
-	}, "Please specify a valid postal code");
-
-	// Matches UK postcode. Does not match to UK Channel Islands that have their own postcodes (non standard UK)
-	$.validator.addMethod("postcodeUK", function (value, element) {
-		return this.optional(element) || /^((([A-PR-UWYZ][0-9])|([A-PR-UWYZ][0-9][0-9])|([A-PR-UWYZ][A-HK-Y][0-9])|([A-PR-UWYZ][A-HK-Y][0-9][0-9])|([A-PR-UWYZ][0-9][A-HJKSTUW])|([A-PR-UWYZ][A-HK-Y][0-9][ABEHMNPRVWXY]))\s?([0-9][ABD-HJLNP-UW-Z]{2})|(GIR)\s?(0AA))$/i.test(value);
-	}, "Please specify a valid UK postcode");
-
-	/*
-  * Lets you say "at least X inputs that match selector Y must be filled."
-  *
-  * The end result is that neither of these inputs:
-  *
-  *	<input class="productinfo" name="partnumber">
-  *	<input class="productinfo" name="description">
-  *
-  *	...will validate unless at least one of them is filled.
-  *
-  * partnumber:	{require_from_group: [1,".productinfo"]},
-  * description: {require_from_group: [1,".productinfo"]}
-  *
-  * options[0]: number of fields that must be filled in the group
-  * options[1]: CSS selector that defines the group of conditionally required fields
-  */
-	$.validator.addMethod("require_from_group", function (value, element, options) {
-		var $fields = $(options[1], element.form),
-		    $fieldsFirst = $fields.eq(0),
-		    validator = $fieldsFirst.data("valid_req_grp") ? $fieldsFirst.data("valid_req_grp") : $.extend({}, this),
-		    isValid = $fields.filter(function () {
-			return validator.elementValue(this);
-		}).length >= options[0];
-
-		// Store the cloned validator for future validation
-		$fieldsFirst.data("valid_req_grp", validator);
-
-		// If element isn't being validated, run each require_from_group field's validation rules
-		if (!$(element).data("being_validated")) {
-			$fields.data("being_validated", true);
-			$fields.each(function () {
-				validator.element(this);
-			});
-			$fields.data("being_validated", false);
-		}
-		return isValid;
-	}, $.validator.format("Please fill at least {0} of these fields."));
-
-	/*
-  * Lets you say "either at least X inputs that match selector Y must be filled,
-  * OR they must all be skipped (left blank)."
-  *
-  * The end result, is that none of these inputs:
-  *
-  *	<input class="productinfo" name="partnumber">
-  *	<input class="productinfo" name="description">
-  *	<input class="productinfo" name="color">
-  *
-  *	...will validate unless either at least two of them are filled,
-  *	OR none of them are.
-  *
-  * partnumber:	{skip_or_fill_minimum: [2,".productinfo"]},
-  * description: {skip_or_fill_minimum: [2,".productinfo"]},
-  * color:		{skip_or_fill_minimum: [2,".productinfo"]}
-  *
-  * options[0]: number of fields that must be filled in the group
-  * options[1]: CSS selector that defines the group of conditionally required fields
-  *
-  */
-	$.validator.addMethod("skip_or_fill_minimum", function (value, element, options) {
-		var $fields = $(options[1], element.form),
-		    $fieldsFirst = $fields.eq(0),
-		    validator = $fieldsFirst.data("valid_skip") ? $fieldsFirst.data("valid_skip") : $.extend({}, this),
-		    numberFilled = $fields.filter(function () {
-			return validator.elementValue(this);
-		}).length,
-		    isValid = numberFilled === 0 || numberFilled >= options[0];
-
-		// Store the cloned validator for future validation
-		$fieldsFirst.data("valid_skip", validator);
-
-		// If element isn't being validated, run each skip_or_fill_minimum field's validation rules
-		if (!$(element).data("being_validated")) {
-			$fields.data("being_validated", true);
-			$fields.each(function () {
-				validator.element(this);
-			});
-			$fields.data("being_validated", false);
-		}
-		return isValid;
-	}, $.validator.format("Please either skip these fields or fill at least {0} of them."));
-
-	/* Validates US States and/or Territories by @jdforsythe
-  * Can be case insensitive or require capitalization - default is case insensitive
-  * Can include US Territories or not - default does not
-  * Can include US Military postal abbreviations (AA, AE, AP) - default does not
-  *
-  * Note: "States" always includes DC (District of Colombia)
-  *
-  * Usage examples:
-  *
-  *  This is the default - case insensitive, no territories, no military zones
-  *  stateInput: {
-  *     caseSensitive: false,
-  *     includeTerritories: false,
-  *     includeMilitary: false
-  *  }
-  *
-  *  Only allow capital letters, no territories, no military zones
-  *  stateInput: {
-  *     caseSensitive: false
-  *  }
-  *
-  *  Case insensitive, include territories but not military zones
-  *  stateInput: {
-  *     includeTerritories: true
-  *  }
-  *
-  *  Only allow capital letters, include territories and military zones
-  *  stateInput: {
-  *     caseSensitive: true,
-  *     includeTerritories: true,
-  *     includeMilitary: true
-  *  }
-  *
-  */
-	$.validator.addMethod("stateUS", function (value, element, options) {
-		var isDefault = typeof options === "undefined",
-		    caseSensitive = isDefault || typeof options.caseSensitive === "undefined" ? false : options.caseSensitive,
-		    includeTerritories = isDefault || typeof options.includeTerritories === "undefined" ? false : options.includeTerritories,
-		    includeMilitary = isDefault || typeof options.includeMilitary === "undefined" ? false : options.includeMilitary,
-		    regex;
-
-		if (!includeTerritories && !includeMilitary) {
-			regex = "^(A[KLRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])$";
-		} else if (includeTerritories && includeMilitary) {
-			regex = "^(A[AEKLPRSZ]|C[AOT]|D[CE]|FL|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEINOPST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$";
-		} else if (includeTerritories) {
-			regex = "^(A[KLRSZ]|C[AOT]|D[CE]|FL|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEINOPST]|N[CDEHJMVY]|O[HKR]|P[AR]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY])$";
-		} else {
-			regex = "^(A[AEKLPRZ]|C[AOT]|D[CE]|FL|GA|HI|I[ADLN]|K[SY]|LA|M[ADEINOST]|N[CDEHJMVY]|O[HKR]|PA|RI|S[CD]|T[NX]|UT|V[AT]|W[AIVY])$";
-		}
-
-		regex = caseSensitive ? new RegExp(regex) : new RegExp(regex, "i");
-		return this.optional(element) || regex.test(value);
-	}, "Please specify a valid state");
-
-	// TODO check if value starts with <, otherwise don't try stripping anything
-	$.validator.addMethod("strippedminlength", function (value, element, param) {
-		return $(value).text().length >= param;
-	}, $.validator.format("Please enter at least {0} characters"));
-
-	$.validator.addMethod("time", function (value, element) {
-		return this.optional(element) || /^([01]\d|2[0-3]|[0-9])(:[0-5]\d){1,2}$/.test(value);
-	}, "Please enter a valid time, between 00:00 and 23:59");
-
-	$.validator.addMethod("time12h", function (value, element) {
-		return this.optional(element) || /^((0?[1-9]|1[012])(:[0-5]\d){1,2}(\ ?[AP]M))$/i.test(value);
-	}, "Please enter a valid time in 12-hour am/pm format");
-
-	// Same as url, but TLD is optional
-	$.validator.addMethod("url2", function (value, element) {
-		return this.optional(element) || /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)*(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(value);
-	}, $.validator.messages.url);
-	/**
-  * Return true, if the value is a valid vehicle identification number (VIN).
-  *
-  * Works with all kind of text inputs.
-  *
-  * @example <input type="text" size="20" name="VehicleID" class="{required:true,vinUS:true}" />
-  * @desc Declares a required input element whose value must be a valid vehicle identification number.
-  *
-  * @name $.validator.methods.vinUS
-  * @type Boolean
-  * @cat Plugins/Validate/Methods
-  */
-	$.validator.addMethod("vinUS", function (v) {
-		if (v.length !== 17) {
-			return false;
-		}
-
-		var LL = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-		    VL = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 7, 9, 2, 3, 4, 5, 6, 7, 8, 9],
-		    FL = [8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2],
-		    rs = 0,
-		    i,
-		    n,
-		    d,
-		    f,
-		    cd,
-		    cdv;
-
-		for (i = 0; i < 17; i++) {
-			f = FL[i];
-			d = v.slice(i, i + 1);
-			if (i === 8) {
-				cdv = d;
-			}
-			if (!isNaN(d)) {
-				d *= f;
-			} else {
-				for (n = 0; n < LL.length; n++) {
-					if (d.toUpperCase() === LL[n]) {
-						d = VL[n];
-						d *= f;
-						if (isNaN(cdv) && n === 8) {
-							cdv = LL[n];
-						}
-						break;
-					}
-				}
-			}
-			rs += d;
-		}
-		cd = rs % 11;
-		if (cd === 10) {
-			cd = "X";
-		}
-		if (cd === cdv) {
-			return true;
-		}
-		return false;
-	}, "The specified vehicle identification number (VIN) is invalid.");
-
-	$.validator.addMethod("zipcodeUS", function (value, element) {
-		return this.optional(element) || /^\d{5}(-\d{4})?$/.test(value);
-	}, "The specified US ZIP Code is invalid");
-
-	$.validator.addMethod("ziprange", function (value, element) {
-		return this.optional(element) || /^90[2-5]\d\{2\}-\d{4}$/.test(value);
-	}, "Your ZIP-code must be in the range 902xx-xxxx to 905xx-xxxx");
-});
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-/***************************************************************************************************
-LoadingOverlay - A flexible loading overlay jQuery plugin
-    Author          : Gaspare Sganga
-    Version         : 2.1.7
-    License         : MIT
-    Documentation   : https://gasparesganga.com/labs/jquery-loading-overlay/
-***************************************************************************************************/
-!function (e) {
-     true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (e),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : "object" == (typeof module === "undefined" ? "undefined" : _typeof(module)) && module.exports ? e(require("jquery")) : e(jQuery);
-}(function (g, a) {
-    "use strict";
-    var t = { background: "rgba(255, 255, 255, 0.8)", backgroundClass: "", image: "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000'><circle r='80' cx='500' cy='90'/><circle r='80' cx='500' cy='910'/><circle r='80' cx='90' cy='500'/><circle r='80' cx='910' cy='500'/><circle r='80' cx='212' cy='212'/><circle r='80' cx='788' cy='212'/><circle r='80' cx='212' cy='788'/><circle r='80' cx='788' cy='788'/></svg>", imageAnimation: "2000ms rotate_right", imageAutoResize: !0, imageResizeFactor: 1, imageColor: "#202020", imageClass: "", imageOrder: 1, fontawesome: "", fontawesomeAnimation: "", fontawesomeAutoResize: !0, fontawesomeResizeFactor: 1, fontawesomeColor: "#202020", fontawesomeOrder: 2, custom: "", customAnimation: "", customAutoResize: !0, customResizeFactor: 1, customOrder: 3, text: "", textAnimation: "", textAutoResize: !0, textResizeFactor: .5, textColor: "#202020", textClass: "", textOrder: 4, progress: !1, progressAutoResize: !0, progressResizeFactor: .25, progressColor: "#a0a0a0", progressClass: "", progressOrder: 5, progressFixedPosition: "", progressSpeed: 200, progressMin: 0, progressMax: 100, size: 50, maxSize: 120, minSize: 20, direction: "column", fade: !0, resizeInterval: 50, zIndex: 2147483647 },
-        c = { overlay: { "box-sizing": "border-box", position: "relative", display: "flex", "flex-wrap": "nowrap", "align-items": "center", "justify-content": "space-around" }, element: { "box-sizing": "border-box", overflow: "visible", flex: "0 0 auto", display: "flex", "justify-content": "center", "align-items": "center" }, element_svg: { width: "100%", height: "100%" }, progress_fixed: { position: "absolute", left: "0", width: "100%" }, progress_wrapper: { position: "absolute", top: "0", left: "0", width: "100%", height: "100%" }, progress_bar: { position: "absolute", left: "0" } },
-        n = { count: 0, container: a, settings: a, wholePage: a, resizeIntervalId: a, text: a, progress: a },
-        s = { animations: ["rotate_right", "rotate_left", "fadein", "pulse"], progressPosition: ["top", "bottom"] },
-        d = { animations: { name: "rotate_right", time: "2000ms" }, fade: [400, 200] };function o(e, s) {
-        e = g(e), s.size = w(s.size), s.maxSize = parseInt(s.maxSize, 10) || 0, s.minSize = parseInt(s.minSize, 10) || 0, s.resizeInterval = parseInt(s.resizeInterval, 10) || 0;var t = p(e),
-            a = u(e);if (!1 === a) {
-            if ((a = g.extend({}, n)).container = e, a.wholePage = e.is("body"), t = g("<div>", { class: "loadingoverlay" }).css(c.overlay).css("flex-direction", "row" === s.direction.toLowerCase() ? "row" : "column"), s.backgroundClass ? t.addClass(s.backgroundClass) : t.css("background", s.background), a.wholePage && t.css({ position: "fixed", top: 0, left: 0, width: "100%", height: "100%" }), void 0 !== s.zIndex && t.css("z-index", s.zIndex), s.image) {
-                g.isArray(s.imageColor) ? 0 === s.imageColor.length ? s.imageColor = !1 : 1 === s.imageColor.length ? s.imageColor = { fill: s.imageColor[0] } : s.imageColor = { fill: s.imageColor[0], stroke: s.imageColor[1] } : s.imageColor && (s.imageColor = { fill: s.imageColor });var o = v(t, s.imageOrder, s.imageAutoResize, s.imageResizeFactor, s.imageAnimation);"<svg" === s.image.slice(0, 4).toLowerCase() && "</svg>" === s.image.slice(-6).toLowerCase() ? (o.append(s.image), o.children().css(c.element_svg), !s.imageClass && s.imageColor && o.find("*").css(s.imageColor)) : ".svg" === s.image.slice(-4).toLowerCase() || "data:image/svg" === s.image.slice(0, 14).toLowerCase() ? g.ajax({ url: s.image, type: "GET", dataType: "html", global: !1 }).done(function (e) {
-                    o.html(e), o.children().css(c.element_svg), !s.imageClass && s.imageColor && o.find("*").css(s.imageColor);
-                }) : o.css({ "background-image": "url(" + s.image + ")", "background-position": "center", "background-repeat": "no-repeat", "background-size": "cover" }), s.imageClass && o.addClass(s.imageClass);
-            }if (s.fontawesome) {
-                o = v(t, s.fontawesomeOrder, s.fontawesomeAutoResize, s.fontawesomeResizeFactor, s.fontawesomeAnimation).addClass("loadingoverlay_fa");g("<div>", { class: s.fontawesome }).appendTo(o), s.fontawesomeColor && o.css("color", s.fontawesomeColor);
-            }if (s.custom) o = v(t, s.customOrder, s.customAutoResize, s.customResizeFactor, s.customAnimation).append(s.custom);if (s.text && (a.text = v(t, s.textOrder, s.textAutoResize, s.textResizeFactor, s.textAnimation).addClass("loadingoverlay_text").text(s.text), s.textClass ? a.text.addClass(s.textClass) : s.textColor && a.text.css("color", s.textColor)), s.progress) {
-                o = v(t, s.progressOrder, s.progressAutoResize, s.progressResizeFactor, !1).addClass("loadingoverlay_progress");var r = g("<div>").css(c.progress_wrapper).appendTo(o);a.progress = { bar: g("<div>").css(c.progress_bar).appendTo(r), fixed: !1, margin: 0, min: parseFloat(s.progressMin), max: parseFloat(s.progressMax), speed: parseInt(s.progressSpeed, 10) };var i = (s.progressFixedPosition + "").replace(/\s\s+/g, " ").toLowerCase().split(" ");2 === i.length && y(i[0]) ? (a.progress.fixed = i[0], a.progress.margin = w(i[1])) : 2 === i.length && y(i[1]) ? (a.progress.fixed = i[1], a.progress.margin = w(i[0])) : 1 === i.length && y(i[0]) && (a.progress.fixed = i[0], a.progress.margin = 0), "top" === a.progress.fixed ? o.css(c.progress_fixed).css("top", a.progress.margin ? a.progress.margin.value + (a.progress.margin.fixed ? a.progress.margin.units : "%") : 0) : "bottom" === a.progress.fixed && o.css(c.progress_fixed).css("top", "auto"), s.progressClass ? a.progress.bar.addClass(s.progressClass) : s.progressColor && a.progress.bar.css("background", s.progressColor);
-            }s.fade ? !0 === s.fade ? s.fade = d.fade : "string" == typeof s.fade || "number" == typeof s.fade ? s.fade = [s.fade, s.fade] : g.isArray(s.fade) && s.fade.length < 2 && (s.fade = [s.fade[0], s.fade[0]]) : s.fade = [0, 0], s.fade = [parseInt(s.fade[0], 10), parseInt(s.fade[1], 10)], a.settings = s, t.data("loadingoverlay_data", a), e.data("loadingoverlay", t), t.fadeTo(0, .01).appendTo("body"), f(e, !0), 0 < s.resizeInterval && (a.resizeIntervalId = setInterval(function () {
-                f(e, !1);
-            }, s.resizeInterval)), t.fadeTo(s.fade[0], 1);
-        }a.count++;
-    }function r(e, s) {
-        var t = p(e = g(e)),
-            a = u(e);!1 !== a && (a.count--, (s || a.count <= 0) && t.animate({ opacity: 0 }, a.settings.fade[1], function () {
-            a.resizeIntervalId && clearInterval(a.resizeIntervalId), g(this).remove(), e.removeData("loadingoverlay");
-        }));
-    }function i(e) {
-        f(g(e), !0);
-    }function l(e, s) {
-        var t = u(e = g(e));!1 !== t && t.text && (!1 === s ? t.text.hide() : t.text.show().text(s));
-    }function m(e, s) {
-        var t = u(e = g(e));if (!1 !== t && t.progress) if (!1 === s) t.progress.bar.hide();else {
-            var a = 100 * ((parseFloat(s) || 0) - t.progress.min) / (t.progress.max - t.progress.min);a < 0 && (a = 0), 100 < a && (a = 100), t.progress.bar.show().animate({ width: a + "%" }, t.progress.speed);
-        }
-    }function f(e, t) {
-        var s = p(e),
-            a = u(e);if (!1 !== a) {
-            if (!a.wholePage) {
-                var o = "fixed" === e.css("position"),
-                    r = o ? e[0].getBoundingClientRect() : e.offset();s.css({ position: o ? "fixed" : "absolute", top: r.top + parseInt(e.css("border-top-width"), 10), left: r.left + parseInt(e.css("border-left-width"), 10), width: e.innerWidth(), height: e.innerHeight() });
-            }if (a.settings.size) {
-                var i = a.wholePage ? g(window) : e,
-                    n = a.settings.size.value;a.settings.size.fixed || (n = Math.min(i.innerWidth(), i.innerHeight()) * n / 100, a.settings.maxSize && n > a.settings.maxSize && (n = a.settings.maxSize), a.settings.minSize && n < a.settings.minSize && (n = a.settings.minSize)), s.children(".loadingoverlay_element").each(function () {
-                    var e = g(this);if (t || e.data("loadingoverlay_autoresize")) {
-                        var s = e.data("loadingoverlay_resizefactor");e.hasClass("loadingoverlay_fa") || e.hasClass("loadingoverlay_text") ? e.css("font-size", n * s + a.settings.size.units) : e.hasClass("loadingoverlay_progress") ? (a.progress.bar.css("height", n * s + a.settings.size.units), a.progress.fixed ? "bottom" === a.progress.fixed && e.css("bottom", a.progress.margin ? a.progress.margin.value + (a.progress.margin.fixed ? a.progress.margin.units : "%") : 0).css("bottom", "+=" + n * s + a.settings.size.units) : a.progress.bar.css("top", e.position().top).css("top", "-=" + n * s * .5 + a.settings.size.units)) : e.css({ width: n * s + a.settings.size.units, height: n * s + a.settings.size.units });
-                    }
-                });
-            }
-        }
-    }function p(e) {
-        return e.data("loadingoverlay");
-    }function u(e) {
-        var s = p(e),
-            t = void 0 === s ? a : s.data("loadingoverlay_data");return void 0 === t ? (g(".loadingoverlay").each(function () {
-            var e = g(this),
-                s = e.data("loadingoverlay_data");document.body.contains(s.container[0]) || (s.resizeIntervalId && clearInterval(s.resizeIntervalId), e.remove());
-        }), !1) : (s.toggle(e.is(":visible")), t);
-    }function v(e, s, t, a, o) {
-        var r = g("<div>", { class: "loadingoverlay_element", css: { order: s } }).css(c.element).data({ loadingoverlay_autoresize: t, loadingoverlay_resizefactor: a }).appendTo(e);if (!0 === o && (o = d.animations.time + " " + d.animations.name), "string" == typeof o) {
-            var i,
-                n,
-                l = o.replace(/\s\s+/g, " ").toLowerCase().split(" ");2 === l.length && x(l[0]) && h(l[1]) ? (i = l[1], n = l[0]) : 2 === l.length && x(l[1]) && h(l[0]) ? (i = l[0], n = l[1]) : 1 === l.length && x(l[0]) ? (i = d.animations.name, n = l[0]) : 1 === l.length && h(l[0]) && (i = l[0], n = d.animations.time), r.css({ "animation-name": "loadingoverlay_animation__" + i, "animation-duration": n, "animation-timing-function": "linear", "animation-iteration-count": "infinite" });
-        }return r;
-    }function x(e) {
-        return !isNaN(parseFloat(e)) && ("s" === e.slice(-1) || "ms" === e.slice(-2));
-    }function h(e) {
-        return -1 < s.animations.indexOf(e);
-    }function y(e) {
-        return -1 < s.progressPosition.indexOf(e);
-    }function w(e) {
-        return !(!e || e < 0) && ("string" == typeof e && -1 < ["vmin", "vmax"].indexOf(e.slice(-4)) ? { fixed: !0, units: e.slice(-4), value: e.slice(0, -4) } : "string" == typeof e && -1 < ["rem"].indexOf(e.slice(-3)) ? { fixed: !0, units: e.slice(-3), value: e.slice(0, -3) } : "string" == typeof e && -1 < ["px", "em", "cm", "mm", "in", "pt", "pc", "vh", "vw"].indexOf(e.slice(-2)) ? { fixed: !0, units: e.slice(-2), value: e.slice(0, -2) } : { fixed: !1, units: "px", value: parseFloat(e) });
-    }g.LoadingOverlaySetup = function (e) {
-        g.extend(!0, t, e);
-    }, g.LoadingOverlay = function (e, s) {
-        switch (e.toLowerCase()) {case "show":
-                o("body", g.extend(!0, {}, t, s));break;case "hide":
-                r("body", s);break;case "resize":
-                i("body");break;case "text":
-                l("body", s);break;case "progress":
-                m("body", s);}
-    }, g.fn.LoadingOverlay = function (e, s) {
-        switch (e.toLowerCase()) {case "show":
-                return this.each(function () {
-                    o(this, g.extend(!0, {}, t, s));
-                });case "hide":
-                return this.each(function () {
-                    r(this, s);
-                });case "resize":
-                return this.each(function () {
-                    i(this);
-                });case "text":
-                return this.each(function () {
-                    l(this, s);
-                });case "progress":
-                return this.each(function () {
-                    m(this, s);
-                });}
-    }, g(function () {
-        g("head").append(["<style>", "@-webkit-keyframes loadingoverlay_animation__rotate_right {", "to {", "-webkit-transform : rotate(360deg);", "transform : rotate(360deg);", "}", "}", "@keyframes loadingoverlay_animation__rotate_right {", "to {", "-webkit-transform : rotate(360deg);", "transform : rotate(360deg);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__rotate_left {", "to {", "-webkit-transform : rotate(-360deg);", "transform : rotate(-360deg);", "}", "}", "@keyframes loadingoverlay_animation__rotate_left {", "to {", "-webkit-transform : rotate(-360deg);", "transform : rotate(-360deg);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__fadein {", "0% {", "opacity   : 0;", "-webkit-transform : scale(0.1, 0.1);", "transform : scale(0.1, 0.1);", "}", "50% {", "opacity   : 1;", "}", "100% {", "opacity   : 0;", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "}", "@keyframes loadingoverlay_animation__fadein {", "0% {", "opacity   : 0;", "-webkit-transform : scale(0.1, 0.1);", "transform : scale(0.1, 0.1);", "}", "50% {", "opacity   : 1;", "}", "100% {", "opacity   : 0;", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "}", "@-webkit-keyframes loadingoverlay_animation__pulse {", "0% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "50% {", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "100% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "}", "@keyframes loadingoverlay_animation__pulse {", "0% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "50% {", "-webkit-transform : scale(1, 1);", "transform : scale(1, 1);", "}", "100% {", "-webkit-transform : scale(0, 0);", "transform : scale(0, 0);", "}", "}", "</style>"].join(" "));
-    });
-});
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-(function ($) {
-  $.fn.extend({ slimScroll: function slimScroll(options) {
-      var defaults = { width: 'auto', height: '250px', size: '7px', color: '#000', position: 'right', distance: '1px', start: 'top', opacity: .4, alwaysVisible: false, disableFadeOut: false, railVisible: false, railColor: '#333', railOpacity: .2, railDraggable: true, railClass: 'slimScrollRail', barClass: 'slimScrollBar', wrapperClass: 'slimScrollDiv', allowPageScroll: false, wheelStep: 20, touchScrollStep: 200, borderRadius: '7px', railBorderRadius: '7px' };var o = $.extend(defaults, options);this.each(function () {
-        var isOverPanel,
-            isOverBar,
-            isDragg,
-            queueHide,
-            touchDif,
-            barHeight,
-            percentScroll,
-            lastScroll,
-            divS = '<div></div>',
-            minBarHeight = 30,
-            releaseScroll = false;var me = $(this);if (me.parent().hasClass(o.wrapperClass)) {
-          var offset = me.scrollTop();bar = me.siblings('.' + o.barClass);rail = me.siblings('.' + o.railClass);getBarHeight();if ($.isPlainObject(options)) {
-            if ('height' in options && options.height == 'auto') {
-              me.parent().css('height', 'auto');me.css('height', 'auto');var height = me.parent().parent().height();me.parent().css('height', height);me.css('height', height);
-            } else if ('height' in options) {
-              var h = options.height;me.parent().css('height', h);me.css('height', h);
-            }
-            if ('scrollTo' in options) {
-              offset = parseInt(o.scrollTo);
-            } else if ('scrollBy' in options) {
-              offset += parseInt(o.scrollBy);
-            } else if ('destroy' in options) {
-              bar.remove();rail.remove();me.unwrap();return;
-            }
-            scrollContent(offset, false, true);
-          }
-          return;
-        } else if ($.isPlainObject(options)) {
-          if ('destroy' in options) {
-            return;
-          }
-        }
-        o.height = o.height == 'auto' ? me.parent().height() : o.height;var wrapper = $(divS).addClass(o.wrapperClass).css({ position: 'relative', overflow: 'hidden', width: o.width, height: o.height });me.css({ overflow: 'hidden', width: o.width, height: o.height });var rail = $(divS).addClass(o.railClass).css({ width: o.size, height: '100%', position: 'absolute', top: 0, display: o.alwaysVisible && o.railVisible ? 'block' : 'none', 'border-radius': o.railBorderRadius, background: o.railColor, opacity: o.railOpacity, zIndex: 90 });var bar = $(divS).addClass(o.barClass).css({ background: o.color, width: o.size, position: 'absolute', top: 0, opacity: o.opacity, display: o.alwaysVisible ? 'block' : 'none', 'border-radius': o.borderRadius, BorderRadius: o.borderRadius, MozBorderRadius: o.borderRadius, WebkitBorderRadius: o.borderRadius, zIndex: 99 });var posCss = o.position == 'right' ? { right: o.distance } : { left: o.distance };rail.css(posCss);bar.css(posCss);me.wrap(wrapper);me.parent().append(bar);me.parent().append(rail);if (o.railDraggable) {
-          bar.bind("mousedown", function (e) {
-            var $doc = $(document);isDragg = true;t = parseFloat(bar.css('top'));pageY = e.pageY;$doc.bind("mousemove.slimscroll", function (e) {
-              currTop = t + e.pageY - pageY;bar.css('top', currTop);scrollContent(0, bar.position().top, false);
-            });$doc.bind("mouseup.slimscroll", function (e) {
-              isDragg = false;hideBar();$doc.unbind('.slimscroll');
-            });return false;
-          }).bind("selectstart.slimscroll", function (e) {
-            e.stopPropagation();e.preventDefault();return false;
-          });
-        }
-        rail.hover(function () {
-          showBar();
-        }, function () {
-          hideBar();
-        });bar.hover(function () {
-          isOverBar = true;
-        }, function () {
-          isOverBar = false;
-        });me.hover(function () {
-          isOverPanel = true;showBar();hideBar();
-        }, function () {
-          isOverPanel = false;hideBar();
-        });me.bind('touchstart', function (e, b) {
-          if (e.originalEvent.touches.length) {
-            touchDif = e.originalEvent.touches[0].pageY;
-          }
-        });me.bind('touchmove', function (e) {
-          if (!releaseScroll) {
-            e.originalEvent.preventDefault();
-          }
-          if (e.originalEvent.touches.length) {
-            var diff = (touchDif - e.originalEvent.touches[0].pageY) / o.touchScrollStep;scrollContent(diff, true);touchDif = e.originalEvent.touches[0].pageY;
-          }
-        });getBarHeight();if (o.start === 'bottom') {
-          bar.css({ top: me.outerHeight() - bar.outerHeight() });scrollContent(0, true);
-        } else if (o.start !== 'top') {
-          scrollContent($(o.start).position().top, null, true);if (!o.alwaysVisible) {
-            bar.hide();
-          }
-        }
-        attachWheel(this);function _onWheel(e) {
-          if (!isOverPanel) {
-            return;
-          }
-          var e = e || window.event;var delta = 0;if (e.wheelDelta) {
-            delta = -e.wheelDelta / 120;
-          }
-          if (e.detail) {
-            delta = e.detail / 3;
-          }
-          var target = e.target || e.srcTarget || e.srcElement;if ($(target).closest('.' + o.wrapperClass).is(me.parent())) {
-            scrollContent(delta, true);
-          }
-          if (e.preventDefault && !releaseScroll) {
-            e.preventDefault();
-          }
-          if (!releaseScroll) {
-            e.returnValue = false;
-          }
-        }
-        function scrollContent(y, isWheel, isJump) {
-          releaseScroll = false;var delta = y;var maxTop = me.outerHeight() - bar.outerHeight();if (isWheel) {
-            delta = parseInt(bar.css('top')) + y * parseInt(o.wheelStep) / 100 * bar.outerHeight();delta = Math.min(Math.max(delta, 0), maxTop);delta = y > 0 ? Math.ceil(delta) : Math.floor(delta);bar.css({ top: delta + 'px' });
-          }
-          percentScroll = parseInt(bar.css('top')) / (me.outerHeight() - bar.outerHeight());delta = percentScroll * (me[0].scrollHeight - me.outerHeight());if (isJump) {
-            delta = y;var offsetTop = delta / me[0].scrollHeight * me.outerHeight();offsetTop = Math.min(Math.max(offsetTop, 0), maxTop);bar.css({ top: offsetTop + 'px' });
-          }
-          me.scrollTop(delta);me.trigger('slimscrolling', ~~delta);showBar();hideBar();
-        }
-        function attachWheel(target) {
-          if (window.addEventListener) {
-            target.addEventListener('DOMMouseScroll', _onWheel, false);target.addEventListener('mousewheel', _onWheel, false);
-          } else {
-            document.attachEvent("onmousewheel", _onWheel);
-          }
-        }
-        function getBarHeight() {
-          barHeight = Math.max(me.outerHeight() / me[0].scrollHeight * me.outerHeight(), minBarHeight);bar.css({ height: barHeight + 'px' });var display = barHeight == me.outerHeight() ? 'none' : 'block';bar.css({ display: display });
-        }
-        function showBar() {
-          getBarHeight();clearTimeout(queueHide);if (percentScroll == ~~percentScroll) {
-            releaseScroll = o.allowPageScroll;if (lastScroll != percentScroll) {
-              var msg = ~~percentScroll == 0 ? 'top' : 'bottom';me.trigger('slimscroll', msg);
-            }
-          } else {
-            releaseScroll = false;
-          }
-          lastScroll = percentScroll;if (barHeight >= me.outerHeight()) {
-            releaseScroll = true;return;
-          }
-          bar.stop(true, true).fadeIn('fast');if (o.railVisible) {
-            rail.stop(true, true).fadeIn('fast');
-          }
-        }
-        function hideBar() {
-          if (!o.alwaysVisible) {
-            queueHide = setTimeout(function () {
-              if (!(o.disableFadeOut && isOverPanel) && !isOverBar && !isDragg) {
-                bar.fadeOut('slow');rail.fadeOut('slow');
-              }
-            }, 1000);
-          }
-        }
-      });return this;
-    } });$.fn.extend({ slimscroll: $.fn.slimScroll });
-})(jQuery);
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// jscs:disable maximumLineLength
-/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
-/*!
- * jQuery UI Datepicker 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Datepicker
-//>>group: Widgets
-//>>description: Displays a calendar from an input or inline for selecting dates.
-//>>docs: http://api.jqueryui.com/datepicker/
-//>>demos: http://jqueryui.com/datepicker/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/datepicker.css
-//>>css.theme: ../../themes/base/theme.css
-
-( function( factory ) {
-	if ( true ) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-			__webpack_require__(1),
-			__webpack_require__(41),
-			__webpack_require__(46)
-		], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory( jQuery );
-	}
-}( function( $ ) {
-
-$.extend( $.ui, { datepicker: { version: "1.12.1" } } );
-
-var datepicker_instActive;
-
-function datepicker_getZindex( elem ) {
-	var position, value;
-	while ( elem.length && elem[ 0 ] !== document ) {
-
-		// Ignore z-index if position is set to a value where z-index is ignored by the browser
-		// This makes behavior of this function consistent across browsers
-		// WebKit always returns auto if the element is positioned
-		position = elem.css( "position" );
-		if ( position === "absolute" || position === "relative" || position === "fixed" ) {
-
-			// IE returns 0 when zIndex is not specified
-			// other browsers return a string
-			// we ignore the case of nested elements with an explicit value of 0
-			// <div style="z-index: -10;"><div style="z-index: 0;"></div></div>
-			value = parseInt( elem.css( "zIndex" ), 10 );
-			if ( !isNaN( value ) && value !== 0 ) {
-				return value;
-			}
-		}
-		elem = elem.parent();
-	}
-
-	return 0;
-}
-/* Date picker manager.
-   Use the singleton instance of this class, $.datepicker, to interact with the date picker.
-   Settings for (groups of) date pickers are maintained in an instance object,
-   allowing multiple different settings on the same page. */
-
-function Datepicker() {
-	this._curInst = null; // The current instance in use
-	this._keyEvent = false; // If the last event was a key event
-	this._disabledInputs = []; // List of date picker inputs that have been disabled
-	this._datepickerShowing = false; // True if the popup picker is showing , false if not
-	this._inDialog = false; // True if showing within a "dialog", false if not
-	this._mainDivId = "ui-datepicker-div"; // The ID of the main datepicker division
-	this._inlineClass = "ui-datepicker-inline"; // The name of the inline marker class
-	this._appendClass = "ui-datepicker-append"; // The name of the append marker class
-	this._triggerClass = "ui-datepicker-trigger"; // The name of the trigger marker class
-	this._dialogClass = "ui-datepicker-dialog"; // The name of the dialog marker class
-	this._disableClass = "ui-datepicker-disabled"; // The name of the disabled covering marker class
-	this._unselectableClass = "ui-datepicker-unselectable"; // The name of the unselectable cell marker class
-	this._currentClass = "ui-datepicker-current-day"; // The name of the current day marker class
-	this._dayOverClass = "ui-datepicker-days-cell-over"; // The name of the day hover marker class
-	this.regional = []; // Available regional settings, indexed by language code
-	this.regional[ "" ] = { // Default regional settings
-		closeText: "Done", // Display text for close link
-		prevText: "Prev", // Display text for previous month link
-		nextText: "Next", // Display text for next month link
-		currentText: "Today", // Display text for current month link
-		monthNames: [ "January","February","March","April","May","June",
-			"July","August","September","October","November","December" ], // Names of months for drop-down and formatting
-		monthNamesShort: [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ], // For formatting
-		dayNames: [ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ], // For formatting
-		dayNamesShort: [ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" ], // For formatting
-		dayNamesMin: [ "Su","Mo","Tu","We","Th","Fr","Sa" ], // Column headings for days starting at Sunday
-		weekHeader: "Wk", // Column header for week of the year
-		dateFormat: "mm/dd/yy", // See format options on parseDate
-		firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
-		isRTL: false, // True if right-to-left language, false if left-to-right
-		showMonthAfterYear: false, // True if the year select precedes month, false for month then year
-		yearSuffix: "" // Additional text to append to the year in the month headers
-	};
-	this._defaults = { // Global defaults for all the date picker instances
-		showOn: "focus", // "focus" for popup on focus,
-			// "button" for trigger button, or "both" for either
-		showAnim: "fadeIn", // Name of jQuery animation for popup
-		showOptions: {}, // Options for enhanced animations
-		defaultDate: null, // Used when field is blank: actual date,
-			// +/-number for offset from today, null for today
-		appendText: "", // Display text following the input box, e.g. showing the format
-		buttonText: "...", // Text for trigger button
-		buttonImage: "", // URL for trigger button image
-		buttonImageOnly: false, // True if the image appears alone, false if it appears on a button
-		hideIfNoPrevNext: false, // True to hide next/previous month links
-			// if not applicable, false to just disable them
-		navigationAsDateFormat: false, // True if date formatting applied to prev/today/next links
-		gotoCurrent: false, // True if today link goes back to current selection instead
-		changeMonth: false, // True if month can be selected directly, false if only prev/next
-		changeYear: false, // True if year can be selected directly, false if only prev/next
-		yearRange: "c-10:c+10", // Range of years to display in drop-down,
-			// either relative to today's year (-nn:+nn), relative to currently displayed year
-			// (c-nn:c+nn), absolute (nnnn:nnnn), or a combination of the above (nnnn:-n)
-		showOtherMonths: false, // True to show dates in other months, false to leave blank
-		selectOtherMonths: false, // True to allow selection of dates in other months, false for unselectable
-		showWeek: false, // True to show week of the year, false to not show it
-		calculateWeek: this.iso8601Week, // How to calculate the week of the year,
-			// takes a Date and returns the number of the week for it
-		shortYearCutoff: "+10", // Short year values < this are in the current century,
-			// > this are in the previous century,
-			// string value starting with "+" for current year + value
-		minDate: null, // The earliest selectable date, or null for no limit
-		maxDate: null, // The latest selectable date, or null for no limit
-		duration: "fast", // Duration of display/closure
-		beforeShowDay: null, // Function that takes a date and returns an array with
-			// [0] = true if selectable, false if not, [1] = custom CSS class name(s) or "",
-			// [2] = cell title (optional), e.g. $.datepicker.noWeekends
-		beforeShow: null, // Function that takes an input field and
-			// returns a set of custom settings for the date picker
-		onSelect: null, // Define a callback function when a date is selected
-		onChangeMonthYear: null, // Define a callback function when the month or year is changed
-		onClose: null, // Define a callback function when the datepicker is closed
-		numberOfMonths: 1, // Number of months to show at a time
-		showCurrentAtPos: 0, // The position in multipe months at which to show the current month (starting at 0)
-		stepMonths: 1, // Number of months to step back/forward
-		stepBigMonths: 12, // Number of months to step back/forward for the big links
-		altField: "", // Selector for an alternate field to store selected dates into
-		altFormat: "", // The date format to use for the alternate field
-		constrainInput: true, // The input is constrained by the current date format
-		showButtonPanel: false, // True to show button panel, false to not show it
-		autoSize: false, // True to size the input for the date format, false to leave as is
-		disabled: false // The initial disabled state
-	};
-	$.extend( this._defaults, this.regional[ "" ] );
-	this.regional.en = $.extend( true, {}, this.regional[ "" ] );
-	this.regional[ "en-US" ] = $.extend( true, {}, this.regional.en );
-	this.dpDiv = datepicker_bindHover( $( "<div id='" + this._mainDivId + "' class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>" ) );
-}
-
-$.extend( Datepicker.prototype, {
-	/* Class name added to elements to indicate already configured with a date picker. */
-	markerClassName: "hasDatepicker",
-
-	//Keep track of the maximum number of rows displayed (see #7043)
-	maxRows: 4,
-
-	// TODO rename to "widget" when switching to widget factory
-	_widgetDatepicker: function() {
-		return this.dpDiv;
-	},
-
-	/* Override the default settings for all instances of the date picker.
-	 * @param  settings  object - the new settings to use as defaults (anonymous object)
-	 * @return the manager object
-	 */
-	setDefaults: function( settings ) {
-		datepicker_extendRemove( this._defaults, settings || {} );
-		return this;
-	},
-
-	/* Attach the date picker to a jQuery selection.
-	 * @param  target	element - the target input field or division or span
-	 * @param  settings  object - the new settings to use for this date picker instance (anonymous)
-	 */
-	_attachDatepicker: function( target, settings ) {
-		var nodeName, inline, inst;
-		nodeName = target.nodeName.toLowerCase();
-		inline = ( nodeName === "div" || nodeName === "span" );
-		if ( !target.id ) {
-			this.uuid += 1;
-			target.id = "dp" + this.uuid;
-		}
-		inst = this._newInst( $( target ), inline );
-		inst.settings = $.extend( {}, settings || {} );
-		if ( nodeName === "input" ) {
-			this._connectDatepicker( target, inst );
-		} else if ( inline ) {
-			this._inlineDatepicker( target, inst );
-		}
-	},
-
-	/* Create a new instance object. */
-	_newInst: function( target, inline ) {
-		var id = target[ 0 ].id.replace( /([^A-Za-z0-9_\-])/g, "\\\\$1" ); // escape jQuery meta chars
-		return { id: id, input: target, // associated target
-			selectedDay: 0, selectedMonth: 0, selectedYear: 0, // current selection
-			drawMonth: 0, drawYear: 0, // month being drawn
-			inline: inline, // is datepicker inline or not
-			dpDiv: ( !inline ? this.dpDiv : // presentation div
-			datepicker_bindHover( $( "<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>" ) ) ) };
-	},
-
-	/* Attach the date picker to an input field. */
-	_connectDatepicker: function( target, inst ) {
-		var input = $( target );
-		inst.append = $( [] );
-		inst.trigger = $( [] );
-		if ( input.hasClass( this.markerClassName ) ) {
-			return;
-		}
-		this._attachments( input, inst );
-		input.addClass( this.markerClassName ).on( "keydown", this._doKeyDown ).
-			on( "keypress", this._doKeyPress ).on( "keyup", this._doKeyUp );
-		this._autoSize( inst );
-		$.data( target, "datepicker", inst );
-
-		//If disabled option is true, disable the datepicker once it has been attached to the input (see ticket #5665)
-		if ( inst.settings.disabled ) {
-			this._disableDatepicker( target );
-		}
-	},
-
-	/* Make attachments based on settings. */
-	_attachments: function( input, inst ) {
-		var showOn, buttonText, buttonImage,
-			appendText = this._get( inst, "appendText" ),
-			isRTL = this._get( inst, "isRTL" );
-
-		if ( inst.append ) {
-			inst.append.remove();
-		}
-		if ( appendText ) {
-			inst.append = $( "<span class='" + this._appendClass + "'>" + appendText + "</span>" );
-			input[ isRTL ? "before" : "after" ]( inst.append );
-		}
-
-		input.off( "focus", this._showDatepicker );
-
-		if ( inst.trigger ) {
-			inst.trigger.remove();
-		}
-
-		showOn = this._get( inst, "showOn" );
-		if ( showOn === "focus" || showOn === "both" ) { // pop-up date picker when in the marked field
-			input.on( "focus", this._showDatepicker );
-		}
-		if ( showOn === "button" || showOn === "both" ) { // pop-up date picker when button clicked
-			buttonText = this._get( inst, "buttonText" );
-			buttonImage = this._get( inst, "buttonImage" );
-			inst.trigger = $( this._get( inst, "buttonImageOnly" ) ?
-				$( "<img/>" ).addClass( this._triggerClass ).
-					attr( { src: buttonImage, alt: buttonText, title: buttonText } ) :
-				$( "<button type='button'></button>" ).addClass( this._triggerClass ).
-					html( !buttonImage ? buttonText : $( "<img/>" ).attr(
-					{ src:buttonImage, alt:buttonText, title:buttonText } ) ) );
-			input[ isRTL ? "before" : "after" ]( inst.trigger );
-			inst.trigger.on( "click", function() {
-				if ( $.datepicker._datepickerShowing && $.datepicker._lastInput === input[ 0 ] ) {
-					$.datepicker._hideDatepicker();
-				} else if ( $.datepicker._datepickerShowing && $.datepicker._lastInput !== input[ 0 ] ) {
-					$.datepicker._hideDatepicker();
-					$.datepicker._showDatepicker( input[ 0 ] );
-				} else {
-					$.datepicker._showDatepicker( input[ 0 ] );
-				}
-				return false;
-			} );
-		}
-	},
-
-	/* Apply the maximum length for the date format. */
-	_autoSize: function( inst ) {
-		if ( this._get( inst, "autoSize" ) && !inst.inline ) {
-			var findMax, max, maxI, i,
-				date = new Date( 2009, 12 - 1, 20 ), // Ensure double digits
-				dateFormat = this._get( inst, "dateFormat" );
-
-			if ( dateFormat.match( /[DM]/ ) ) {
-				findMax = function( names ) {
-					max = 0;
-					maxI = 0;
-					for ( i = 0; i < names.length; i++ ) {
-						if ( names[ i ].length > max ) {
-							max = names[ i ].length;
-							maxI = i;
-						}
-					}
-					return maxI;
-				};
-				date.setMonth( findMax( this._get( inst, ( dateFormat.match( /MM/ ) ?
-					"monthNames" : "monthNamesShort" ) ) ) );
-				date.setDate( findMax( this._get( inst, ( dateFormat.match( /DD/ ) ?
-					"dayNames" : "dayNamesShort" ) ) ) + 20 - date.getDay() );
-			}
-			inst.input.attr( "size", this._formatDate( inst, date ).length );
-		}
-	},
-
-	/* Attach an inline date picker to a div. */
-	_inlineDatepicker: function( target, inst ) {
-		var divSpan = $( target );
-		if ( divSpan.hasClass( this.markerClassName ) ) {
-			return;
-		}
-		divSpan.addClass( this.markerClassName ).append( inst.dpDiv );
-		$.data( target, "datepicker", inst );
-		this._setDate( inst, this._getDefaultDate( inst ), true );
-		this._updateDatepicker( inst );
-		this._updateAlternate( inst );
-
-		//If disabled option is true, disable the datepicker before showing it (see ticket #5665)
-		if ( inst.settings.disabled ) {
-			this._disableDatepicker( target );
-		}
-
-		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
-		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
-		inst.dpDiv.css( "display", "block" );
-	},
-
-	/* Pop-up the date picker in a "dialog" box.
-	 * @param  input element - ignored
-	 * @param  date	string or Date - the initial date to display
-	 * @param  onSelect  function - the function to call when a date is selected
-	 * @param  settings  object - update the dialog date picker instance's settings (anonymous object)
-	 * @param  pos int[2] - coordinates for the dialog's position within the screen or
-	 *					event - with x/y coordinates or
-	 *					leave empty for default (screen centre)
-	 * @return the manager object
-	 */
-	_dialogDatepicker: function( input, date, onSelect, settings, pos ) {
-		var id, browserWidth, browserHeight, scrollX, scrollY,
-			inst = this._dialogInst; // internal instance
-
-		if ( !inst ) {
-			this.uuid += 1;
-			id = "dp" + this.uuid;
-			this._dialogInput = $( "<input type='text' id='" + id +
-				"' style='position: absolute; top: -100px; width: 0px;'/>" );
-			this._dialogInput.on( "keydown", this._doKeyDown );
-			$( "body" ).append( this._dialogInput );
-			inst = this._dialogInst = this._newInst( this._dialogInput, false );
-			inst.settings = {};
-			$.data( this._dialogInput[ 0 ], "datepicker", inst );
-		}
-		datepicker_extendRemove( inst.settings, settings || {} );
-		date = ( date && date.constructor === Date ? this._formatDate( inst, date ) : date );
-		this._dialogInput.val( date );
-
-		this._pos = ( pos ? ( pos.length ? pos : [ pos.pageX, pos.pageY ] ) : null );
-		if ( !this._pos ) {
-			browserWidth = document.documentElement.clientWidth;
-			browserHeight = document.documentElement.clientHeight;
-			scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
-			scrollY = document.documentElement.scrollTop || document.body.scrollTop;
-			this._pos = // should use actual width/height below
-				[ ( browserWidth / 2 ) - 100 + scrollX, ( browserHeight / 2 ) - 150 + scrollY ];
-		}
-
-		// Move input on screen for focus, but hidden behind dialog
-		this._dialogInput.css( "left", ( this._pos[ 0 ] + 20 ) + "px" ).css( "top", this._pos[ 1 ] + "px" );
-		inst.settings.onSelect = onSelect;
-		this._inDialog = true;
-		this.dpDiv.addClass( this._dialogClass );
-		this._showDatepicker( this._dialogInput[ 0 ] );
-		if ( $.blockUI ) {
-			$.blockUI( this.dpDiv );
-		}
-		$.data( this._dialogInput[ 0 ], "datepicker", inst );
-		return this;
-	},
-
-	/* Detach a datepicker from its control.
-	 * @param  target	element - the target input field or division or span
-	 */
-	_destroyDatepicker: function( target ) {
-		var nodeName,
-			$target = $( target ),
-			inst = $.data( target, "datepicker" );
-
-		if ( !$target.hasClass( this.markerClassName ) ) {
-			return;
-		}
-
-		nodeName = target.nodeName.toLowerCase();
-		$.removeData( target, "datepicker" );
-		if ( nodeName === "input" ) {
-			inst.append.remove();
-			inst.trigger.remove();
-			$target.removeClass( this.markerClassName ).
-				off( "focus", this._showDatepicker ).
-				off( "keydown", this._doKeyDown ).
-				off( "keypress", this._doKeyPress ).
-				off( "keyup", this._doKeyUp );
-		} else if ( nodeName === "div" || nodeName === "span" ) {
-			$target.removeClass( this.markerClassName ).empty();
-		}
-
-		if ( datepicker_instActive === inst ) {
-			datepicker_instActive = null;
-		}
-	},
-
-	/* Enable the date picker to a jQuery selection.
-	 * @param  target	element - the target input field or division or span
-	 */
-	_enableDatepicker: function( target ) {
-		var nodeName, inline,
-			$target = $( target ),
-			inst = $.data( target, "datepicker" );
-
-		if ( !$target.hasClass( this.markerClassName ) ) {
-			return;
-		}
-
-		nodeName = target.nodeName.toLowerCase();
-		if ( nodeName === "input" ) {
-			target.disabled = false;
-			inst.trigger.filter( "button" ).
-				each( function() { this.disabled = false; } ).end().
-				filter( "img" ).css( { opacity: "1.0", cursor: "" } );
-		} else if ( nodeName === "div" || nodeName === "span" ) {
-			inline = $target.children( "." + this._inlineClass );
-			inline.children().removeClass( "ui-state-disabled" );
-			inline.find( "select.ui-datepicker-month, select.ui-datepicker-year" ).
-				prop( "disabled", false );
-		}
-		this._disabledInputs = $.map( this._disabledInputs,
-			function( value ) { return ( value === target ? null : value ); } ); // delete entry
-	},
-
-	/* Disable the date picker to a jQuery selection.
-	 * @param  target	element - the target input field or division or span
-	 */
-	_disableDatepicker: function( target ) {
-		var nodeName, inline,
-			$target = $( target ),
-			inst = $.data( target, "datepicker" );
-
-		if ( !$target.hasClass( this.markerClassName ) ) {
-			return;
-		}
-
-		nodeName = target.nodeName.toLowerCase();
-		if ( nodeName === "input" ) {
-			target.disabled = true;
-			inst.trigger.filter( "button" ).
-				each( function() { this.disabled = true; } ).end().
-				filter( "img" ).css( { opacity: "0.5", cursor: "default" } );
-		} else if ( nodeName === "div" || nodeName === "span" ) {
-			inline = $target.children( "." + this._inlineClass );
-			inline.children().addClass( "ui-state-disabled" );
-			inline.find( "select.ui-datepicker-month, select.ui-datepicker-year" ).
-				prop( "disabled", true );
-		}
-		this._disabledInputs = $.map( this._disabledInputs,
-			function( value ) { return ( value === target ? null : value ); } ); // delete entry
-		this._disabledInputs[ this._disabledInputs.length ] = target;
-	},
-
-	/* Is the first field in a jQuery collection disabled as a datepicker?
-	 * @param  target	element - the target input field or division or span
-	 * @return boolean - true if disabled, false if enabled
-	 */
-	_isDisabledDatepicker: function( target ) {
-		if ( !target ) {
-			return false;
-		}
-		for ( var i = 0; i < this._disabledInputs.length; i++ ) {
-			if ( this._disabledInputs[ i ] === target ) {
-				return true;
-			}
-		}
-		return false;
-	},
-
-	/* Retrieve the instance data for the target control.
-	 * @param  target  element - the target input field or division or span
-	 * @return  object - the associated instance data
-	 * @throws  error if a jQuery problem getting data
-	 */
-	_getInst: function( target ) {
-		try {
-			return $.data( target, "datepicker" );
-		}
-		catch ( err ) {
-			throw "Missing instance data for this datepicker";
-		}
-	},
-
-	/* Update or retrieve the settings for a date picker attached to an input field or division.
-	 * @param  target  element - the target input field or division or span
-	 * @param  name	object - the new settings to update or
-	 *				string - the name of the setting to change or retrieve,
-	 *				when retrieving also "all" for all instance settings or
-	 *				"defaults" for all global defaults
-	 * @param  value   any - the new value for the setting
-	 *				(omit if above is an object or to retrieve a value)
-	 */
-	_optionDatepicker: function( target, name, value ) {
-		var settings, date, minDate, maxDate,
-			inst = this._getInst( target );
-
-		if ( arguments.length === 2 && typeof name === "string" ) {
-			return ( name === "defaults" ? $.extend( {}, $.datepicker._defaults ) :
-				( inst ? ( name === "all" ? $.extend( {}, inst.settings ) :
-				this._get( inst, name ) ) : null ) );
-		}
-
-		settings = name || {};
-		if ( typeof name === "string" ) {
-			settings = {};
-			settings[ name ] = value;
-		}
-
-		if ( inst ) {
-			if ( this._curInst === inst ) {
-				this._hideDatepicker();
-			}
-
-			date = this._getDateDatepicker( target, true );
-			minDate = this._getMinMaxDate( inst, "min" );
-			maxDate = this._getMinMaxDate( inst, "max" );
-			datepicker_extendRemove( inst.settings, settings );
-
-			// reformat the old minDate/maxDate values if dateFormat changes and a new minDate/maxDate isn't provided
-			if ( minDate !== null && settings.dateFormat !== undefined && settings.minDate === undefined ) {
-				inst.settings.minDate = this._formatDate( inst, minDate );
-			}
-			if ( maxDate !== null && settings.dateFormat !== undefined && settings.maxDate === undefined ) {
-				inst.settings.maxDate = this._formatDate( inst, maxDate );
-			}
-			if ( "disabled" in settings ) {
-				if ( settings.disabled ) {
-					this._disableDatepicker( target );
-				} else {
-					this._enableDatepicker( target );
-				}
-			}
-			this._attachments( $( target ), inst );
-			this._autoSize( inst );
-			this._setDate( inst, date );
-			this._updateAlternate( inst );
-			this._updateDatepicker( inst );
-		}
-	},
-
-	// Change method deprecated
-	_changeDatepicker: function( target, name, value ) {
-		this._optionDatepicker( target, name, value );
-	},
-
-	/* Redraw the date picker attached to an input field or division.
-	 * @param  target  element - the target input field or division or span
-	 */
-	_refreshDatepicker: function( target ) {
-		var inst = this._getInst( target );
-		if ( inst ) {
-			this._updateDatepicker( inst );
-		}
-	},
-
-	/* Set the dates for a jQuery selection.
-	 * @param  target element - the target input field or division or span
-	 * @param  date	Date - the new date
-	 */
-	_setDateDatepicker: function( target, date ) {
-		var inst = this._getInst( target );
-		if ( inst ) {
-			this._setDate( inst, date );
-			this._updateDatepicker( inst );
-			this._updateAlternate( inst );
-		}
-	},
-
-	/* Get the date(s) for the first entry in a jQuery selection.
-	 * @param  target element - the target input field or division or span
-	 * @param  noDefault boolean - true if no default date is to be used
-	 * @return Date - the current date
-	 */
-	_getDateDatepicker: function( target, noDefault ) {
-		var inst = this._getInst( target );
-		if ( inst && !inst.inline ) {
-			this._setDateFromField( inst, noDefault );
-		}
-		return ( inst ? this._getDate( inst ) : null );
-	},
-
-	/* Handle keystrokes. */
-	_doKeyDown: function( event ) {
-		var onSelect, dateStr, sel,
-			inst = $.datepicker._getInst( event.target ),
-			handled = true,
-			isRTL = inst.dpDiv.is( ".ui-datepicker-rtl" );
-
-		inst._keyEvent = true;
-		if ( $.datepicker._datepickerShowing ) {
-			switch ( event.keyCode ) {
-				case 9: $.datepicker._hideDatepicker();
-						handled = false;
-						break; // hide on tab out
-				case 13: sel = $( "td." + $.datepicker._dayOverClass + ":not(." +
-									$.datepicker._currentClass + ")", inst.dpDiv );
-						if ( sel[ 0 ] ) {
-							$.datepicker._selectDay( event.target, inst.selectedMonth, inst.selectedYear, sel[ 0 ] );
-						}
-
-						onSelect = $.datepicker._get( inst, "onSelect" );
-						if ( onSelect ) {
-							dateStr = $.datepicker._formatDate( inst );
-
-							// Trigger custom callback
-							onSelect.apply( ( inst.input ? inst.input[ 0 ] : null ), [ dateStr, inst ] );
-						} else {
-							$.datepicker._hideDatepicker();
-						}
-
-						return false; // don't submit the form
-				case 27: $.datepicker._hideDatepicker();
-						break; // hide on escape
-				case 33: $.datepicker._adjustDate( event.target, ( event.ctrlKey ?
-							-$.datepicker._get( inst, "stepBigMonths" ) :
-							-$.datepicker._get( inst, "stepMonths" ) ), "M" );
-						break; // previous month/year on page up/+ ctrl
-				case 34: $.datepicker._adjustDate( event.target, ( event.ctrlKey ?
-							+$.datepicker._get( inst, "stepBigMonths" ) :
-							+$.datepicker._get( inst, "stepMonths" ) ), "M" );
-						break; // next month/year on page down/+ ctrl
-				case 35: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._clearDate( event.target );
-						}
-						handled = event.ctrlKey || event.metaKey;
-						break; // clear on ctrl or command +end
-				case 36: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._gotoToday( event.target );
-						}
-						handled = event.ctrlKey || event.metaKey;
-						break; // current on ctrl or command +home
-				case 37: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._adjustDate( event.target, ( isRTL ? +1 : -1 ), "D" );
-						}
-						handled = event.ctrlKey || event.metaKey;
-
-						// -1 day on ctrl or command +left
-						if ( event.originalEvent.altKey ) {
-							$.datepicker._adjustDate( event.target, ( event.ctrlKey ?
-								-$.datepicker._get( inst, "stepBigMonths" ) :
-								-$.datepicker._get( inst, "stepMonths" ) ), "M" );
-						}
-
-						// next month/year on alt +left on Mac
-						break;
-				case 38: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._adjustDate( event.target, -7, "D" );
-						}
-						handled = event.ctrlKey || event.metaKey;
-						break; // -1 week on ctrl or command +up
-				case 39: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._adjustDate( event.target, ( isRTL ? -1 : +1 ), "D" );
-						}
-						handled = event.ctrlKey || event.metaKey;
-
-						// +1 day on ctrl or command +right
-						if ( event.originalEvent.altKey ) {
-							$.datepicker._adjustDate( event.target, ( event.ctrlKey ?
-								+$.datepicker._get( inst, "stepBigMonths" ) :
-								+$.datepicker._get( inst, "stepMonths" ) ), "M" );
-						}
-
-						// next month/year on alt +right
-						break;
-				case 40: if ( event.ctrlKey || event.metaKey ) {
-							$.datepicker._adjustDate( event.target, +7, "D" );
-						}
-						handled = event.ctrlKey || event.metaKey;
-						break; // +1 week on ctrl or command +down
-				default: handled = false;
-			}
-		} else if ( event.keyCode === 36 && event.ctrlKey ) { // display the date picker on ctrl+home
-			$.datepicker._showDatepicker( this );
-		} else {
-			handled = false;
-		}
-
-		if ( handled ) {
-			event.preventDefault();
-			event.stopPropagation();
-		}
-	},
-
-	/* Filter entered characters - based on date format. */
-	_doKeyPress: function( event ) {
-		var chars, chr,
-			inst = $.datepicker._getInst( event.target );
-
-		if ( $.datepicker._get( inst, "constrainInput" ) ) {
-			chars = $.datepicker._possibleChars( $.datepicker._get( inst, "dateFormat" ) );
-			chr = String.fromCharCode( event.charCode == null ? event.keyCode : event.charCode );
-			return event.ctrlKey || event.metaKey || ( chr < " " || !chars || chars.indexOf( chr ) > -1 );
-		}
-	},
-
-	/* Synchronise manual entry and field/alternate field. */
-	_doKeyUp: function( event ) {
-		var date,
-			inst = $.datepicker._getInst( event.target );
-
-		if ( inst.input.val() !== inst.lastVal ) {
-			try {
-				date = $.datepicker.parseDate( $.datepicker._get( inst, "dateFormat" ),
-					( inst.input ? inst.input.val() : null ),
-					$.datepicker._getFormatConfig( inst ) );
-
-				if ( date ) { // only if valid
-					$.datepicker._setDateFromField( inst );
-					$.datepicker._updateAlternate( inst );
-					$.datepicker._updateDatepicker( inst );
-				}
-			}
-			catch ( err ) {
-			}
-		}
-		return true;
-	},
-
-	/* Pop-up the date picker for a given input field.
-	 * If false returned from beforeShow event handler do not show.
-	 * @param  input  element - the input field attached to the date picker or
-	 *					event - if triggered by focus
-	 */
-	_showDatepicker: function( input ) {
-		input = input.target || input;
-		if ( input.nodeName.toLowerCase() !== "input" ) { // find from button/image trigger
-			input = $( "input", input.parentNode )[ 0 ];
-		}
-
-		if ( $.datepicker._isDisabledDatepicker( input ) || $.datepicker._lastInput === input ) { // already here
-			return;
-		}
-
-		var inst, beforeShow, beforeShowSettings, isFixed,
-			offset, showAnim, duration;
-
-		inst = $.datepicker._getInst( input );
-		if ( $.datepicker._curInst && $.datepicker._curInst !== inst ) {
-			$.datepicker._curInst.dpDiv.stop( true, true );
-			if ( inst && $.datepicker._datepickerShowing ) {
-				$.datepicker._hideDatepicker( $.datepicker._curInst.input[ 0 ] );
-			}
-		}
-
-		beforeShow = $.datepicker._get( inst, "beforeShow" );
-		beforeShowSettings = beforeShow ? beforeShow.apply( input, [ input, inst ] ) : {};
-		if ( beforeShowSettings === false ) {
-			return;
-		}
-		datepicker_extendRemove( inst.settings, beforeShowSettings );
-
-		inst.lastVal = null;
-		$.datepicker._lastInput = input;
-		$.datepicker._setDateFromField( inst );
-
-		if ( $.datepicker._inDialog ) { // hide cursor
-			input.value = "";
-		}
-		if ( !$.datepicker._pos ) { // position below input
-			$.datepicker._pos = $.datepicker._findPos( input );
-			$.datepicker._pos[ 1 ] += input.offsetHeight; // add the height
-		}
-
-		isFixed = false;
-		$( input ).parents().each( function() {
-			isFixed |= $( this ).css( "position" ) === "fixed";
-			return !isFixed;
-		} );
-
-		offset = { left: $.datepicker._pos[ 0 ], top: $.datepicker._pos[ 1 ] };
-		$.datepicker._pos = null;
-
-		//to avoid flashes on Firefox
-		inst.dpDiv.empty();
-
-		// determine sizing offscreen
-		inst.dpDiv.css( { position: "absolute", display: "block", top: "-1000px" } );
-		$.datepicker._updateDatepicker( inst );
-
-		// fix width for dynamic number of date pickers
-		// and adjust position before showing
-		offset = $.datepicker._checkOffset( inst, offset, isFixed );
-		inst.dpDiv.css( { position: ( $.datepicker._inDialog && $.blockUI ?
-			"static" : ( isFixed ? "fixed" : "absolute" ) ), display: "none",
-			left: offset.left + "px", top: offset.top + "px" } );
-
-		if ( !inst.inline ) {
-			showAnim = $.datepicker._get( inst, "showAnim" );
-			duration = $.datepicker._get( inst, "duration" );
-			inst.dpDiv.css( "z-index", datepicker_getZindex( $( input ) ) + 1 );
-			$.datepicker._datepickerShowing = true;
-
-			if ( $.effects && $.effects.effect[ showAnim ] ) {
-				inst.dpDiv.show( showAnim, $.datepicker._get( inst, "showOptions" ), duration );
-			} else {
-				inst.dpDiv[ showAnim || "show" ]( showAnim ? duration : null );
-			}
-
-			if ( $.datepicker._shouldFocusInput( inst ) ) {
-				inst.input.trigger( "focus" );
-			}
-
-			$.datepicker._curInst = inst;
-		}
-	},
-
-	/* Generate the date picker content. */
-	_updateDatepicker: function( inst ) {
-		this.maxRows = 4; //Reset the max number of rows being displayed (see #7043)
-		datepicker_instActive = inst; // for delegate hover events
-		inst.dpDiv.empty().append( this._generateHTML( inst ) );
-		this._attachHandlers( inst );
-
-		var origyearshtml,
-			numMonths = this._getNumberOfMonths( inst ),
-			cols = numMonths[ 1 ],
-			width = 17,
-			activeCell = inst.dpDiv.find( "." + this._dayOverClass + " a" );
-
-		if ( activeCell.length > 0 ) {
-			datepicker_handleMouseover.apply( activeCell.get( 0 ) );
-		}
-
-		inst.dpDiv.removeClass( "ui-datepicker-multi-2 ui-datepicker-multi-3 ui-datepicker-multi-4" ).width( "" );
-		if ( cols > 1 ) {
-			inst.dpDiv.addClass( "ui-datepicker-multi-" + cols ).css( "width", ( width * cols ) + "em" );
-		}
-		inst.dpDiv[ ( numMonths[ 0 ] !== 1 || numMonths[ 1 ] !== 1 ? "add" : "remove" ) +
-			"Class" ]( "ui-datepicker-multi" );
-		inst.dpDiv[ ( this._get( inst, "isRTL" ) ? "add" : "remove" ) +
-			"Class" ]( "ui-datepicker-rtl" );
-
-		if ( inst === $.datepicker._curInst && $.datepicker._datepickerShowing && $.datepicker._shouldFocusInput( inst ) ) {
-			inst.input.trigger( "focus" );
-		}
-
-		// Deffered render of the years select (to avoid flashes on Firefox)
-		if ( inst.yearshtml ) {
-			origyearshtml = inst.yearshtml;
-			setTimeout( function() {
-
-				//assure that inst.yearshtml didn't change.
-				if ( origyearshtml === inst.yearshtml && inst.yearshtml ) {
-					inst.dpDiv.find( "select.ui-datepicker-year:first" ).replaceWith( inst.yearshtml );
-				}
-				origyearshtml = inst.yearshtml = null;
-			}, 0 );
-		}
-	},
-
-	// #6694 - don't focus the input if it's already focused
-	// this breaks the change event in IE
-	// Support: IE and jQuery <1.9
-	_shouldFocusInput: function( inst ) {
-		return inst.input && inst.input.is( ":visible" ) && !inst.input.is( ":disabled" ) && !inst.input.is( ":focus" );
-	},
-
-	/* Check positioning to remain on screen. */
-	_checkOffset: function( inst, offset, isFixed ) {
-		var dpWidth = inst.dpDiv.outerWidth(),
-			dpHeight = inst.dpDiv.outerHeight(),
-			inputWidth = inst.input ? inst.input.outerWidth() : 0,
-			inputHeight = inst.input ? inst.input.outerHeight() : 0,
-			viewWidth = document.documentElement.clientWidth + ( isFixed ? 0 : $( document ).scrollLeft() ),
-			viewHeight = document.documentElement.clientHeight + ( isFixed ? 0 : $( document ).scrollTop() );
-
-		offset.left -= ( this._get( inst, "isRTL" ) ? ( dpWidth - inputWidth ) : 0 );
-		offset.left -= ( isFixed && offset.left === inst.input.offset().left ) ? $( document ).scrollLeft() : 0;
-		offset.top -= ( isFixed && offset.top === ( inst.input.offset().top + inputHeight ) ) ? $( document ).scrollTop() : 0;
-
-		// Now check if datepicker is showing outside window viewport - move to a better place if so.
-		offset.left -= Math.min( offset.left, ( offset.left + dpWidth > viewWidth && viewWidth > dpWidth ) ?
-			Math.abs( offset.left + dpWidth - viewWidth ) : 0 );
-		offset.top -= Math.min( offset.top, ( offset.top + dpHeight > viewHeight && viewHeight > dpHeight ) ?
-			Math.abs( dpHeight + inputHeight ) : 0 );
-
-		return offset;
-	},
-
-	/* Find an object's position on the screen. */
-	_findPos: function( obj ) {
-		var position,
-			inst = this._getInst( obj ),
-			isRTL = this._get( inst, "isRTL" );
-
-		while ( obj && ( obj.type === "hidden" || obj.nodeType !== 1 || $.expr.filters.hidden( obj ) ) ) {
-			obj = obj[ isRTL ? "previousSibling" : "nextSibling" ];
-		}
-
-		position = $( obj ).offset();
-		return [ position.left, position.top ];
-	},
-
-	/* Hide the date picker from view.
-	 * @param  input  element - the input field attached to the date picker
-	 */
-	_hideDatepicker: function( input ) {
-		var showAnim, duration, postProcess, onClose,
-			inst = this._curInst;
-
-		if ( !inst || ( input && inst !== $.data( input, "datepicker" ) ) ) {
-			return;
-		}
-
-		if ( this._datepickerShowing ) {
-			showAnim = this._get( inst, "showAnim" );
-			duration = this._get( inst, "duration" );
-			postProcess = function() {
-				$.datepicker._tidyDialog( inst );
-			};
-
-			// DEPRECATED: after BC for 1.8.x $.effects[ showAnim ] is not needed
-			if ( $.effects && ( $.effects.effect[ showAnim ] || $.effects[ showAnim ] ) ) {
-				inst.dpDiv.hide( showAnim, $.datepicker._get( inst, "showOptions" ), duration, postProcess );
-			} else {
-				inst.dpDiv[ ( showAnim === "slideDown" ? "slideUp" :
-					( showAnim === "fadeIn" ? "fadeOut" : "hide" ) ) ]( ( showAnim ? duration : null ), postProcess );
-			}
-
-			if ( !showAnim ) {
-				postProcess();
-			}
-			this._datepickerShowing = false;
-
-			onClose = this._get( inst, "onClose" );
-			if ( onClose ) {
-				onClose.apply( ( inst.input ? inst.input[ 0 ] : null ), [ ( inst.input ? inst.input.val() : "" ), inst ] );
-			}
-
-			this._lastInput = null;
-			if ( this._inDialog ) {
-				this._dialogInput.css( { position: "absolute", left: "0", top: "-100px" } );
-				if ( $.blockUI ) {
-					$.unblockUI();
-					$( "body" ).append( this.dpDiv );
-				}
-			}
-			this._inDialog = false;
-		}
-	},
-
-	/* Tidy up after a dialog display. */
-	_tidyDialog: function( inst ) {
-		inst.dpDiv.removeClass( this._dialogClass ).off( ".ui-datepicker-calendar" );
-	},
-
-	/* Close date picker if clicked elsewhere. */
-	_checkExternalClick: function( event ) {
-		if ( !$.datepicker._curInst ) {
-			return;
-		}
-
-		var $target = $( event.target ),
-			inst = $.datepicker._getInst( $target[ 0 ] );
-
-		if ( ( ( $target[ 0 ].id !== $.datepicker._mainDivId &&
-				$target.parents( "#" + $.datepicker._mainDivId ).length === 0 &&
-				!$target.hasClass( $.datepicker.markerClassName ) &&
-				!$target.closest( "." + $.datepicker._triggerClass ).length &&
-				$.datepicker._datepickerShowing && !( $.datepicker._inDialog && $.blockUI ) ) ) ||
-			( $target.hasClass( $.datepicker.markerClassName ) && $.datepicker._curInst !== inst ) ) {
-				$.datepicker._hideDatepicker();
-		}
-	},
-
-	/* Adjust one of the date sub-fields. */
-	_adjustDate: function( id, offset, period ) {
-		var target = $( id ),
-			inst = this._getInst( target[ 0 ] );
-
-		if ( this._isDisabledDatepicker( target[ 0 ] ) ) {
-			return;
-		}
-		this._adjustInstDate( inst, offset +
-			( period === "M" ? this._get( inst, "showCurrentAtPos" ) : 0 ), // undo positioning
-			period );
-		this._updateDatepicker( inst );
-	},
-
-	/* Action for current link. */
-	_gotoToday: function( id ) {
-		var date,
-			target = $( id ),
-			inst = this._getInst( target[ 0 ] );
-
-		if ( this._get( inst, "gotoCurrent" ) && inst.currentDay ) {
-			inst.selectedDay = inst.currentDay;
-			inst.drawMonth = inst.selectedMonth = inst.currentMonth;
-			inst.drawYear = inst.selectedYear = inst.currentYear;
-		} else {
-			date = new Date();
-			inst.selectedDay = date.getDate();
-			inst.drawMonth = inst.selectedMonth = date.getMonth();
-			inst.drawYear = inst.selectedYear = date.getFullYear();
-		}
-		this._notifyChange( inst );
-		this._adjustDate( target );
-	},
-
-	/* Action for selecting a new month/year. */
-	_selectMonthYear: function( id, select, period ) {
-		var target = $( id ),
-			inst = this._getInst( target[ 0 ] );
-
-		inst[ "selected" + ( period === "M" ? "Month" : "Year" ) ] =
-		inst[ "draw" + ( period === "M" ? "Month" : "Year" ) ] =
-			parseInt( select.options[ select.selectedIndex ].value, 10 );
-
-		this._notifyChange( inst );
-		this._adjustDate( target );
-	},
-
-	/* Action for selecting a day. */
-	_selectDay: function( id, month, year, td ) {
-		var inst,
-			target = $( id );
-
-		if ( $( td ).hasClass( this._unselectableClass ) || this._isDisabledDatepicker( target[ 0 ] ) ) {
-			return;
-		}
-
-		inst = this._getInst( target[ 0 ] );
-		inst.selectedDay = inst.currentDay = $( "a", td ).html();
-		inst.selectedMonth = inst.currentMonth = month;
-		inst.selectedYear = inst.currentYear = year;
-		this._selectDate( id, this._formatDate( inst,
-			inst.currentDay, inst.currentMonth, inst.currentYear ) );
-	},
-
-	/* Erase the input field and hide the date picker. */
-	_clearDate: function( id ) {
-		var target = $( id );
-		this._selectDate( target, "" );
-	},
-
-	/* Update the input field with the selected date. */
-	_selectDate: function( id, dateStr ) {
-		var onSelect,
-			target = $( id ),
-			inst = this._getInst( target[ 0 ] );
-
-		dateStr = ( dateStr != null ? dateStr : this._formatDate( inst ) );
-		if ( inst.input ) {
-			inst.input.val( dateStr );
-		}
-		this._updateAlternate( inst );
-
-		onSelect = this._get( inst, "onSelect" );
-		if ( onSelect ) {
-			onSelect.apply( ( inst.input ? inst.input[ 0 ] : null ), [ dateStr, inst ] );  // trigger custom callback
-		} else if ( inst.input ) {
-			inst.input.trigger( "change" ); // fire the change event
-		}
-
-		if ( inst.inline ) {
-			this._updateDatepicker( inst );
-		} else {
-			this._hideDatepicker();
-			this._lastInput = inst.input[ 0 ];
-			if ( typeof( inst.input[ 0 ] ) !== "object" ) {
-				inst.input.trigger( "focus" ); // restore focus
-			}
-			this._lastInput = null;
-		}
-	},
-
-	/* Update any alternate field to synchronise with the main field. */
-	_updateAlternate: function( inst ) {
-		var altFormat, date, dateStr,
-			altField = this._get( inst, "altField" );
-
-		if ( altField ) { // update alternate field too
-			altFormat = this._get( inst, "altFormat" ) || this._get( inst, "dateFormat" );
-			date = this._getDate( inst );
-			dateStr = this.formatDate( altFormat, date, this._getFormatConfig( inst ) );
-			$( altField ).val( dateStr );
-		}
-	},
-
-	/* Set as beforeShowDay function to prevent selection of weekends.
-	 * @param  date  Date - the date to customise
-	 * @return [boolean, string] - is this date selectable?, what is its CSS class?
-	 */
-	noWeekends: function( date ) {
-		var day = date.getDay();
-		return [ ( day > 0 && day < 6 ), "" ];
-	},
-
-	/* Set as calculateWeek to determine the week of the year based on the ISO 8601 definition.
-	 * @param  date  Date - the date to get the week for
-	 * @return  number - the number of the week within the year that contains this date
-	 */
-	iso8601Week: function( date ) {
-		var time,
-			checkDate = new Date( date.getTime() );
-
-		// Find Thursday of this week starting on Monday
-		checkDate.setDate( checkDate.getDate() + 4 - ( checkDate.getDay() || 7 ) );
-
-		time = checkDate.getTime();
-		checkDate.setMonth( 0 ); // Compare with Jan 1
-		checkDate.setDate( 1 );
-		return Math.floor( Math.round( ( time - checkDate ) / 86400000 ) / 7 ) + 1;
-	},
-
-	/* Parse a string value into a date object.
-	 * See formatDate below for the possible formats.
-	 *
-	 * @param  format string - the expected format of the date
-	 * @param  value string - the date in the above format
-	 * @param  settings Object - attributes include:
-	 *					shortYearCutoff  number - the cutoff year for determining the century (optional)
-	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
-	 *					dayNames		string[7] - names of the days from Sunday (optional)
-	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
-	 *					monthNames		string[12] - names of the months (optional)
-	 * @return  Date - the extracted date value or null if value is blank
-	 */
-	parseDate: function( format, value, settings ) {
-		if ( format == null || value == null ) {
-			throw "Invalid arguments";
-		}
-
-		value = ( typeof value === "object" ? value.toString() : value + "" );
-		if ( value === "" ) {
-			return null;
-		}
-
-		var iFormat, dim, extra,
-			iValue = 0,
-			shortYearCutoffTemp = ( settings ? settings.shortYearCutoff : null ) || this._defaults.shortYearCutoff,
-			shortYearCutoff = ( typeof shortYearCutoffTemp !== "string" ? shortYearCutoffTemp :
-				new Date().getFullYear() % 100 + parseInt( shortYearCutoffTemp, 10 ) ),
-			dayNamesShort = ( settings ? settings.dayNamesShort : null ) || this._defaults.dayNamesShort,
-			dayNames = ( settings ? settings.dayNames : null ) || this._defaults.dayNames,
-			monthNamesShort = ( settings ? settings.monthNamesShort : null ) || this._defaults.monthNamesShort,
-			monthNames = ( settings ? settings.monthNames : null ) || this._defaults.monthNames,
-			year = -1,
-			month = -1,
-			day = -1,
-			doy = -1,
-			literal = false,
-			date,
-
-			// Check whether a format character is doubled
-			lookAhead = function( match ) {
-				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
-				if ( matches ) {
-					iFormat++;
-				}
-				return matches;
-			},
-
-			// Extract a number from the string value
-			getNumber = function( match ) {
-				var isDoubled = lookAhead( match ),
-					size = ( match === "@" ? 14 : ( match === "!" ? 20 :
-					( match === "y" && isDoubled ? 4 : ( match === "o" ? 3 : 2 ) ) ) ),
-					minSize = ( match === "y" ? size : 1 ),
-					digits = new RegExp( "^\\d{" + minSize + "," + size + "}" ),
-					num = value.substring( iValue ).match( digits );
-				if ( !num ) {
-					throw "Missing number at position " + iValue;
-				}
-				iValue += num[ 0 ].length;
-				return parseInt( num[ 0 ], 10 );
-			},
-
-			// Extract a name from the string value and convert to an index
-			getName = function( match, shortNames, longNames ) {
-				var index = -1,
-					names = $.map( lookAhead( match ) ? longNames : shortNames, function( v, k ) {
-						return [ [ k, v ] ];
-					} ).sort( function( a, b ) {
-						return -( a[ 1 ].length - b[ 1 ].length );
-					} );
-
-				$.each( names, function( i, pair ) {
-					var name = pair[ 1 ];
-					if ( value.substr( iValue, name.length ).toLowerCase() === name.toLowerCase() ) {
-						index = pair[ 0 ];
-						iValue += name.length;
-						return false;
-					}
-				} );
-				if ( index !== -1 ) {
-					return index + 1;
-				} else {
-					throw "Unknown name at position " + iValue;
-				}
-			},
-
-			// Confirm that a literal character matches the string value
-			checkLiteral = function() {
-				if ( value.charAt( iValue ) !== format.charAt( iFormat ) ) {
-					throw "Unexpected literal at position " + iValue;
-				}
-				iValue++;
-			};
-
-		for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
-			if ( literal ) {
-				if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
-					literal = false;
-				} else {
-					checkLiteral();
-				}
-			} else {
-				switch ( format.charAt( iFormat ) ) {
-					case "d":
-						day = getNumber( "d" );
-						break;
-					case "D":
-						getName( "D", dayNamesShort, dayNames );
-						break;
-					case "o":
-						doy = getNumber( "o" );
-						break;
-					case "m":
-						month = getNumber( "m" );
-						break;
-					case "M":
-						month = getName( "M", monthNamesShort, monthNames );
-						break;
-					case "y":
-						year = getNumber( "y" );
-						break;
-					case "@":
-						date = new Date( getNumber( "@" ) );
-						year = date.getFullYear();
-						month = date.getMonth() + 1;
-						day = date.getDate();
-						break;
-					case "!":
-						date = new Date( ( getNumber( "!" ) - this._ticksTo1970 ) / 10000 );
-						year = date.getFullYear();
-						month = date.getMonth() + 1;
-						day = date.getDate();
-						break;
-					case "'":
-						if ( lookAhead( "'" ) ) {
-							checkLiteral();
-						} else {
-							literal = true;
-						}
-						break;
-					default:
-						checkLiteral();
-				}
-			}
-		}
-
-		if ( iValue < value.length ) {
-			extra = value.substr( iValue );
-			if ( !/^\s+/.test( extra ) ) {
-				throw "Extra/unparsed characters found in date: " + extra;
-			}
-		}
-
-		if ( year === -1 ) {
-			year = new Date().getFullYear();
-		} else if ( year < 100 ) {
-			year += new Date().getFullYear() - new Date().getFullYear() % 100 +
-				( year <= shortYearCutoff ? 0 : -100 );
-		}
-
-		if ( doy > -1 ) {
-			month = 1;
-			day = doy;
-			do {
-				dim = this._getDaysInMonth( year, month - 1 );
-				if ( day <= dim ) {
-					break;
-				}
-				month++;
-				day -= dim;
-			} while ( true );
-		}
-
-		date = this._daylightSavingAdjust( new Date( year, month - 1, day ) );
-		if ( date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day ) {
-			throw "Invalid date"; // E.g. 31/02/00
-		}
-		return date;
-	},
-
-	/* Standard date formats. */
-	ATOM: "yy-mm-dd", // RFC 3339 (ISO 8601)
-	COOKIE: "D, dd M yy",
-	ISO_8601: "yy-mm-dd",
-	RFC_822: "D, d M y",
-	RFC_850: "DD, dd-M-y",
-	RFC_1036: "D, d M y",
-	RFC_1123: "D, d M yy",
-	RFC_2822: "D, d M yy",
-	RSS: "D, d M y", // RFC 822
-	TICKS: "!",
-	TIMESTAMP: "@",
-	W3C: "yy-mm-dd", // ISO 8601
-
-	_ticksTo1970: ( ( ( 1970 - 1 ) * 365 + Math.floor( 1970 / 4 ) - Math.floor( 1970 / 100 ) +
-		Math.floor( 1970 / 400 ) ) * 24 * 60 * 60 * 10000000 ),
-
-	/* Format a date object into a string value.
-	 * The format can be combinations of the following:
-	 * d  - day of month (no leading zero)
-	 * dd - day of month (two digit)
-	 * o  - day of year (no leading zeros)
-	 * oo - day of year (three digit)
-	 * D  - day name short
-	 * DD - day name long
-	 * m  - month of year (no leading zero)
-	 * mm - month of year (two digit)
-	 * M  - month name short
-	 * MM - month name long
-	 * y  - year (two digit)
-	 * yy - year (four digit)
-	 * @ - Unix timestamp (ms since 01/01/1970)
-	 * ! - Windows ticks (100ns since 01/01/0001)
-	 * "..." - literal text
-	 * '' - single quote
-	 *
-	 * @param  format string - the desired format of the date
-	 * @param  date Date - the date value to format
-	 * @param  settings Object - attributes include:
-	 *					dayNamesShort	string[7] - abbreviated names of the days from Sunday (optional)
-	 *					dayNames		string[7] - names of the days from Sunday (optional)
-	 *					monthNamesShort string[12] - abbreviated names of the months (optional)
-	 *					monthNames		string[12] - names of the months (optional)
-	 * @return  string - the date in the above format
-	 */
-	formatDate: function( format, date, settings ) {
-		if ( !date ) {
-			return "";
-		}
-
-		var iFormat,
-			dayNamesShort = ( settings ? settings.dayNamesShort : null ) || this._defaults.dayNamesShort,
-			dayNames = ( settings ? settings.dayNames : null ) || this._defaults.dayNames,
-			monthNamesShort = ( settings ? settings.monthNamesShort : null ) || this._defaults.monthNamesShort,
-			monthNames = ( settings ? settings.monthNames : null ) || this._defaults.monthNames,
-
-			// Check whether a format character is doubled
-			lookAhead = function( match ) {
-				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
-				if ( matches ) {
-					iFormat++;
-				}
-				return matches;
-			},
-
-			// Format a number, with leading zero if necessary
-			formatNumber = function( match, value, len ) {
-				var num = "" + value;
-				if ( lookAhead( match ) ) {
-					while ( num.length < len ) {
-						num = "0" + num;
-					}
-				}
-				return num;
-			},
-
-			// Format a name, short or long as requested
-			formatName = function( match, value, shortNames, longNames ) {
-				return ( lookAhead( match ) ? longNames[ value ] : shortNames[ value ] );
-			},
-			output = "",
-			literal = false;
-
-		if ( date ) {
-			for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
-				if ( literal ) {
-					if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
-						literal = false;
-					} else {
-						output += format.charAt( iFormat );
-					}
-				} else {
-					switch ( format.charAt( iFormat ) ) {
-						case "d":
-							output += formatNumber( "d", date.getDate(), 2 );
-							break;
-						case "D":
-							output += formatName( "D", date.getDay(), dayNamesShort, dayNames );
-							break;
-						case "o":
-							output += formatNumber( "o",
-								Math.round( ( new Date( date.getFullYear(), date.getMonth(), date.getDate() ).getTime() - new Date( date.getFullYear(), 0, 0 ).getTime() ) / 86400000 ), 3 );
-							break;
-						case "m":
-							output += formatNumber( "m", date.getMonth() + 1, 2 );
-							break;
-						case "M":
-							output += formatName( "M", date.getMonth(), monthNamesShort, monthNames );
-							break;
-						case "y":
-							output += ( lookAhead( "y" ) ? date.getFullYear() :
-								( date.getFullYear() % 100 < 10 ? "0" : "" ) + date.getFullYear() % 100 );
-							break;
-						case "@":
-							output += date.getTime();
-							break;
-						case "!":
-							output += date.getTime() * 10000 + this._ticksTo1970;
-							break;
-						case "'":
-							if ( lookAhead( "'" ) ) {
-								output += "'";
-							} else {
-								literal = true;
-							}
-							break;
-						default:
-							output += format.charAt( iFormat );
-					}
-				}
-			}
-		}
-		return output;
-	},
-
-	/* Extract all possible characters from the date format. */
-	_possibleChars: function( format ) {
-		var iFormat,
-			chars = "",
-			literal = false,
-
-			// Check whether a format character is doubled
-			lookAhead = function( match ) {
-				var matches = ( iFormat + 1 < format.length && format.charAt( iFormat + 1 ) === match );
-				if ( matches ) {
-					iFormat++;
-				}
-				return matches;
-			};
-
-		for ( iFormat = 0; iFormat < format.length; iFormat++ ) {
-			if ( literal ) {
-				if ( format.charAt( iFormat ) === "'" && !lookAhead( "'" ) ) {
-					literal = false;
-				} else {
-					chars += format.charAt( iFormat );
-				}
-			} else {
-				switch ( format.charAt( iFormat ) ) {
-					case "d": case "m": case "y": case "@":
-						chars += "0123456789";
-						break;
-					case "D": case "M":
-						return null; // Accept anything
-					case "'":
-						if ( lookAhead( "'" ) ) {
-							chars += "'";
-						} else {
-							literal = true;
-						}
-						break;
-					default:
-						chars += format.charAt( iFormat );
-				}
-			}
-		}
-		return chars;
-	},
-
-	/* Get a setting value, defaulting if necessary. */
-	_get: function( inst, name ) {
-		return inst.settings[ name ] !== undefined ?
-			inst.settings[ name ] : this._defaults[ name ];
-	},
-
-	/* Parse existing date and initialise date picker. */
-	_setDateFromField: function( inst, noDefault ) {
-		if ( inst.input.val() === inst.lastVal ) {
-			return;
-		}
-
-		var dateFormat = this._get( inst, "dateFormat" ),
-			dates = inst.lastVal = inst.input ? inst.input.val() : null,
-			defaultDate = this._getDefaultDate( inst ),
-			date = defaultDate,
-			settings = this._getFormatConfig( inst );
-
-		try {
-			date = this.parseDate( dateFormat, dates, settings ) || defaultDate;
-		} catch ( event ) {
-			dates = ( noDefault ? "" : dates );
-		}
-		inst.selectedDay = date.getDate();
-		inst.drawMonth = inst.selectedMonth = date.getMonth();
-		inst.drawYear = inst.selectedYear = date.getFullYear();
-		inst.currentDay = ( dates ? date.getDate() : 0 );
-		inst.currentMonth = ( dates ? date.getMonth() : 0 );
-		inst.currentYear = ( dates ? date.getFullYear() : 0 );
-		this._adjustInstDate( inst );
-	},
-
-	/* Retrieve the default date shown on opening. */
-	_getDefaultDate: function( inst ) {
-		return this._restrictMinMax( inst,
-			this._determineDate( inst, this._get( inst, "defaultDate" ), new Date() ) );
-	},
-
-	/* A date may be specified as an exact value or a relative one. */
-	_determineDate: function( inst, date, defaultDate ) {
-		var offsetNumeric = function( offset ) {
-				var date = new Date();
-				date.setDate( date.getDate() + offset );
-				return date;
-			},
-			offsetString = function( offset ) {
-				try {
-					return $.datepicker.parseDate( $.datepicker._get( inst, "dateFormat" ),
-						offset, $.datepicker._getFormatConfig( inst ) );
-				}
-				catch ( e ) {
-
-					// Ignore
-				}
-
-				var date = ( offset.toLowerCase().match( /^c/ ) ?
-					$.datepicker._getDate( inst ) : null ) || new Date(),
-					year = date.getFullYear(),
-					month = date.getMonth(),
-					day = date.getDate(),
-					pattern = /([+\-]?[0-9]+)\s*(d|D|w|W|m|M|y|Y)?/g,
-					matches = pattern.exec( offset );
-
-				while ( matches ) {
-					switch ( matches[ 2 ] || "d" ) {
-						case "d" : case "D" :
-							day += parseInt( matches[ 1 ], 10 ); break;
-						case "w" : case "W" :
-							day += parseInt( matches[ 1 ], 10 ) * 7; break;
-						case "m" : case "M" :
-							month += parseInt( matches[ 1 ], 10 );
-							day = Math.min( day, $.datepicker._getDaysInMonth( year, month ) );
-							break;
-						case "y": case "Y" :
-							year += parseInt( matches[ 1 ], 10 );
-							day = Math.min( day, $.datepicker._getDaysInMonth( year, month ) );
-							break;
-					}
-					matches = pattern.exec( offset );
-				}
-				return new Date( year, month, day );
-			},
-			newDate = ( date == null || date === "" ? defaultDate : ( typeof date === "string" ? offsetString( date ) :
-				( typeof date === "number" ? ( isNaN( date ) ? defaultDate : offsetNumeric( date ) ) : new Date( date.getTime() ) ) ) );
-
-		newDate = ( newDate && newDate.toString() === "Invalid Date" ? defaultDate : newDate );
-		if ( newDate ) {
-			newDate.setHours( 0 );
-			newDate.setMinutes( 0 );
-			newDate.setSeconds( 0 );
-			newDate.setMilliseconds( 0 );
-		}
-		return this._daylightSavingAdjust( newDate );
-	},
-
-	/* Handle switch to/from daylight saving.
-	 * Hours may be non-zero on daylight saving cut-over:
-	 * > 12 when midnight changeover, but then cannot generate
-	 * midnight datetime, so jump to 1AM, otherwise reset.
-	 * @param  date  (Date) the date to check
-	 * @return  (Date) the corrected date
-	 */
-	_daylightSavingAdjust: function( date ) {
-		if ( !date ) {
-			return null;
-		}
-		date.setHours( date.getHours() > 12 ? date.getHours() + 2 : 0 );
-		return date;
-	},
-
-	/* Set the date(s) directly. */
-	_setDate: function( inst, date, noChange ) {
-		var clear = !date,
-			origMonth = inst.selectedMonth,
-			origYear = inst.selectedYear,
-			newDate = this._restrictMinMax( inst, this._determineDate( inst, date, new Date() ) );
-
-		inst.selectedDay = inst.currentDay = newDate.getDate();
-		inst.drawMonth = inst.selectedMonth = inst.currentMonth = newDate.getMonth();
-		inst.drawYear = inst.selectedYear = inst.currentYear = newDate.getFullYear();
-		if ( ( origMonth !== inst.selectedMonth || origYear !== inst.selectedYear ) && !noChange ) {
-			this._notifyChange( inst );
-		}
-		this._adjustInstDate( inst );
-		if ( inst.input ) {
-			inst.input.val( clear ? "" : this._formatDate( inst ) );
-		}
-	},
-
-	/* Retrieve the date(s) directly. */
-	_getDate: function( inst ) {
-		var startDate = ( !inst.currentYear || ( inst.input && inst.input.val() === "" ) ? null :
-			this._daylightSavingAdjust( new Date(
-			inst.currentYear, inst.currentMonth, inst.currentDay ) ) );
-			return startDate;
-	},
-
-	/* Attach the onxxx handlers.  These are declared statically so
-	 * they work with static code transformers like Caja.
-	 */
-	_attachHandlers: function( inst ) {
-		var stepMonths = this._get( inst, "stepMonths" ),
-			id = "#" + inst.id.replace( /\\\\/g, "\\" );
-		inst.dpDiv.find( "[data-handler]" ).map( function() {
-			var handler = {
-				prev: function() {
-					$.datepicker._adjustDate( id, -stepMonths, "M" );
-				},
-				next: function() {
-					$.datepicker._adjustDate( id, +stepMonths, "M" );
-				},
-				hide: function() {
-					$.datepicker._hideDatepicker();
-				},
-				today: function() {
-					$.datepicker._gotoToday( id );
-				},
-				selectDay: function() {
-					$.datepicker._selectDay( id, +this.getAttribute( "data-month" ), +this.getAttribute( "data-year" ), this );
-					return false;
-				},
-				selectMonth: function() {
-					$.datepicker._selectMonthYear( id, this, "M" );
-					return false;
-				},
-				selectYear: function() {
-					$.datepicker._selectMonthYear( id, this, "Y" );
-					return false;
-				}
-			};
-			$( this ).on( this.getAttribute( "data-event" ), handler[ this.getAttribute( "data-handler" ) ] );
-		} );
-	},
-
-	/* Generate the HTML for the current state of the date picker. */
-	_generateHTML: function( inst ) {
-		var maxDraw, prevText, prev, nextText, next, currentText, gotoDate,
-			controls, buttonPanel, firstDay, showWeek, dayNames, dayNamesMin,
-			monthNames, monthNamesShort, beforeShowDay, showOtherMonths,
-			selectOtherMonths, defaultDate, html, dow, row, group, col, selectedDate,
-			cornerClass, calender, thead, day, daysInMonth, leadDays, curRows, numRows,
-			printDate, dRow, tbody, daySettings, otherMonth, unselectable,
-			tempDate = new Date(),
-			today = this._daylightSavingAdjust(
-				new Date( tempDate.getFullYear(), tempDate.getMonth(), tempDate.getDate() ) ), // clear time
-			isRTL = this._get( inst, "isRTL" ),
-			showButtonPanel = this._get( inst, "showButtonPanel" ),
-			hideIfNoPrevNext = this._get( inst, "hideIfNoPrevNext" ),
-			navigationAsDateFormat = this._get( inst, "navigationAsDateFormat" ),
-			numMonths = this._getNumberOfMonths( inst ),
-			showCurrentAtPos = this._get( inst, "showCurrentAtPos" ),
-			stepMonths = this._get( inst, "stepMonths" ),
-			isMultiMonth = ( numMonths[ 0 ] !== 1 || numMonths[ 1 ] !== 1 ),
-			currentDate = this._daylightSavingAdjust( ( !inst.currentDay ? new Date( 9999, 9, 9 ) :
-				new Date( inst.currentYear, inst.currentMonth, inst.currentDay ) ) ),
-			minDate = this._getMinMaxDate( inst, "min" ),
-			maxDate = this._getMinMaxDate( inst, "max" ),
-			drawMonth = inst.drawMonth - showCurrentAtPos,
-			drawYear = inst.drawYear;
-
-		if ( drawMonth < 0 ) {
-			drawMonth += 12;
-			drawYear--;
-		}
-		if ( maxDate ) {
-			maxDraw = this._daylightSavingAdjust( new Date( maxDate.getFullYear(),
-				maxDate.getMonth() - ( numMonths[ 0 ] * numMonths[ 1 ] ) + 1, maxDate.getDate() ) );
-			maxDraw = ( minDate && maxDraw < minDate ? minDate : maxDraw );
-			while ( this._daylightSavingAdjust( new Date( drawYear, drawMonth, 1 ) ) > maxDraw ) {
-				drawMonth--;
-				if ( drawMonth < 0 ) {
-					drawMonth = 11;
-					drawYear--;
-				}
-			}
-		}
-		inst.drawMonth = drawMonth;
-		inst.drawYear = drawYear;
-
-		prevText = this._get( inst, "prevText" );
-		prevText = ( !navigationAsDateFormat ? prevText : this.formatDate( prevText,
-			this._daylightSavingAdjust( new Date( drawYear, drawMonth - stepMonths, 1 ) ),
-			this._getFormatConfig( inst ) ) );
-
-		prev = ( this._canAdjustMonth( inst, -1, drawYear, drawMonth ) ?
-			"<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='click'" +
-			" title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w" ) + "'>" + prevText + "</span></a>" :
-			( hideIfNoPrevNext ? "" : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "e" : "w" ) + "'>" + prevText + "</span></a>" ) );
-
-		nextText = this._get( inst, "nextText" );
-		nextText = ( !navigationAsDateFormat ? nextText : this.formatDate( nextText,
-			this._daylightSavingAdjust( new Date( drawYear, drawMonth + stepMonths, 1 ) ),
-			this._getFormatConfig( inst ) ) );
-
-		next = ( this._canAdjustMonth( inst, +1, drawYear, drawMonth ) ?
-			"<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='click'" +
-			" title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e" ) + "'>" + nextText + "</span></a>" :
-			( hideIfNoPrevNext ? "" : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + ( isRTL ? "w" : "e" ) + "'>" + nextText + "</span></a>" ) );
-
-		currentText = this._get( inst, "currentText" );
-		gotoDate = ( this._get( inst, "gotoCurrent" ) && inst.currentDay ? currentDate : today );
-		currentText = ( !navigationAsDateFormat ? currentText :
-			this.formatDate( currentText, gotoDate, this._getFormatConfig( inst ) ) );
-
-		controls = ( !inst.inline ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='hide' data-event='click'>" +
-			this._get( inst, "closeText" ) + "</button>" : "" );
-
-		buttonPanel = ( showButtonPanel ) ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + ( isRTL ? controls : "" ) +
-			( this._isInRange( inst, gotoDate ) ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all' data-handler='today' data-event='click'" +
-			">" + currentText + "</button>" : "" ) + ( isRTL ? "" : controls ) + "</div>" : "";
-
-		firstDay = parseInt( this._get( inst, "firstDay" ), 10 );
-		firstDay = ( isNaN( firstDay ) ? 0 : firstDay );
-
-		showWeek = this._get( inst, "showWeek" );
-		dayNames = this._get( inst, "dayNames" );
-		dayNamesMin = this._get( inst, "dayNamesMin" );
-		monthNames = this._get( inst, "monthNames" );
-		monthNamesShort = this._get( inst, "monthNamesShort" );
-		beforeShowDay = this._get( inst, "beforeShowDay" );
-		showOtherMonths = this._get( inst, "showOtherMonths" );
-		selectOtherMonths = this._get( inst, "selectOtherMonths" );
-		defaultDate = this._getDefaultDate( inst );
-		html = "";
-
-		for ( row = 0; row < numMonths[ 0 ]; row++ ) {
-			group = "";
-			this.maxRows = 4;
-			for ( col = 0; col < numMonths[ 1 ]; col++ ) {
-				selectedDate = this._daylightSavingAdjust( new Date( drawYear, drawMonth, inst.selectedDay ) );
-				cornerClass = " ui-corner-all";
-				calender = "";
-				if ( isMultiMonth ) {
-					calender += "<div class='ui-datepicker-group";
-					if ( numMonths[ 1 ] > 1 ) {
-						switch ( col ) {
-							case 0: calender += " ui-datepicker-group-first";
-								cornerClass = " ui-corner-" + ( isRTL ? "right" : "left" ); break;
-							case numMonths[ 1 ] - 1: calender += " ui-datepicker-group-last";
-								cornerClass = " ui-corner-" + ( isRTL ? "left" : "right" ); break;
-							default: calender += " ui-datepicker-group-middle"; cornerClass = ""; break;
-						}
-					}
-					calender += "'>";
-				}
-				calender += "<div class='ui-datepicker-header ui-widget-header ui-helper-clearfix" + cornerClass + "'>" +
-					( /all|left/.test( cornerClass ) && row === 0 ? ( isRTL ? next : prev ) : "" ) +
-					( /all|right/.test( cornerClass ) && row === 0 ? ( isRTL ? prev : next ) : "" ) +
-					this._generateMonthYearHeader( inst, drawMonth, drawYear, minDate, maxDate,
-					row > 0 || col > 0, monthNames, monthNamesShort ) + // draw month headers
-					"</div><table class='ui-datepicker-calendar'><thead>" +
-					"<tr>";
-				thead = ( showWeek ? "<th class='ui-datepicker-week-col'>" + this._get( inst, "weekHeader" ) + "</th>" : "" );
-				for ( dow = 0; dow < 7; dow++ ) { // days of the week
-					day = ( dow + firstDay ) % 7;
-					thead += "<th scope='col'" + ( ( dow + firstDay + 6 ) % 7 >= 5 ? " class='ui-datepicker-week-end'" : "" ) + ">" +
-						"<span title='" + dayNames[ day ] + "'>" + dayNamesMin[ day ] + "</span></th>";
-				}
-				calender += thead + "</tr></thead><tbody>";
-				daysInMonth = this._getDaysInMonth( drawYear, drawMonth );
-				if ( drawYear === inst.selectedYear && drawMonth === inst.selectedMonth ) {
-					inst.selectedDay = Math.min( inst.selectedDay, daysInMonth );
-				}
-				leadDays = ( this._getFirstDayOfMonth( drawYear, drawMonth ) - firstDay + 7 ) % 7;
-				curRows = Math.ceil( ( leadDays + daysInMonth ) / 7 ); // calculate the number of rows to generate
-				numRows = ( isMultiMonth ? this.maxRows > curRows ? this.maxRows : curRows : curRows ); //If multiple months, use the higher number of rows (see #7043)
-				this.maxRows = numRows;
-				printDate = this._daylightSavingAdjust( new Date( drawYear, drawMonth, 1 - leadDays ) );
-				for ( dRow = 0; dRow < numRows; dRow++ ) { // create date picker rows
-					calender += "<tr>";
-					tbody = ( !showWeek ? "" : "<td class='ui-datepicker-week-col'>" +
-						this._get( inst, "calculateWeek" )( printDate ) + "</td>" );
-					for ( dow = 0; dow < 7; dow++ ) { // create date picker days
-						daySettings = ( beforeShowDay ?
-							beforeShowDay.apply( ( inst.input ? inst.input[ 0 ] : null ), [ printDate ] ) : [ true, "" ] );
-						otherMonth = ( printDate.getMonth() !== drawMonth );
-						unselectable = ( otherMonth && !selectOtherMonths ) || !daySettings[ 0 ] ||
-							( minDate && printDate < minDate ) || ( maxDate && printDate > maxDate );
-						tbody += "<td class='" +
-							( ( dow + firstDay + 6 ) % 7 >= 5 ? " ui-datepicker-week-end" : "" ) + // highlight weekends
-							( otherMonth ? " ui-datepicker-other-month" : "" ) + // highlight days from other months
-							( ( printDate.getTime() === selectedDate.getTime() && drawMonth === inst.selectedMonth && inst._keyEvent ) || // user pressed key
-							( defaultDate.getTime() === printDate.getTime() && defaultDate.getTime() === selectedDate.getTime() ) ?
-
-							// or defaultDate is current printedDate and defaultDate is selectedDate
-							" " + this._dayOverClass : "" ) + // highlight selected day
-							( unselectable ? " " + this._unselectableClass + " ui-state-disabled" : "" ) +  // highlight unselectable days
-							( otherMonth && !showOtherMonths ? "" : " " + daySettings[ 1 ] + // highlight custom dates
-							( printDate.getTime() === currentDate.getTime() ? " " + this._currentClass : "" ) + // highlight selected day
-							( printDate.getTime() === today.getTime() ? " ui-datepicker-today" : "" ) ) + "'" + // highlight today (if different)
-							( ( !otherMonth || showOtherMonths ) && daySettings[ 2 ] ? " title='" + daySettings[ 2 ].replace( /'/g, "&#39;" ) + "'" : "" ) + // cell title
-							( unselectable ? "" : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'" ) + ">" + // actions
-							( otherMonth && !showOtherMonths ? "&#xa0;" : // display for other months
-							( unselectable ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>" : "<a class='ui-state-default" +
-							( printDate.getTime() === today.getTime() ? " ui-state-highlight" : "" ) +
-							( printDate.getTime() === currentDate.getTime() ? " ui-state-active" : "" ) + // highlight selected day
-							( otherMonth ? " ui-priority-secondary" : "" ) + // distinguish dates from other months
-							"' href='#'>" + printDate.getDate() + "</a>" ) ) + "</td>"; // display selectable date
-						printDate.setDate( printDate.getDate() + 1 );
-						printDate = this._daylightSavingAdjust( printDate );
-					}
-					calender += tbody + "</tr>";
-				}
-				drawMonth++;
-				if ( drawMonth > 11 ) {
-					drawMonth = 0;
-					drawYear++;
-				}
-				calender += "</tbody></table>" + ( isMultiMonth ? "</div>" +
-							( ( numMonths[ 0 ] > 0 && col === numMonths[ 1 ] - 1 ) ? "<div class='ui-datepicker-row-break'></div>" : "" ) : "" );
-				group += calender;
-			}
-			html += group;
-		}
-		html += buttonPanel;
-		inst._keyEvent = false;
-		return html;
-	},
-
-	/* Generate the month and year header. */
-	_generateMonthYearHeader: function( inst, drawMonth, drawYear, minDate, maxDate,
-			secondary, monthNames, monthNamesShort ) {
-
-		var inMinYear, inMaxYear, month, years, thisYear, determineYear, year, endYear,
-			changeMonth = this._get( inst, "changeMonth" ),
-			changeYear = this._get( inst, "changeYear" ),
-			showMonthAfterYear = this._get( inst, "showMonthAfterYear" ),
-			html = "<div class='ui-datepicker-title'>",
-			monthHtml = "";
-
-		// Month selection
-		if ( secondary || !changeMonth ) {
-			monthHtml += "<span class='ui-datepicker-month'>" + monthNames[ drawMonth ] + "</span>";
-		} else {
-			inMinYear = ( minDate && minDate.getFullYear() === drawYear );
-			inMaxYear = ( maxDate && maxDate.getFullYear() === drawYear );
-			monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='change'>";
-			for ( month = 0; month < 12; month++ ) {
-				if ( ( !inMinYear || month >= minDate.getMonth() ) && ( !inMaxYear || month <= maxDate.getMonth() ) ) {
-					monthHtml += "<option value='" + month + "'" +
-						( month === drawMonth ? " selected='selected'" : "" ) +
-						">" + monthNamesShort[ month ] + "</option>";
-				}
-			}
-			monthHtml += "</select>";
-		}
-
-		if ( !showMonthAfterYear ) {
-			html += monthHtml + ( secondary || !( changeMonth && changeYear ) ? "&#xa0;" : "" );
-		}
-
-		// Year selection
-		if ( !inst.yearshtml ) {
-			inst.yearshtml = "";
-			if ( secondary || !changeYear ) {
-				html += "<span class='ui-datepicker-year'>" + drawYear + "</span>";
-			} else {
-
-				// determine range of years to display
-				years = this._get( inst, "yearRange" ).split( ":" );
-				thisYear = new Date().getFullYear();
-				determineYear = function( value ) {
-					var year = ( value.match( /c[+\-].*/ ) ? drawYear + parseInt( value.substring( 1 ), 10 ) :
-						( value.match( /[+\-].*/ ) ? thisYear + parseInt( value, 10 ) :
-						parseInt( value, 10 ) ) );
-					return ( isNaN( year ) ? thisYear : year );
-				};
-				year = determineYear( years[ 0 ] );
-				endYear = Math.max( year, determineYear( years[ 1 ] || "" ) );
-				year = ( minDate ? Math.max( year, minDate.getFullYear() ) : year );
-				endYear = ( maxDate ? Math.min( endYear, maxDate.getFullYear() ) : endYear );
-				inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'>";
-				for ( ; year <= endYear; year++ ) {
-					inst.yearshtml += "<option value='" + year + "'" +
-						( year === drawYear ? " selected='selected'" : "" ) +
-						">" + year + "</option>";
-				}
-				inst.yearshtml += "</select>";
-
-				html += inst.yearshtml;
-				inst.yearshtml = null;
-			}
-		}
-
-		html += this._get( inst, "yearSuffix" );
-		if ( showMonthAfterYear ) {
-			html += ( secondary || !( changeMonth && changeYear ) ? "&#xa0;" : "" ) + monthHtml;
-		}
-		html += "</div>"; // Close datepicker_header
-		return html;
-	},
-
-	/* Adjust one of the date sub-fields. */
-	_adjustInstDate: function( inst, offset, period ) {
-		var year = inst.selectedYear + ( period === "Y" ? offset : 0 ),
-			month = inst.selectedMonth + ( period === "M" ? offset : 0 ),
-			day = Math.min( inst.selectedDay, this._getDaysInMonth( year, month ) ) + ( period === "D" ? offset : 0 ),
-			date = this._restrictMinMax( inst, this._daylightSavingAdjust( new Date( year, month, day ) ) );
-
-		inst.selectedDay = date.getDate();
-		inst.drawMonth = inst.selectedMonth = date.getMonth();
-		inst.drawYear = inst.selectedYear = date.getFullYear();
-		if ( period === "M" || period === "Y" ) {
-			this._notifyChange( inst );
-		}
-	},
-
-	/* Ensure a date is within any min/max bounds. */
-	_restrictMinMax: function( inst, date ) {
-		var minDate = this._getMinMaxDate( inst, "min" ),
-			maxDate = this._getMinMaxDate( inst, "max" ),
-			newDate = ( minDate && date < minDate ? minDate : date );
-		return ( maxDate && newDate > maxDate ? maxDate : newDate );
-	},
-
-	/* Notify change of month/year. */
-	_notifyChange: function( inst ) {
-		var onChange = this._get( inst, "onChangeMonthYear" );
-		if ( onChange ) {
-			onChange.apply( ( inst.input ? inst.input[ 0 ] : null ),
-				[ inst.selectedYear, inst.selectedMonth + 1, inst ] );
-		}
-	},
-
-	/* Determine the number of months to show. */
-	_getNumberOfMonths: function( inst ) {
-		var numMonths = this._get( inst, "numberOfMonths" );
-		return ( numMonths == null ? [ 1, 1 ] : ( typeof numMonths === "number" ? [ 1, numMonths ] : numMonths ) );
-	},
-
-	/* Determine the current maximum date - ensure no time components are set. */
-	_getMinMaxDate: function( inst, minMax ) {
-		return this._determineDate( inst, this._get( inst, minMax + "Date" ), null );
-	},
-
-	/* Find the number of days in a given month. */
-	_getDaysInMonth: function( year, month ) {
-		return 32 - this._daylightSavingAdjust( new Date( year, month, 32 ) ).getDate();
-	},
-
-	/* Find the day of the week of the first of a month. */
-	_getFirstDayOfMonth: function( year, month ) {
-		return new Date( year, month, 1 ).getDay();
-	},
-
-	/* Determines if we should allow a "next/prev" month display change. */
-	_canAdjustMonth: function( inst, offset, curYear, curMonth ) {
-		var numMonths = this._getNumberOfMonths( inst ),
-			date = this._daylightSavingAdjust( new Date( curYear,
-			curMonth + ( offset < 0 ? offset : numMonths[ 0 ] * numMonths[ 1 ] ), 1 ) );
-
-		if ( offset < 0 ) {
-			date.setDate( this._getDaysInMonth( date.getFullYear(), date.getMonth() ) );
-		}
-		return this._isInRange( inst, date );
-	},
-
-	/* Is the given date in the accepted range? */
-	_isInRange: function( inst, date ) {
-		var yearSplit, currentYear,
-			minDate = this._getMinMaxDate( inst, "min" ),
-			maxDate = this._getMinMaxDate( inst, "max" ),
-			minYear = null,
-			maxYear = null,
-			years = this._get( inst, "yearRange" );
-			if ( years ) {
-				yearSplit = years.split( ":" );
-				currentYear = new Date().getFullYear();
-				minYear = parseInt( yearSplit[ 0 ], 10 );
-				maxYear = parseInt( yearSplit[ 1 ], 10 );
-				if ( yearSplit[ 0 ].match( /[+\-].*/ ) ) {
-					minYear += currentYear;
-				}
-				if ( yearSplit[ 1 ].match( /[+\-].*/ ) ) {
-					maxYear += currentYear;
-				}
-			}
-
-		return ( ( !minDate || date.getTime() >= minDate.getTime() ) &&
-			( !maxDate || date.getTime() <= maxDate.getTime() ) &&
-			( !minYear || date.getFullYear() >= minYear ) &&
-			( !maxYear || date.getFullYear() <= maxYear ) );
-	},
-
-	/* Provide the configuration settings for formatting/parsing. */
-	_getFormatConfig: function( inst ) {
-		var shortYearCutoff = this._get( inst, "shortYearCutoff" );
-		shortYearCutoff = ( typeof shortYearCutoff !== "string" ? shortYearCutoff :
-			new Date().getFullYear() % 100 + parseInt( shortYearCutoff, 10 ) );
-		return { shortYearCutoff: shortYearCutoff,
-			dayNamesShort: this._get( inst, "dayNamesShort" ), dayNames: this._get( inst, "dayNames" ),
-			monthNamesShort: this._get( inst, "monthNamesShort" ), monthNames: this._get( inst, "monthNames" ) };
-	},
-
-	/* Format the given date for display. */
-	_formatDate: function( inst, day, month, year ) {
-		if ( !day ) {
-			inst.currentDay = inst.selectedDay;
-			inst.currentMonth = inst.selectedMonth;
-			inst.currentYear = inst.selectedYear;
-		}
-		var date = ( day ? ( typeof day === "object" ? day :
-			this._daylightSavingAdjust( new Date( year, month, day ) ) ) :
-			this._daylightSavingAdjust( new Date( inst.currentYear, inst.currentMonth, inst.currentDay ) ) );
-		return this.formatDate( this._get( inst, "dateFormat" ), date, this._getFormatConfig( inst ) );
-	}
-} );
-
-/*
- * Bind hover events for datepicker elements.
- * Done via delegate so the binding only occurs once in the lifetime of the parent div.
- * Global datepicker_instActive, set by _updateDatepicker allows the handlers to find their way back to the active picker.
- */
-function datepicker_bindHover( dpDiv ) {
-	var selector = "button, .ui-datepicker-prev, .ui-datepicker-next, .ui-datepicker-calendar td a";
-	return dpDiv.on( "mouseout", selector, function() {
-			$( this ).removeClass( "ui-state-hover" );
-			if ( this.className.indexOf( "ui-datepicker-prev" ) !== -1 ) {
-				$( this ).removeClass( "ui-datepicker-prev-hover" );
-			}
-			if ( this.className.indexOf( "ui-datepicker-next" ) !== -1 ) {
-				$( this ).removeClass( "ui-datepicker-next-hover" );
-			}
-		} )
-		.on( "mouseover", selector, datepicker_handleMouseover );
-}
-
-function datepicker_handleMouseover() {
-	if ( !$.datepicker._isDisabledDatepicker( datepicker_instActive.inline ? datepicker_instActive.dpDiv.parent()[ 0 ] : datepicker_instActive.input[ 0 ] ) ) {
-		$( this ).parents( ".ui-datepicker-calendar" ).find( "a" ).removeClass( "ui-state-hover" );
-		$( this ).addClass( "ui-state-hover" );
-		if ( this.className.indexOf( "ui-datepicker-prev" ) !== -1 ) {
-			$( this ).addClass( "ui-datepicker-prev-hover" );
-		}
-		if ( this.className.indexOf( "ui-datepicker-next" ) !== -1 ) {
-			$( this ).addClass( "ui-datepicker-next-hover" );
-		}
-	}
-}
-
-/* jQuery extend now ignores nulls! */
-function datepicker_extendRemove( target, props ) {
-	$.extend( target, props );
-	for ( var name in props ) {
-		if ( props[ name ] == null ) {
-			target[ name ] = props[ name ];
-		}
-	}
-	return target;
-}
-
-/* Invoke the datepicker functionality.
-   @param  options  string - a command, optionally followed by additional parameters or
-					Object - settings for attaching new datepicker functionality
-   @return  jQuery object */
-$.fn.datepicker = function( options ) {
-
-	/* Verify an empty collection wasn't passed - Fixes #6976 */
-	if ( !this.length ) {
-		return this;
-	}
-
-	/* Initialise the date picker. */
-	if ( !$.datepicker.initialized ) {
-		$( document ).on( "mousedown", $.datepicker._checkExternalClick );
-		$.datepicker.initialized = true;
-	}
-
-	/* Append datepicker main container to body if not exist. */
-	if ( $( "#" + $.datepicker._mainDivId ).length === 0 ) {
-		$( "body" ).append( $.datepicker.dpDiv );
-	}
-
-	var otherArgs = Array.prototype.slice.call( arguments, 1 );
-	if ( typeof options === "string" && ( options === "isDisabled" || options === "getDate" || options === "widget" ) ) {
-		return $.datepicker[ "_" + options + "Datepicker" ].
-			apply( $.datepicker, [ this[ 0 ] ].concat( otherArgs ) );
-	}
-	if ( options === "option" && arguments.length === 2 && typeof arguments[ 1 ] === "string" ) {
-		return $.datepicker[ "_" + options + "Datepicker" ].
-			apply( $.datepicker, [ this[ 0 ] ].concat( otherArgs ) );
-	}
-	return this.each( function() {
-		typeof options === "string" ?
-			$.datepicker[ "_" + options + "Datepicker" ].
-				apply( $.datepicker, [ this ].concat( otherArgs ) ) :
-			$.datepicker._attachDatepicker( this, options );
-	} );
-};
-
-$.datepicker = new Datepicker(); // singleton instance
-$.datepicker.initialized = false;
-$.datepicker.uuid = new Date().getTime();
-$.datepicker.version = "1.12.1";
-
-return $.datepicker;
-
-} ) );
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;( function( factory ) {
-	if ( true ) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory( jQuery );
-	}
-} ( function( $ ) {
-
-$.ui = $.ui || {};
-
-return $.ui.version = "1.12.1";
-
-} ) );
-
-
-/***/ }),
 /* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(43);
-__webpack_require__(51);
-module.exports = __webpack_require__(52);
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_datatables_net_bs4__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_jquery_ui_ui_widgets_datepicker_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_select2_dist_js_select2__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_summernote__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_summernote___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_summernote__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker__ = __webpack_require__(49);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_bootstrap_datepicker__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_timepicker__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_timepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_timepicker__);
-
-
-__webpack_require__(11);
-__webpack_require__(37);
-__webpack_require__(10);
-__webpack_require__(38);
-__webpack_require__(39);
-
-
-
-
-
-
-
-
-
-
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-$(function () {
-    if ($('.datetimepicker').length > 0) {
-        $('.datetimepicker').datepicker({
-            format: 'mm/dd/yyyy'
-        });
-    }
-    if ($('.timepicker').length > 0) {
-        $('.timepicker').timepicker({});
-    }
-});
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-var $sidebarOverlay = $(".task-overlay");
-$(".task-chat, #mobile_btn").on("click", function (e) {
-    var $target = $($(this).attr("href"));
-    if ($target.length) {
-        $target.toggleClass("opened");
-        $sidebarOverlay.toggleClass("opened");
-        $("html").toggleClass("menu-opened");
-        $sidebarOverlay.attr("data-reff", $(this).attr("href"));
-    }
-    e.preventDefault();
-});
-
-$sidebarOverlay.on("click", function (e) {
-    var $target = $($(this).attr("data-reff"));
-    if ($target.length) {
-        $target.removeClass("opened");
-        $("html").removeClass("menu-opened");
-        $(this).removeClass("opened");
-        $(".main-wrapper").removeClass("slide-nav-toggle");
-    }
-    e.preventDefault();
-});
-
-$(document).ready(function () {
-    if ($('.themes-icon').length > 0) {
-        $(".themes-icon").click(function () {
-            $('.themes').toggleClass("active");
-            $('.main-wrapper').removeClass('open-msg-box');
-        });
-    }
-});
-
-!function ($) {
-    "use strict";
-
-    var Sidemenu = function Sidemenu() {
-        this.$menuItem = $("#sidebar-menu a");
-    };
-
-    Sidemenu.prototype.menuItemClick = function (e) {
-        if ($(this).parent().hasClass("submenu")) {
-            e.preventDefault();
-        }
-        if (!$(this).hasClass("subdrop")) {
-            $("ul", $(this).parents("ul:first")).slideUp(350);
-            $("a", $(this).parents("ul:first")).removeClass("subdrop");
-            $(this).next("ul").slideDown(350);
-            $(this).addClass("subdrop");
-        } else if ($(this).hasClass("subdrop")) {
-            $(this).removeClass("subdrop");
-            $(this).next("ul").slideUp(350);
-        }
-    }, Sidemenu.prototype.init = function () {
-        var $this = this;
-        $this.$menuItem.on('click', $this.menuItemClick);
-        $("#sidebar-menu ul li.submenu a.active").parents("li:last").children("a:first").addClass("active").trigger("click");
-    }, $.Sidemenu = new Sidemenu(), $.Sidemenu.Constructor = Sidemenu;
-}(window.jQuery), function ($) {
-    "use strict";
-
-    var App = function App() {
-        this.$body = $("body");
-    };
-    App.prototype.init = function () {
-        var $this = this;
-        $(document).ready($this.onDocReady);
-        $.Sidemenu.init();
-    }, $.App = new App(), $.App.Constructor = App;
-}(window.jQuery), function ($) {
-    "use strict";
-
-    $.App.init();
-}(window.jQuery);
-
-$(document).ready(function () {
-    if ($('.select').length > 0) {
-        $('.select').select2({
-            minimumResultsForSearch: -1,
-            width: '100%'
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.modal').length > 0) {
-        var modalUniqueClass = ".modal";
-        $('.modal').on('show.bs.modal', function (e) {
-            var $element = $(this);
-            var $uniques = $(modalUniqueClass + ':visible').not($(this));
-            if ($uniques.length) {
-                $uniques.modal('hide');
-                $uniques.one('hidden.bs.modal', function (e) {
-                    $element.modal('show');
-                });
-                return false;
-            }
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.floating').length > 0) {
-        $('.floating').on('focus blur', function (e) {
-            $(this).parents('.form-focus').toggleClass('focused', e.type === 'focus' || this.value.length > 0);
-        }).trigger('blur');
-    }
-});
-
-$(document).ready(function () {
-    if ($('.msg-list-scroll').length > 0) {
-        $('.msg-list-scroll').slimscroll({
-            height: '100%',
-            color: '#878787',
-            disableFadeOut: true,
-            borderRadius: 0,
-            size: '4px',
-            alwaysVisible: false,
-            touchScrollStep: 100
-        });
-        var h = $(window).height() - 124;
-        $('.msg-list-scroll').height(h);
-        $('.msg-sidebar .slimScrollDiv').height(h);
-
-        $(window).resize(function () {
-            var h = $(window).height() - 124;
-            $('.msg-list-scroll').height(h);
-            $('.msg-sidebar .slimScrollDiv').height(h);
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.slimscroll').length > 0) {
-        $('.slimscroll').slimScroll({
-            height: 'auto',
-            width: '100%',
-            position: 'right',
-            size: "7px",
-            color: '#ccc',
-            wheelStep: 10,
-            touchScrollStep: 100
-        });
-        var h = $(window).height() - 60;
-        $('.slimscroll').height(h);
-        $('.sidebar .slimScrollDiv').height(h);
-
-        $(window).resize(function () {
-            var h = $(window).height() - 60;
-            $('.slimscroll').height(h);
-            $('.sidebar .slimScrollDiv').height(h);
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.page-wrapper').length > 0) {
-        var height = $(window).height();
-        $(".page-wrapper").css("min-height", height);
-    }
-});
-
-$(window).resize(function () {
-    if ($('.page-wrapper').length > 0) {
-        var height = $(window).height();
-        $(".page-wrapper").css("min-height", height);
-    }
-});
-
-$(document).ready(function () {
-    if ($('.datatable').length > 0) {
-        $('.datatable').DataTable({
-            "bFilter": false
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('[data-toggle="tooltip"]').length > 0) {
-        $('[data-toggle="tooltip"]').tooltip();
-    }
-});
-
-$(document).ready(function () {
-    if ($('.btn-toggle').length > 0) {
-        $('.btn-toggle').click(function () {
-            $(this).find('.btn').toggleClass('active');
-            if ($(this).find('.btn-success').size() > 0) {
-                $(this).find('.btn').toggleClass('btn-success');
-            }
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.main-wrapper').length > 0) {
-        var $wrapper = $(".main-wrapper");
-        $(document).on('click', '#mobile_btn', function (e) {
-            $(".dropdown.open > .dropdown-toggle").dropdown("toggle");
-            return false;
-        });
-        $(document).on('click', '#mobile_btn', function (e) {
-            $wrapper.toggleClass('slide-nav-toggle');
-            $('#chat_sidebar').removeClass('opened');
-            return false;
-        });
-        $(document).on('click', '#open_msg_box', function (e) {
-            $wrapper.toggleClass('open-msg-box').removeClass('');
-            $('.themes').removeClass('active');
-            $('.dropdown').removeClass('open');
-            return false;
-        });
-    }
-});
-
-$(document).ready(function () {
-    if ($('.dropdown-toggle').length > 0) {
-        $('.dropdown-toggle').click(function () {
-            if ($('.main-wrapper').hasClass('open-msg-box')) {
-                $('.main-wrapper').removeClass('open-msg-box');
-            }
-        });
-    }
-});
-
-$(document).ready(function () {
-    $('.table-responsive').on('shown.bs.dropdown', function (e) {
-        var $table = $(this),
-            $dropmenu = $(e.target).find('.dropdown-menu'),
-            tableOffsetHeight = $table.offset().top + $table.height(),
-            menuOffsetHeight = $dropmenu.offset().top + $dropmenu.outerHeight(true);
-
-        if (menuOffsetHeight > tableOffsetHeight) $table.css("padding-bottom", menuOffsetHeight - tableOffsetHeight);
-    });
-    $('.table-responsive').on('hide.bs.dropdown', function () {
-        $(this).css("padding-bottom", 0);
-    });
-
-    $('a[data-toggle="modal"]').on('click', function () {
-        setTimeout(function () {
-            if ($(".modal.custom-modal").hasClass('in')) {
-                $(".modal-backdrop").addClass('custom-backdrop');
-            }
-        }, 500);
-    });
-});
-
-$(document).ready(function () {
-    if ($('.clickable-row').length > 0) {
-        $(".clickable-row").click(function () {
-            window.location = $(this).data("href");
-        });
-    }
-});
-$(document).ready(function () {
-    if ($('.checkbox-all').length > 0) {
-        $('.checkbox-all').click(function () {
-            $('.checkmail').click();
-        });
-    }
-    if ($('.checkmail').length > 0) {
-        $('.checkmail').each(function () {
-            $(this).click(function () {
-                if ($(this).closest('tr').hasClass("checked")) {
-                    $(this).closest('tr').removeClass('checked');
-                } else {
-                    $(this).closest('tr').addClass('checked');
-                }
-            });
-        });
-    }
-    if ($('.mail-important').length > 0) {
-        $(".mail-important").click(function () {
-            $(this).find('i.fa').toggleClass("fa-star");
-            $(this).find('i.fa').toggleClass("fa-star-o");
-        });
-    }
-});
-$(document).ready(function () {
-    if ($('select').length > 0) {
-        $('select').select2({
-            width: '100%'
-        });
-    }
-});
-$('.summernote').summernote({
-    height: 200, // set editor height
-    minHeight: null, // set minimum height of editor
-    maxHeight: null, // set maximum height of editor
-    focus: false // set focus to editable area after initializing summernote
-});
-$(document).on('click', '.addImage', function (e) {
-    console.log('addImage');
-    var html = '';
-    html = '<tr id="image-row' + myLabel.imageRow + '">';
-    html += '  <td class="text-left"><a href="" type="image" id="thumb-image' + myLabel.imageRow + '"data-toggle="image" class=""><img src="' + myLabel.placeholder + '" alt="" title="" data-placeholder="' + myLabel.placeholder + '" /></a><input type="hidden" name="images[' + myLabel.imageRow + '][image]" value="" id="input-image' + myLabel.imageRow + '" /></td>';
-    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><select name="images[' + myLabel.imageRow + '][thumbnail]" class="form-control select floating" id="input-thumbnail[' + myLabel.imageRow + '][thumbnail]" >\n' + '                                            <option value="0">false</option>\n' + '                                            <option value="1">true</option>\n' + '                                        </select></div></td>';
-    html += '  <td class="text-left"><div class="form-group form-focus select-focus"><input type="text" name="images[' + myLabel.imageRow + '][sort_order]" value="" class="form-control" id="input-sort_order' + myLabel.imageRow + '" data-placeholder="Sort Order" required></div></td>';
-    html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + myLabel.imageRow + '\').remove();" data-toggle="tooltip" title="Remove" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
-    html += '</tr>';
-
-    $('#images tbody').append(html);
-    myLabel.imageRow++;
-});
-
-/* Dynamic Menu Selction */
-/** Select Dynamic Menu*/
-$('#menu a[href]').on('click', function () {
-
-    sessionStorage.setItem('menu', $(this).attr('href'));
-});
-
-if (!sessionStorage.getItem('menu')) {
-    $('#menu #dashboard').addClass('active');
-} else {
-    // Sets active and open to selected page in the left column menu.
-    if (sessionStorage.getItem('menu') != '#') {
-        $('#menu a[href=\'' + sessionStorage.getItem('menu') + '\']').parents('li').addClass('active');
-    }
-}
-
-if (localStorage.getItem('sidebar') == 'active') {
-    $('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
-
-    $('#sidebar').addClass('active');
-
-    // Slide Down Menu
-    $('#menu li.active').has('ul').children('ul').addClass(' in');
-    $('#menu li').not('.active').has('ul').children('ul').addClass('');
-} else {
-    $('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
-    $('#menu li li.active').has('ul').children('ul').addClass(' in');
-    $('#menu li li').not('.active').has('ul').children('ul').addClass('');
-}
-
-// Menu button
-$('#button-menu').on('click', function () {
-    // Checks if the left column is active or not.
-    if ($('#sidebar').hasClass('active')) {
-        localStorage.setItem('sidebar', '');
-
-        $('#button-menu i').replaceWith('<i class="fa fa-indent fa-lg"></i>');
-
-        $('#sidebar').removeClass('active');
-
-        $('#menu > li > ul').removeClass('in collapse');
-        $('#menu > li > ul').removeAttr('style');
-    } else {
-        localStorage.setItem('sidebar', 'active');
-
-        $('#button-menu i').replaceWith('<i class="fa fa-dedent fa-lg"></i>');
-
-        $('#sidebar').addClass('active');
-
-        // Add the slide down to open menu items
-        $('#menu li.open').has('ul').children('ul').addClass('collapse in');
-        $('#menu li').not('.open').has('ul').children('ul').addClass('collapse');
-    }
-});
-
-// Image Manager
-$(document).on('click', 'a[data-toggle=\'image\']', function (e) {
-    var $element = $(this);
-    //console.log($element);
-    var $popover = $element.data('bs.popover'); // element has bs popover?
-
-    e.preventDefault();
-
-    // destroy all image popovers
-    $('a[data-toggle="image"]').popover('destroy');
-
-    // remove flickering (do not re-add popover when clicking for removal)
-    if ($popover) {
-        return;
-    }
-    console.log($element);
-    $element.popover({
-        html: true,
-        placement: 'right',
-        trigger: 'manual',
-        content: function content() {
-            return '<a type="button" id="button-image" class="btn btn-primary"><i class="fa fa-pencil"></i></a> <a type="button" id="button-clear" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>';
-        }
-    });
-
-    $element.popover('show');
-    console.log(1);
-    $('#button-image').on('click', function () {
-        var $button = $(this);
-        var $icon = $button.find('> i');
-
-        $('#modal-image').remove();
-
-        $.ajax({
-            url: myLabel.filemanager + '?target=' + $element.parent().find('input').attr('id') + '&thumb=' + $element.attr('id') + '&type=' + $element.attr('type'),
-            dataType: 'html',
-            beforeSend: function beforeSend() {
-                $button.prop('disabled', true);
-                if ($icon.length) {
-                    $icon.attr('class', 'fa fa-circle-o-notch fa-spin');
-                }
-            },
-            complete: function complete() {
-                $button.prop('disabled', false);
-
-                if ($icon.length) {
-                    $icon.attr('class', 'fa fa-pencil');
-                }
-            },
-            success: function success(html) {
-                $('body').append('<div id="modal-image" class="modal">' + html + '</div>');
-
-                $('#modal-image').modal('show');
-            }
-        });
-
-        $element.popover('destroy');
-    });
-
-    $('#button-clear').on('click', function () {
-        $element.find('img').attr('src', $element.find('img').attr('data-placeholder'));
-
-        $element.parent().find('input').val('');
-
-        $element.popover('destroy');
-    });
-});
-
-$('select[name="country_id"]').on('change', function () {
-    var country_id = $('select[name="country_id"]').find(":selected").val();
-    $.ajax({
-        url: myLabel.states,
-        dataType: 'json',
-        method: 'POST',
-        data: {
-            country_id: country_id
-        },
-        beforeSend: function beforeSend() {
-            $('select[name="country_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
-        },
-        complete: function complete() {
-            $('.fa-spin').remove();
-        },
-        success: function success(json) {
-            // }
-            var html = '';
-            // html = '<option value="">select option</option>';
-
-            if (json['states'] && json['states'] != '') {
-                for (var i = 0; i < json['states'].length; i++) {
-                    html += '<option value="' + json['states'][i]['id'] + '"';
-                    //console.log(json['states'][i]['id']);
-                    if (json['states'][i]['id'] == myLabel.state_id) {
-
-                        html += ' selected="selected"';
-                    }
-
-                    html += '>' + json['states'][i]['name'] + '</option>';
-                }
-            } else {
-                html += '<option value="0" selected="selected">Empty</option>';
-            }
-
-            $('select[name="state_id"]').html(html);
-        },
-        error: function error(xhr, ajaxOptions, thrownError) {
-            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-    });
-});
-$('select[name="state_id"]').on('change', function () {
-    var state_id = $('select[name="state_id"]').find(":selected").val();
-    $.ajax({
-        url: myLabel.childStates,
-        dataType: 'json',
-        method: 'POST',
-        data: {
-            state_id: state_id
-        },
-        beforeSend: function beforeSend() {
-            $('select[name="state_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
-        },
-        complete: function complete() {
-            $('.fa-spin').remove();
-        },
-        success: function success(json) {
-            // }
-            var html = '';
-            // html = '<option value="">select option</option>';
-
-            if (json['states'] && json['states'] != '') {
-                for (var i = 0; i < json['states'].length; i++) {
-                    html += '<option value="' + json['states'][i]['id'] + '"';
-                    //console.log(json['states'][i]['id']);
-                    if (json['states'][i]['id'] == myLabel.state_id) {
-
-                        html += ' selected="selected"';
-                    }
-
-                    html += '>' + json['states'][i]['name'] + '</option>';
-                }
-            } else {
-                html += '<option value="0" selected="selected">Empty</option>';
-            }
-
-            $('select[name="childstate_id"]').html(html);
-        },
-        error: function error(xhr, ajaxOptions, thrownError) {
-            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-    });
-});
-$('select[name="country_id"]').trigger('change');
-$('select[name="state_id"]').trigger('change');
-
-// Agent Form Validation
-var $frmAgent = $("#frmAgent"),
-    $frmLogin = $("#frmLogin"),
-    $frmResetPassword = $("#frmResetPassword"),
-    $frmEditProfile = $("#frmEditProfile"),
-    validate = $.fn.validate !== undefined,
-    dataTable = $.fn.dataTable !== undefined;
-
-// Agent Form Validation
-if ($frmAgent.length > 0 && validate) {
-    $frmAgent.validate({
-        rules: {
-            firstname: {
-                required: true
-            },
-            lastname: {
-                required: true
-            },
-            email: {
-                required: true,
-                email: true
-            },
-            "input-password": {
-                alphanumeric: true,
-                nowhitespace: true
-            },
-            "input-confirm": {
-                alphanumeric: true,
-                nowhitespace: true,
-                equalTo: "#input-password"
-            },
-            phone: {
-                integer: false
-            },
-            mobile: {
-                integer: false
-            },
-            postcode: {
-                nowhitespace: true,
-                integer: true
-            }
-        }
-    });
-}
-// Reset Password
-if ($frmResetPassword.length > 0 && validate) {
-    $frmResetPassword.validate({
-        rules: {
-            "input-old": {
-                required: true,
-                nowhitespace: true
-            },
-            "input-password": {
-                alphanumeric: true,
-                required: true,
-                nowhitespace: true
-            },
-            "input-confirm": {
-                alphanumeric: true,
-                required: true,
-                nowhitespace: true,
-                equalTo: "#input-password"
-            }
-        },
-        submitHandler: function submitHandler(form) {
-            $.ajax({
-                type: "POST",
-                url: $(form).attr('action'),
-                dataType: "json",
-                data: $(form).serialize(),
-                success: function success(json) {
-                    if (json['error']) {
-                        $("#btnReset").LoadingOverlay("show");
-                        if (json['error']) {
-                            $('#containerBox .frmResetPassword').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                            $("#btnReset").LoadingOverlay("hide");
-                        }
-                    }
-                    if (json['success']) {
-                        $('#containerBox > .frmResetPassword').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
-                        $("#btnReset").LoadingOverlay("hide");
-                        $frmResetPassword[0].reset();
-                        setTimeout(function () {
-                            location.href = json['redirect'];
-                        }, 600);
-                    }
-                }
-            });
-
-            return false; // required to block normal submit since you used ajax
-        }
-    });
-}
-// Profile Form Validation
-if ($frmEditProfile.length > 0 && validate) {
-    $frmEditProfile.validate({
-        rules: {
-            firstname: {
-                required: true
-            },
-            lastname: {
-                required: true
-            },
-            email: {
-                email: true
-            },
-            phone: {
-                integer: true
-            },
-            mobile: {
-                integer: false
-            },
-            postcode: {
-                nowhitespace: true,
-                integer: true
-            }
-        }
-    });
-}
-// Admin Login Form Valiation
-if ($frmLogin.length > 0 && validate) {
-    $frmLogin.validate({
-        rules: {
-            email: {
-                required: true,
-                email: true
-            },
-            password: {
-                required: true
-            }
-        },
-        submitHandler: function submitHandler(form) {
-            $.ajax({
-                type: "POST",
-                url: $(form).attr('action'),
-                dataType: "json",
-                data: $(form).serialize(),
-                beforeSend: function beforeSend() {
-                    $("#loginButton").LoadingOverlay("show");
-                },
-                success: function success(json) {
-                    if (json['error']) {
-                        $("#loginButton").LoadingOverlay("hide");
-                        if (json['error']) {
-                            $('#containerBox .adminLoginForm').prepend('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
-                            $("#loginButton").LoadingOverlay("hide");
-                        }
-                    }
-                    if (json['success']) {
-                        $('#containerBox > .adminLoginForm').prepend('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['success'] + '</div>');
-                        location.href = json['redirect'];
-                        setTimeout(function () {}, 600);
-                    }
-                }
-            });
-
-            return false; // required to block normal submit since you used ajax
-        }
-
-    });
-}
-
-// Global Fetch Data & Delete Data
-var $dt = $("#datatable");
-var $deleteBtn = $("#deleteBtn");
-var $frmProject = $("#frmProject");
-var $frmChildProject = $("#frmChildProject");
-var $frmCategory = $("#frmCategory");
-var $frmChildState = $("#frmChildState");
-var $frmItem = $("#frmItem");
-var $frmHandbook = $("#frmHandbook");
-// Project Form Validation
-if ($frmProject.length > 0 && validate) {
-    $frmProject.validate({
-        rules: {
-            name: {
-                required: true
-            },
-            fit: {
-                required: true
-            },
-            fit1: {
-                required: true
-            },
-            fit2: {
-                required: true
-            },
-            sequence: {
-                required: true
-            },
-            price: {
-                required: true,
-                decimal: true
-            },
-            meta_title: {
-                required: true
-            }
-        }
-    });
-}
-// Project Form Validation
-if ($frmChildProject.length > 0 && validate) {
-    $frmChildProject.validate({
-        rules: {
-            name: {
-                required: true
-            },
-            project_id: {
-                required: true
-            },
-            status: {
-                required: true
-            },
-            sequence: {
-                required: true
-            },
-            sort_order: {
-                required: true,
-                integer: true
-            }
-        }
-    });
-}
-// Category Form Validation
-if ($frmCategory.length > 0 && validate) {
-    $frmCategory.validate({
-        rules: {
-            name: {
-                required: true
-            },
-            project_id: {
-                required: true
-            },
-            status: {
-                required: true
-            },
-            sequence: {
-                required: true
-            }
-        }
-    });
-}
-// Child State Form Validation
-if ($frmChildState.length > 0 && validate) {
-    $frmChildState.validate({
-        rules: {
-            name: {
-                required: true
-            },
-            country_id: {
-                required: true
-            },
-            state_id: {
-                required: true
-            },
-            status: {
-                required: true
-            },
-            sort_order: {
-                required: true
-            }
-        }
-    });
-}
-// Item Form Validation
-if ($frmItem.length > 0 && validate) {
-    $frmItem.validate({
-        rules: {
-            projects_id: {
-                required: true
-            },
-            title: {
-                required: true
-            },
-            category_id: {
-                required: true
-            },
-            price: {
-                required: true,
-                decimal: true
-            },
-            sort_order: {
-                required: true
-            },
-            meta_title: {
-                required: true
-            }
-        }
-    });
-}
-// Handbook Form validation
-if ($frmHandbook.length > 0 && validate) {
-    $frmHandbook.validate({
-        rules: {
-            name: {
-                required: true
-            },
-            project_id: {
-                required: true
-            },
-            status: {
-                required: true
-            },
-            sequence: {
-                required: true
-            }
-        }
-    });
-}
-// Global Fetch Data & Delete Data
-if ($dt.length > 0 && dataTable) {
-    var dataTable = $dt.DataTable({
-        "processing": true,
-        "searching": true,
-        "paging": true,
-        "order": [],
-        "ajax": {
-            "url": myLabel.fetch,
-            "type": 'POST',
-            "dataSrc": "data"
-        },
-        'language': {
-            'loadingRecords': '&nbsp;',
-            'processing': '<div class="spinner"></div>'
-        },
-        "oLanguage": {
-            "sEmptyTable": "Empty Table"
-        },
-        dom: 'lBfrtip',
-        buttons: ['excel', 'csv', 'pdf'],
-        "columnDefs": [{
-            "targets": 0,
-            "orderable": false
-        }, {
-            visible: false
-        }],
-        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
-    }).on('change', '.updateStatus', function (e) {
-        var id = $(this).attr('data-id');
-        var status = $(this).val();
-        $.ajax({
-            type: "POST",
-            url: myLabel.status,
-            cache: false,
-            data: { id: id, status: status },
-            success: function success(res) {
-                if (res.status) {
-                    dataTable.ajax.reload();
-                }
-            }
-        });
-    }).on('click', '#checkAll', function () {
-        $('#agentTable input[type=checkbox]').prop('checked', this.checked);
-    });
-}
-$(document).on('click', '#deleteBtn', function (e) {
-    var selected = [];
-    $('#datatable .selectCheckbox').each(function () {
-        if ($(this).is(":checked")) {
-            var id = $(this).val();
-            if (id != undefined || id != 0 || id != '' || id != null) {
-                selected.push(id);
-            }
-        }
-    });
-
-    if (selected.length > 0) {
-        console.log(selected);
-        swal({
-            title: "Confirm Delete",
-            text: "Are you want to delete this record?(Yes/No)",
-            type: "info",
-            showCancelButton: true,
-            closeOnConfirm: false,
-            showLoaderOnConfirm: true
-        }, function () {
-
-            setTimeout(function () {
-                $.ajax({
-                    type: "POST",
-                    url: myLabel.delete,
-                    data: { selected: selected },
-                    cache: false,
-                    success: function success(res) {
-                        if (res.status === true) {
-                            swal(res.message);
-                        } else {
-                            swal(res.message);
-                        }
-
-                        dataTable.ajax.reload();
-                    }
-                });
-            }, 2000);
-        });
-    } else {
-        swal("You must select one record");
-    }
-});
-// Global Fetch Data & Delete Data
-
-/***/ }),
-/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables Bootstrap 4 integration
@@ -41232,7 +41230,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables B
 (function( factory ){
 	if ( true ) {
 		// AMD
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(45)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ( $ ) {
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(43)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ( $ ) {
 			return factory( $, window, document );
 		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -41405,7 +41403,7 @@ return DataTable;
 
 
 /***/ }),
-/* 45 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables 1.10.22
@@ -41439,7 +41437,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables 1
 
 	if ( true ) {
 		// AMD
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ( $ ) {
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function ( $ ) {
 			return factory( $, window, document );
 		}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -56799,7 +56797,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*! DataTables 1
 
 
 /***/ }),
-/* 46 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -56820,7 +56818,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if ( true ) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(1), __webpack_require__(41) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ __webpack_require__(0), __webpack_require__(16) ], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -56853,7 +56851,7 @@ return $.ui.keyCode = {
 
 
 /***/ }),
-/* 47 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;/*!
@@ -56866,7 +56864,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 ;(function (factory) {
   if (true) {
     // AMD. Register as an anonymous module.
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -62970,7 +62968,7 @@ S2.define('jquery.select2',[
 
 
 /***/ }),
-/* 48 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -62987,7 +62985,7 @@ S2.define('jquery.select2',[
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(1));
+		module.exports = factory(__webpack_require__(0));
 	else if(typeof define === 'function' && define.amd)
 		define(["jquery"], factory);
 	else {
@@ -73203,7 +73201,7 @@ external_root_jQuery_commonjs2_jquery_commonjs_jquery_amd_jquery_default.a.summe
 //# sourceMappingURL=summernote.js.map
 
 /***/ }),
-/* 49 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -73214,7 +73212,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 (function(factory){
     if (true) {
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -75251,24 +75249,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 50 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(){"use strict";function e(t){return(e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(t)}function t(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){for(var i=0;i<t.length;i++){var n=t[i];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}function n(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}function s(e,t){var i=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),i.push.apply(i,n)}return i}function r(e){for(var t=1;t<arguments.length;t++){var i=null!=arguments[t]?arguments[t]:{};t%2?s(Object(i),!0).forEach((function(t){n(e,t,i[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(i)):s(Object(i)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(i,t))}))}return e}function a(e,t){(null==t||t>e.length)&&(t=e.length);for(var i=0,n=new Array(t);i<t;i++)n[i]=e[i];return n}function o(e){if("undefined"==typeof Symbol||null==e[Symbol.iterator]){if(Array.isArray(e)||(e=function(e,t){if(e){if("string"==typeof e)return a(e,t);var i=Object.prototype.toString.call(e).slice(8,-1);return"Object"===i&&e.constructor&&(i=e.constructor.name),"Map"===i||"Set"===i?Array.from(i):"Arguments"===i||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(i)?a(e,t):void 0}}(e))){var t=0,i=function(){};return{s:i,n:function(){return t>=e.length?{done:!0}:{done:!1,value:e[t++]}},e:function(e){throw e},f:i}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var n,s,r=!0,o=!1;return{s:function(){n=e[Symbol.iterator]()},n:function(){var e=n.next();return r=e.done,e},e:function(e){o=!0,s=e},f:function(){try{r||null==n.return||n.return()}finally{if(o)throw s}}}}var l=function(e,t){if(null===e)return null;if("number"!=typeof t.step)return e;var i=e%(60*t.step);return(i-=(t.minTime||0)%(60*t.step))>=30*t.step?e+=60*t.step-i:e-=i,function(e,t){if(86400==e&&t.show2400)return e;return e%86400}(e,t)};var u,c={appendTo:"body",className:null,closeOnWindowScroll:!1,disableTextInput:!1,disableTimeRanges:[],disableTouchKeyboard:!1,durationTime:null,forceRoundTime:!1,lang:{},listWidth:null,maxTime:null,minTime:null,noneOption:!1,orientation:"l",roundingFunction:l,scrollDefault:null,selectOnBlur:!1,show2400:!1,showDuration:!1,showOn:["click","focus"],showOnFocus:!0,step:30,stopScrollPropagation:!1,timeFormat:"g:ia",typeaheadHighlight:!0,useSelect:!1,wrapHours:!0},m={am:"am",pm:"pm",AM:"AM",PM:"PM",decimal:".",mins:"mins",hr:"hr",hrs:"hrs"},p=function(){function n(e){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};t(this,n),this.targetEl=e;var s=n.extractAttrOptions(e,Object.keys(c));this.settings=this.parseSettings(r(r(r({},c),i),s))}var s,a,l;return s=n,l=[{key:"extractAttrOptions",value:function(e,t){var i,n={},s=o(t);try{for(s.s();!(i=s.n()).done;){var r=i.value;r in e.dataset&&(n[r]=e.dataset[r])}}catch(e){s.e(e)}finally{s.f()}return n}},{key:"isVisible",value:function(e){var t=e[0];return t.offsetWidth>0&&t.offsetHeight>0}}],(a=[{key:"_findRow",value:function(e){if(!e&&0!==e)return!1;var t=!1;return e=this.settings.roundingFunction(e,this.settings),!!this.list&&(this.list.find("li").each((function(i,n){var s=Number.parseInt(n.dataset.time);if(!Number.isNaN(s))return s==e?(t=n,!1):void 0})),t)}},{key:"_hideKeyboard",value:function(){return(window.navigator.msMaxTouchPoints||"ontouchstart"in document)&&this.settings.disableTouchKeyboard}},{key:"_setTimeValue",value:function(e,t){if("INPUT"===this.targetEl.nodeName){null===e&&""==this.targetEl.value||(this.targetEl.value=e);var i=this;i.settings.useSelect&&"select"!=t&&i.list&&i.list.val(i._roundAndFormatTime(i.time2int(e)))}var n=new Event("selectTime");if(this.selectedValue!=e){this.selectedValue=e;var s=new Event("changeTime"),r=new CustomEvent("change",{detail:"timepicker"});return"select"==t?(this.targetEl.dispatchEvent(n),this.targetEl.dispatchEvent(s),this.targetEl.dispatchEvent(r)):-1==["error","initial"].indexOf(t)&&this.targetEl.dispatchEvent(s),!0}return-1==["error","initial"].indexOf(t)&&this.targetEl.dispatchEvent(n),!1}},{key:"_getTimeValue",value:function(){return"INPUT"===this.targetEl.nodeName?this.targetEl.value:this.selectedValue}},{key:"_selectValue",value:function(){this.settings;var e=this.list.find(".ui-timepicker-selected");if(e.hasClass("ui-timepicker-disabled"))return!1;if(!e.length)return!0;var t=e.get(0).dataset.time;if(t){var i=Number.parseInt(t);i&&(t=i)}return null!==t&&("string"!=typeof t&&(t=this._int2time(t)),this._setTimeValue(t,"select")),!0}},{key:"time2int",value:function(e){if(""===e||null==e)return null;if(e instanceof Date)return 3600*e.getHours()+60*e.getMinutes()+e.getSeconds();if("string"!=typeof e)return e;"a"!=(e=e.toLowerCase().replace(/[\s\.]/g,"")).slice(-1)&&"p"!=e.slice(-1)||(e+="m");var t=/^(([^0-9]*))?([0-9]?[0-9])(([0-5][0-9]))?(([0-5][0-9]))?(([^0-9]*))$/;e.match(/\W/)&&(t=/^(([^0-9]*))?([0-9]?[0-9])(\W+([0-5][0-9]?))?(\W+([0-5][0-9]))?(([^0-9]*))$/);var i=e.match(t);if(!i)return null;var n=parseInt(1*i[3],10),s=i[2]||i[9],r=n,a=1*i[5]||0,o=1*i[7]||0;if(s||2!=i[3].length||"0"!=i[3][0]||(s="am"),n<=12&&s){var l=(s=s.trim())==this.settings.lang.pm||s==this.settings.lang.PM;r=12==n?l?12:0:n+(l?12:0)}else if(3600*n+60*a+o>=86400+(this.settings.show2400?1:0)){if(!1===this.settings.wrapHours)return null;r=n%24}var u=3600*r+60*a+o;if(n<12&&!s&&this.settings._twelveHourTime&&this.settings.scrollDefault){var c=u-this.settings.scrollDefault();c<0&&c>=-43200&&(u=(u+43200)%86400)}return u}},{key:"parseSettings",value:function(e){var t=this;if(e.lang=r(r({},m),e.lang),this.settings=e,e.minTime&&(e.minTime=this.time2int(e.minTime)),e.maxTime&&(e.maxTime=this.time2int(e.maxTime)),e.listWidth&&(e.listWidth=this.time2int(e.listWidth)),e.durationTime&&"function"!=typeof e.durationTime&&(e.durationTime=this.time2int(e.durationTime)),"now"==e.scrollDefault)e.scrollDefault=function(){return e.roundingFunction(t.time2int(new Date),e)};else if(e.scrollDefault&&"function"!=typeof e.scrollDefault){var i=e.scrollDefault;e.scrollDefault=function(){return e.roundingFunction(t.time2int(i),e)}}else e.minTime&&(e.scrollDefault=function(){return e.roundingFunction(e.minTime,e)});if("string"==typeof e.timeFormat&&e.timeFormat.match(/[gh]/)&&(e._twelveHourTime=!0),!1===e.showOnFocus&&-1!=e.showOn.indexOf("focus")&&e.showOn.splice(e.showOn.indexOf("focus"),1),e.disableTimeRanges||(e.disableTimeRanges=[]),e.disableTimeRanges.length>0){for(var n in e.disableTimeRanges)e.disableTimeRanges[n]=[this.time2int(e.disableTimeRanges[n][0]),this.time2int(e.disableTimeRanges[n][1])];for(e.disableTimeRanges=e.disableTimeRanges.sort((function(e,t){return e[0]-t[0]})),n=e.disableTimeRanges.length-1;n>0;n--)e.disableTimeRanges[n][0]<=e.disableTimeRanges[n-1][1]&&(e.disableTimeRanges[n-1]=[Math.min(e.disableTimeRanges[n][0],e.disableTimeRanges[n-1][0]),Math.max(e.disableTimeRanges[n][1],e.disableTimeRanges[n-1][1])],e.disableTimeRanges.splice(n,1))}return e}},{key:"_disableTextInputHandler",value:function(e){switch(e.keyCode){case 13:case 9:return;default:e.preventDefault()}}},{key:"_int2duration",value:function(e,t){e=Math.abs(e);var i,n,s=Math.round(e/60),r=[];return s<60?r=[s,this.settings.lang.mins]:(i=Math.floor(s/60),n=s%60,30==t&&30==n&&(i+=this.settings.lang.decimal+5),r.push(i),r.push(1==i?this.settings.lang.hr:this.settings.lang.hrs),30!=t&&n&&(r.push(n),r.push(this.settings.lang.mins))),r.join(" ")}},{key:"_roundAndFormatTime",value:function(e){if(null!==(e=this.settings.roundingFunction(e,this.settings)))return this._int2time(e)}},{key:"_int2time",value:function(e){if("number"!=typeof e)return null;var t=parseInt(e%60),i=parseInt(e/60%60),n=parseInt(e/3600%24),s=new Date(1970,0,2,n,i,t,0);if(isNaN(s.getTime()))return null;if("function"==typeof this.settings.timeFormat)return this.settings.timeFormat(s);for(var r,a,o="",l=0;l<this.settings.timeFormat.length;l++)switch(a=this.settings.timeFormat.charAt(l)){case"a":o+=s.getHours()>11?this.settings.lang.pm:this.settings.lang.am;break;case"A":o+=s.getHours()>11?this.settings.lang.PM:this.settings.lang.AM;break;case"g":o+=0==(r=s.getHours()%12)?"12":r;break;case"G":r=s.getHours(),86400===e&&(r=this.settings.show2400?24:0),o+=r;break;case"h":0!=(r=s.getHours()%12)&&r<10&&(r="0"+r),o+=0===r?"12":r;break;case"H":r=s.getHours(),86400===e&&(r=this.settings.show2400?24:0),o+=r>9?r:"0"+r;break;case"i":o+=(i=s.getMinutes())>9?i:"0"+i;break;case"s":o+=(t=s.getSeconds())>9?t:"0"+t;break;case"\\":l++,o+=this.settings.timeFormat.charAt(l);break;default:o+=a}return o}},{key:"_setSelected",value:function(){var e=this.list;e.find("li").removeClass("ui-timepicker-selected");var t=this.time2int(this._getTimeValue());if(null!==t){var i=this._findRow(t);if(i){var n=i.getBoundingClientRect(),s=e.get(0).getBoundingClientRect(),r=n.top-s.top;if(r+n.height>s.height||r<0){var a=e.scrollTop()+(n.top-s.top)-n.height;e.scrollTop(a)}var o=Number.parseInt(i.dataset.time);(this.settings.forceRoundTime||o===t)&&i.classList.add("ui-timepicker-selected")}}}},{key:"_generateNoneElement",value:function(t,i){var n,s,r,a;return"object"==e(t)?(n=t.label,s=t.className,r=t.value):"string"==typeof t?(n=t,r=""):$.error("Invalid noneOption value"),i?(a=document.createElement("option")).value=r:(a=document.createElement("li")).dataset.time=String(r),a.innerText=n,a.classList.add(s),a}}])&&i(s.prototype,a),l&&i(s,l),n}();u=function(t){var i={init:function(e){return this.each((function(){var s=t(this),l=new p(this,e),u=l.settings;if(u.lang,s.data("timepicker-obj",l),s.addClass("ui-timepicker-input"),u.useSelect)n(s);else{if(s.prop("autocomplete","off"),u.showOn)for(var c in u.showOn)s.on(u.showOn[c]+".timepicker",i.show);s.on("change.timepicker",r),s.on("keydown.timepicker",a),s.on("keyup.timepicker",o),u.disableTextInput&&s.on("keydown.timepicker",l._disableTextInputHandler),s.on("cut.timepicker",o),s.on("paste.timepicker",o),r.call(s.get(0),null,"initial")}}))},show:function(e){var r=t(this),a=r.data("timepicker-obj"),o=a.settings;if(e&&e.preventDefault(),o.useSelect)a.list.focus();else{a._hideKeyboard()&&r.blur();var l=a.list;if(!r.prop("readonly")&&(l&&0!==l.length&&"function"!=typeof o.durationTime||(n(r),l=a.list),!p.isVisible(l))){r.is("input")&&(a.selectedValue=r.val()),a._setSelected(),i.hide(),"number"==typeof o.listWidth&&l.width(r.outerWidth()*o.listWidth),l.show();var u={};o.orientation.match(/r/)?u.left=r.offset().left+r.outerWidth()-l.outerWidth()+parseInt(l.css("marginLeft").replace("px",""),10):o.orientation.match(/l/)?u.left=r.offset().left+parseInt(l.css("marginLeft").replace("px",""),10):o.orientation.match(/c/)&&(u.left=r.offset().left+(r.outerWidth()-l.outerWidth())/2+parseInt(l.css("marginLeft").replace("px",""),10)),"t"==(o.orientation.match(/t/)?"t":o.orientation.match(/b/)?"b":r.offset().top+r.outerHeight(!0)+l.outerHeight()>t(window).height()+t(window).scrollTop()?"t":"b")?(l.addClass("ui-timepicker-positioned-top"),u.top=r.offset().top-l.outerHeight()+parseInt(l.css("marginTop").replace("px",""),10)):(l.removeClass("ui-timepicker-positioned-top"),u.top=r.offset().top+r.outerHeight()+parseInt(l.css("marginTop").replace("px",""),10)),l.offset(u);var c=l.find(".ui-timepicker-selected");if(!c.length){var m=a.time2int(a._getTimeValue());null!==m?c=t(a._findRow(m)):o.scrollDefault&&(c=t(a._findRow(o.scrollDefault())))}if(c.length&&!c.hasClass("ui-timepicker-disabled")||(c=l.find("li:not(.ui-timepicker-disabled):first")),c&&c.length){var d=l.scrollTop()+c.position().top-c.outerHeight();l.scrollTop(d)}else l.scrollTop(0);return o.stopScrollPropagation&&t(document).on("wheel.ui-timepicker",".ui-timepicker-wrapper",(function(e){e.preventDefault();var i=t(this).scrollTop();t(this).scrollTop(i+e.originalEvent.deltaY)})),t(document).on("mousedown.ui-timepicker",s),t(window).on("resize.ui-timepicker",s),o.closeOnWindowScroll&&t(document).on("scroll.ui-timepicker",s),r.trigger("showTimepicker"),this}}},hide:function(e){var i=t(this),n=i.data("timepicker-obj");return n&&n.settings&&n.settings.useSelect&&i.blur(),t(".ui-timepicker-wrapper").each((function(){var e=t(this);if(p.isVisible(e)){var i=e.data("timepicker-input"),n=i.data("timepicker-obj");n&&n.settings&&n.settings.selectOnBlur&&n._selectValue(),e.hide(),i.trigger("hideTimepicker")}})),this},option:function(i,s){return"string"==typeof i&&void 0===s?t(this).data("timepicker-obj").settings[i]:this.each((function(){var a=t(this),o=a.data("timepicker-obj"),l=o.settings,u=o.list;"object"==e(i)?l=t.extend(l,i):"string"==typeof i&&(l[i]=s),l=o.parseSettings(l),o.settings=l,r.call(a.get(0),{type:"change"},"initial"),u&&(u.remove(),o.list=null),l.useSelect&&n(a)}))},getSecondsFromMidnight:function(){var e=t(this).data("timepicker-obj");return e.time2int(e._getTimeValue())},getTime:function(e){var i=t(this).data("timepicker-obj"),n=i._getTimeValue();if(!n)return null;var s=i.time2int(n);if(null===s)return null;e||(e=new Date);var r=new Date(e);return r.setHours(s/3600),r.setMinutes(s%3600/60),r.setSeconds(s%60),r.setMilliseconds(0),r},isVisible:function(){var e=this.data("timepicker-obj");return!!(e&&e.list&&p.isVisible(e.list))},setTime:function(e){var t=this.data("timepicker-obj"),i=t.settings;if(i.forceRoundTime)var n=t._roundAndFormatTime(t.time2int(e));else n=t._int2time(t.time2int(e));return e&&null===n&&i.noneOption&&(n=e),t._setTimeValue(n,"initial"),r.call(this.get(0),{type:"change"},"initial"),t&&t.list&&t._setSelected(),this},remove:function(){if(this.hasClass("ui-timepicker-input")){var e=this.data("timepicker-obj"),t=e.settings;return this.removeAttr("autocomplete","off"),this.removeClass("ui-timepicker-input"),this.removeData("timepicker-obj"),this.off(".timepicker"),e.list&&e.list.remove(),t.useSelect&&this.show(),e.list=null,this}}};function n(e){var n=e.data("timepicker-obj"),s=n.list,r=n.settings;if(s&&s.length&&(s.remove(),n.list=null),r.useSelect){s=t("<select />",{class:"ui-timepicker-select"}),e.attr("name")&&s.attr("name","ui-timepicker-"+e.attr("name"));var a=s}else s=t("<ul />",{class:"ui-timepicker-list"}),(a=t("<div />",{class:"ui-timepicker-wrapper",tabindex:-1})).css({display:"none",position:"absolute"}).append(s);if(r.noneOption)if(!0===r.noneOption&&(r.noneOption=r.useSelect?"Time...":"None"),t.isArray(r.noneOption)){for(var o in r.noneOption)if(parseInt(o,10)==o){var u=n._generateNoneElement(r.noneOption[o],r.useSelect);s.append(u)}}else u=n._generateNoneElement(r.noneOption,r.useSelect),s.append(u);r.className&&a.addClass(r.className),null===r.minTime&&null===r.durationTime||!r.showDuration||("function"==typeof r.step||r.step,a.addClass("ui-timepicker-with-duration"),a.addClass("ui-timepicker-step-"+r.step));var c=r.minTime;"function"==typeof r.durationTime?c=n.time2int(r.durationTime()):null!==r.durationTime&&(c=r.durationTime);var m=null!==r.minTime?r.minTime:0,p=null!==r.maxTime?r.maxTime:m+86400-1;p<m&&(p+=86400),86399===p&&"string"===t.type(r.timeFormat)&&r.show2400&&(p=86400);var d=r.disableTimeRanges,f=0,h=d.length,g=r.step;"function"!=typeof g&&(g=function(){return r.step}),o=m;for(var v=0;o<=p;o+=60*g(++v)){var b,k=o,y=n._int2time(k);if(r.useSelect?(b=t("<option />",{value:y})).text(y):((b=t("<li />")).addClass(k%86400<43200?"ui-timepicker-am":"ui-timepicker-pm"),b.attr("data-time",l(k,r)),b.text(y)),(null!==r.minTime||null!==r.durationTime)&&r.showDuration){var T=n._int2duration(o-c,r.step);if(r.useSelect)b.text(b.text()+" ("+T+")");else{var w=t("<span />",{class:"ui-timepicker-duration"});w.text(" ("+T+")"),b.append(w)}}f<h&&(k>=d[f][1]&&(f+=1),d[f]&&k>=d[f][0]&&k<d[f][1]&&(r.useSelect?b.prop("disabled",!0):b.addClass("ui-timepicker-disabled"))),s.append(b)}if(a.data("timepicker-input",e),n.list=a,r.useSelect)e.val()&&s.val(n._roundAndFormatTime(n.time2int(e.val()))),s.on("focus",(function(){t(this).data("timepicker-input").trigger("showTimepicker")})),s.on("blur",(function(){t(this).data("timepicker-input").trigger("hideTimepicker")})),s.on("change",(function(){n._setTimeValue(t(this).val(),"select")})),n._setTimeValue(s.val(),"initial"),e.hide().after(s);else{var O=r.appendTo;"string"==typeof O?O=t(O):"function"==typeof O&&(O=O(e)),O.append(a),n._setSelected(),s.on("mousedown click","li",(function(r){e.off("focus.timepicker"),e.on("focus.timepicker-ie-hack",(function(){e.off("focus.timepicker-ie-hack"),e.on("focus.timepicker",i.show)})),n._hideKeyboard()||e[0].focus(),s.find("li").removeClass("ui-timepicker-selected"),t(this).addClass("ui-timepicker-selected"),n._selectValue()&&(e.trigger("hideTimepicker"),s.on("mouseup.timepicker click.timepicker","li",(function(e){s.off("mouseup.timepicker click.timepicker"),a.hide()})))}))}}function s(e){if(e.target!=window){var n=t(e.target);n.closest(".ui-timepicker-input").length||n.closest(".ui-timepicker-wrapper").length||(i.hide(),t(document).unbind(".ui-timepicker"),t(window).unbind(".ui-timepicker"))}}function r(e,i){if(!e||"timepicker"!=e.detail){var n=t(this),s=n.data("timepicker-obj");if(""!==this.value){if(!n.is(":focus")||e&&"change"==e.type){var r=s.settings,a=s.time2int(this.value);if(null!==a){var o=!1;if(null!==r.minTime&&null!==r.maxTime&&(a<r.minTime||a>r.maxTime)&&(o=!0),t.each(r.disableTimeRanges,(function(){if(a>=this[0]&&a<this[1])return o=!0,!1})),r.forceRoundTime){var l=r.roundingFunction(a,r);l!=a&&(a=l,i=null)}var u=s._int2time(a);o?(s._setTimeValue(u,"error")||e&&"change"==e.type)&&n.trigger("timeRangeError"):s._setTimeValue(u,i)}else n.trigger("timeFormatError")}}else s._setTimeValue(null,i)}}function a(e){var n=t(this),s=n.data("timepicker-obj"),a=s.list;if(!a||!p.isVisible(a)){if(40!=e.keyCode)return!0;i.show.call(n.get(0)),a=s.list,s._hideKeyboard()||n.focus()}switch(e.keyCode){case 13:return s._selectValue()&&(r.call(n.get(0),{type:"change"}),i.hide.apply(this)),e.preventDefault(),!1;case 38:var o=a.find(".ui-timepicker-selected");return o.length?o.is(":first-child")||(o.removeClass("ui-timepicker-selected"),o.prev().addClass("ui-timepicker-selected"),o.prev().position().top<o.outerHeight()&&a.scrollTop(a.scrollTop()-o.outerHeight())):(a.find("li").each((function(e,i){if(t(i).position().top>0)return o=t(i),!1})),o.addClass("ui-timepicker-selected")),!1;case 40:return 0===(o=a.find(".ui-timepicker-selected")).length?(a.find("li").each((function(e,i){if(t(i).position().top>0)return o=t(i),!1})),o.addClass("ui-timepicker-selected")):o.is(":last-child")||(o.removeClass("ui-timepicker-selected"),o.next().addClass("ui-timepicker-selected"),o.next().position().top+2*o.outerHeight()>a.outerHeight()&&a.scrollTop(a.scrollTop()+o.outerHeight())),!1;case 27:a.find("li").removeClass("ui-timepicker-selected"),i.hide();break;case 9:i.hide();break;default:return!0}}function o(e){var i=t(this).data("timepicker-obj"),n=i.list,s=i.settings;if(!n||!p.isVisible(n)||s.disableTextInput)return!0;if("paste"!==e.type&&"cut"!==e.type)switch(e.keyCode){case 96:case 97:case 98:case 99:case 100:case 101:case 102:case 103:case 104:case 105:case 48:case 49:case 50:case 51:case 52:case 53:case 54:case 55:case 56:case 57:case 65:case 77:case 80:case 186:case 8:case 46:s.typeaheadHighlight?i._setSelected():n.hide()}else setTimeout((function(){s.typeaheadHighlight?i._setSelected():n.hide()}),0)}t.fn.timepicker=function(n){return this.length?i[n]?this.hasClass("ui-timepicker-input")?i[n].apply(this,Array.prototype.slice.call(arguments,1)):this:"object"!==e(n)&&n?void t.error("Method "+n+" does not exist on jQuery.timepicker"):i.init.apply(this,arguments):this},t.fn.timepicker.defaults=c},"object"===( false?"undefined":e(exports))&&exports&&"object"===( false?"undefined":e(module))&&module&&module.exports===exports?u(__webpack_require__(1)): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (u),
+/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(){"use strict";function e(t){return(e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol&&e!==Symbol.prototype?"symbol":typeof e})(t)}function t(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function i(e,t){for(var i=0;i<t.length;i++){var n=t[i];n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}function n(e,t,i){return t in e?Object.defineProperty(e,t,{value:i,enumerable:!0,configurable:!0,writable:!0}):e[t]=i,e}function s(e,t){var i=Object.keys(e);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);t&&(n=n.filter((function(t){return Object.getOwnPropertyDescriptor(e,t).enumerable}))),i.push.apply(i,n)}return i}function r(e){for(var t=1;t<arguments.length;t++){var i=null!=arguments[t]?arguments[t]:{};t%2?s(Object(i),!0).forEach((function(t){n(e,t,i[t])})):Object.getOwnPropertyDescriptors?Object.defineProperties(e,Object.getOwnPropertyDescriptors(i)):s(Object(i)).forEach((function(t){Object.defineProperty(e,t,Object.getOwnPropertyDescriptor(i,t))}))}return e}function a(e,t){(null==t||t>e.length)&&(t=e.length);for(var i=0,n=new Array(t);i<t;i++)n[i]=e[i];return n}function o(e){if("undefined"==typeof Symbol||null==e[Symbol.iterator]){if(Array.isArray(e)||(e=function(e,t){if(e){if("string"==typeof e)return a(e,t);var i=Object.prototype.toString.call(e).slice(8,-1);return"Object"===i&&e.constructor&&(i=e.constructor.name),"Map"===i||"Set"===i?Array.from(i):"Arguments"===i||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(i)?a(e,t):void 0}}(e))){var t=0,i=function(){};return{s:i,n:function(){return t>=e.length?{done:!0}:{done:!1,value:e[t++]}},e:function(e){throw e},f:i}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var n,s,r=!0,o=!1;return{s:function(){n=e[Symbol.iterator]()},n:function(){var e=n.next();return r=e.done,e},e:function(e){o=!0,s=e},f:function(){try{r||null==n.return||n.return()}finally{if(o)throw s}}}}var l=function(e,t){if(null===e)return null;if("number"!=typeof t.step)return e;var i=e%(60*t.step);return(i-=(t.minTime||0)%(60*t.step))>=30*t.step?e+=60*t.step-i:e-=i,function(e,t){if(86400==e&&t.show2400)return e;return e%86400}(e,t)};var u,c={appendTo:"body",className:null,closeOnWindowScroll:!1,disableTextInput:!1,disableTimeRanges:[],disableTouchKeyboard:!1,durationTime:null,forceRoundTime:!1,lang:{},listWidth:null,maxTime:null,minTime:null,noneOption:!1,orientation:"l",roundingFunction:l,scrollDefault:null,selectOnBlur:!1,show2400:!1,showDuration:!1,showOn:["click","focus"],showOnFocus:!0,step:30,stopScrollPropagation:!1,timeFormat:"g:ia",typeaheadHighlight:!0,useSelect:!1,wrapHours:!0},m={am:"am",pm:"pm",AM:"AM",PM:"PM",decimal:".",mins:"mins",hr:"hr",hrs:"hrs"},p=function(){function n(e){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};t(this,n),this.targetEl=e;var s=n.extractAttrOptions(e,Object.keys(c));this.settings=this.parseSettings(r(r(r({},c),i),s))}var s,a,l;return s=n,l=[{key:"extractAttrOptions",value:function(e,t){var i,n={},s=o(t);try{for(s.s();!(i=s.n()).done;){var r=i.value;r in e.dataset&&(n[r]=e.dataset[r])}}catch(e){s.e(e)}finally{s.f()}return n}},{key:"isVisible",value:function(e){var t=e[0];return t.offsetWidth>0&&t.offsetHeight>0}}],(a=[{key:"_findRow",value:function(e){if(!e&&0!==e)return!1;var t=!1;return e=this.settings.roundingFunction(e,this.settings),!!this.list&&(this.list.find("li").each((function(i,n){var s=Number.parseInt(n.dataset.time);if(!Number.isNaN(s))return s==e?(t=n,!1):void 0})),t)}},{key:"_hideKeyboard",value:function(){return(window.navigator.msMaxTouchPoints||"ontouchstart"in document)&&this.settings.disableTouchKeyboard}},{key:"_setTimeValue",value:function(e,t){if("INPUT"===this.targetEl.nodeName){null===e&&""==this.targetEl.value||(this.targetEl.value=e);var i=this;i.settings.useSelect&&"select"!=t&&i.list&&i.list.val(i._roundAndFormatTime(i.time2int(e)))}var n=new Event("selectTime");if(this.selectedValue!=e){this.selectedValue=e;var s=new Event("changeTime"),r=new CustomEvent("change",{detail:"timepicker"});return"select"==t?(this.targetEl.dispatchEvent(n),this.targetEl.dispatchEvent(s),this.targetEl.dispatchEvent(r)):-1==["error","initial"].indexOf(t)&&this.targetEl.dispatchEvent(s),!0}return-1==["error","initial"].indexOf(t)&&this.targetEl.dispatchEvent(n),!1}},{key:"_getTimeValue",value:function(){return"INPUT"===this.targetEl.nodeName?this.targetEl.value:this.selectedValue}},{key:"_selectValue",value:function(){this.settings;var e=this.list.find(".ui-timepicker-selected");if(e.hasClass("ui-timepicker-disabled"))return!1;if(!e.length)return!0;var t=e.get(0).dataset.time;if(t){var i=Number.parseInt(t);i&&(t=i)}return null!==t&&("string"!=typeof t&&(t=this._int2time(t)),this._setTimeValue(t,"select")),!0}},{key:"time2int",value:function(e){if(""===e||null==e)return null;if(e instanceof Date)return 3600*e.getHours()+60*e.getMinutes()+e.getSeconds();if("string"!=typeof e)return e;"a"!=(e=e.toLowerCase().replace(/[\s\.]/g,"")).slice(-1)&&"p"!=e.slice(-1)||(e+="m");var t=/^(([^0-9]*))?([0-9]?[0-9])(([0-5][0-9]))?(([0-5][0-9]))?(([^0-9]*))$/;e.match(/\W/)&&(t=/^(([^0-9]*))?([0-9]?[0-9])(\W+([0-5][0-9]?))?(\W+([0-5][0-9]))?(([^0-9]*))$/);var i=e.match(t);if(!i)return null;var n=parseInt(1*i[3],10),s=i[2]||i[9],r=n,a=1*i[5]||0,o=1*i[7]||0;if(s||2!=i[3].length||"0"!=i[3][0]||(s="am"),n<=12&&s){var l=(s=s.trim())==this.settings.lang.pm||s==this.settings.lang.PM;r=12==n?l?12:0:n+(l?12:0)}else if(3600*n+60*a+o>=86400+(this.settings.show2400?1:0)){if(!1===this.settings.wrapHours)return null;r=n%24}var u=3600*r+60*a+o;if(n<12&&!s&&this.settings._twelveHourTime&&this.settings.scrollDefault){var c=u-this.settings.scrollDefault();c<0&&c>=-43200&&(u=(u+43200)%86400)}return u}},{key:"parseSettings",value:function(e){var t=this;if(e.lang=r(r({},m),e.lang),this.settings=e,e.minTime&&(e.minTime=this.time2int(e.minTime)),e.maxTime&&(e.maxTime=this.time2int(e.maxTime)),e.listWidth&&(e.listWidth=this.time2int(e.listWidth)),e.durationTime&&"function"!=typeof e.durationTime&&(e.durationTime=this.time2int(e.durationTime)),"now"==e.scrollDefault)e.scrollDefault=function(){return e.roundingFunction(t.time2int(new Date),e)};else if(e.scrollDefault&&"function"!=typeof e.scrollDefault){var i=e.scrollDefault;e.scrollDefault=function(){return e.roundingFunction(t.time2int(i),e)}}else e.minTime&&(e.scrollDefault=function(){return e.roundingFunction(e.minTime,e)});if("string"==typeof e.timeFormat&&e.timeFormat.match(/[gh]/)&&(e._twelveHourTime=!0),!1===e.showOnFocus&&-1!=e.showOn.indexOf("focus")&&e.showOn.splice(e.showOn.indexOf("focus"),1),e.disableTimeRanges||(e.disableTimeRanges=[]),e.disableTimeRanges.length>0){for(var n in e.disableTimeRanges)e.disableTimeRanges[n]=[this.time2int(e.disableTimeRanges[n][0]),this.time2int(e.disableTimeRanges[n][1])];for(e.disableTimeRanges=e.disableTimeRanges.sort((function(e,t){return e[0]-t[0]})),n=e.disableTimeRanges.length-1;n>0;n--)e.disableTimeRanges[n][0]<=e.disableTimeRanges[n-1][1]&&(e.disableTimeRanges[n-1]=[Math.min(e.disableTimeRanges[n][0],e.disableTimeRanges[n-1][0]),Math.max(e.disableTimeRanges[n][1],e.disableTimeRanges[n-1][1])],e.disableTimeRanges.splice(n,1))}return e}},{key:"_disableTextInputHandler",value:function(e){switch(e.keyCode){case 13:case 9:return;default:e.preventDefault()}}},{key:"_int2duration",value:function(e,t){e=Math.abs(e);var i,n,s=Math.round(e/60),r=[];return s<60?r=[s,this.settings.lang.mins]:(i=Math.floor(s/60),n=s%60,30==t&&30==n&&(i+=this.settings.lang.decimal+5),r.push(i),r.push(1==i?this.settings.lang.hr:this.settings.lang.hrs),30!=t&&n&&(r.push(n),r.push(this.settings.lang.mins))),r.join(" ")}},{key:"_roundAndFormatTime",value:function(e){if(null!==(e=this.settings.roundingFunction(e,this.settings)))return this._int2time(e)}},{key:"_int2time",value:function(e){if("number"!=typeof e)return null;var t=parseInt(e%60),i=parseInt(e/60%60),n=parseInt(e/3600%24),s=new Date(1970,0,2,n,i,t,0);if(isNaN(s.getTime()))return null;if("function"==typeof this.settings.timeFormat)return this.settings.timeFormat(s);for(var r,a,o="",l=0;l<this.settings.timeFormat.length;l++)switch(a=this.settings.timeFormat.charAt(l)){case"a":o+=s.getHours()>11?this.settings.lang.pm:this.settings.lang.am;break;case"A":o+=s.getHours()>11?this.settings.lang.PM:this.settings.lang.AM;break;case"g":o+=0==(r=s.getHours()%12)?"12":r;break;case"G":r=s.getHours(),86400===e&&(r=this.settings.show2400?24:0),o+=r;break;case"h":0!=(r=s.getHours()%12)&&r<10&&(r="0"+r),o+=0===r?"12":r;break;case"H":r=s.getHours(),86400===e&&(r=this.settings.show2400?24:0),o+=r>9?r:"0"+r;break;case"i":o+=(i=s.getMinutes())>9?i:"0"+i;break;case"s":o+=(t=s.getSeconds())>9?t:"0"+t;break;case"\\":l++,o+=this.settings.timeFormat.charAt(l);break;default:o+=a}return o}},{key:"_setSelected",value:function(){var e=this.list;e.find("li").removeClass("ui-timepicker-selected");var t=this.time2int(this._getTimeValue());if(null!==t){var i=this._findRow(t);if(i){var n=i.getBoundingClientRect(),s=e.get(0).getBoundingClientRect(),r=n.top-s.top;if(r+n.height>s.height||r<0){var a=e.scrollTop()+(n.top-s.top)-n.height;e.scrollTop(a)}var o=Number.parseInt(i.dataset.time);(this.settings.forceRoundTime||o===t)&&i.classList.add("ui-timepicker-selected")}}}},{key:"_generateNoneElement",value:function(t,i){var n,s,r,a;return"object"==e(t)?(n=t.label,s=t.className,r=t.value):"string"==typeof t?(n=t,r=""):$.error("Invalid noneOption value"),i?(a=document.createElement("option")).value=r:(a=document.createElement("li")).dataset.time=String(r),a.innerText=n,a.classList.add(s),a}}])&&i(s.prototype,a),l&&i(s,l),n}();u=function(t){var i={init:function(e){return this.each((function(){var s=t(this),l=new p(this,e),u=l.settings;if(u.lang,s.data("timepicker-obj",l),s.addClass("ui-timepicker-input"),u.useSelect)n(s);else{if(s.prop("autocomplete","off"),u.showOn)for(var c in u.showOn)s.on(u.showOn[c]+".timepicker",i.show);s.on("change.timepicker",r),s.on("keydown.timepicker",a),s.on("keyup.timepicker",o),u.disableTextInput&&s.on("keydown.timepicker",l._disableTextInputHandler),s.on("cut.timepicker",o),s.on("paste.timepicker",o),r.call(s.get(0),null,"initial")}}))},show:function(e){var r=t(this),a=r.data("timepicker-obj"),o=a.settings;if(e&&e.preventDefault(),o.useSelect)a.list.focus();else{a._hideKeyboard()&&r.blur();var l=a.list;if(!r.prop("readonly")&&(l&&0!==l.length&&"function"!=typeof o.durationTime||(n(r),l=a.list),!p.isVisible(l))){r.is("input")&&(a.selectedValue=r.val()),a._setSelected(),i.hide(),"number"==typeof o.listWidth&&l.width(r.outerWidth()*o.listWidth),l.show();var u={};o.orientation.match(/r/)?u.left=r.offset().left+r.outerWidth()-l.outerWidth()+parseInt(l.css("marginLeft").replace("px",""),10):o.orientation.match(/l/)?u.left=r.offset().left+parseInt(l.css("marginLeft").replace("px",""),10):o.orientation.match(/c/)&&(u.left=r.offset().left+(r.outerWidth()-l.outerWidth())/2+parseInt(l.css("marginLeft").replace("px",""),10)),"t"==(o.orientation.match(/t/)?"t":o.orientation.match(/b/)?"b":r.offset().top+r.outerHeight(!0)+l.outerHeight()>t(window).height()+t(window).scrollTop()?"t":"b")?(l.addClass("ui-timepicker-positioned-top"),u.top=r.offset().top-l.outerHeight()+parseInt(l.css("marginTop").replace("px",""),10)):(l.removeClass("ui-timepicker-positioned-top"),u.top=r.offset().top+r.outerHeight()+parseInt(l.css("marginTop").replace("px",""),10)),l.offset(u);var c=l.find(".ui-timepicker-selected");if(!c.length){var m=a.time2int(a._getTimeValue());null!==m?c=t(a._findRow(m)):o.scrollDefault&&(c=t(a._findRow(o.scrollDefault())))}if(c.length&&!c.hasClass("ui-timepicker-disabled")||(c=l.find("li:not(.ui-timepicker-disabled):first")),c&&c.length){var d=l.scrollTop()+c.position().top-c.outerHeight();l.scrollTop(d)}else l.scrollTop(0);return o.stopScrollPropagation&&t(document).on("wheel.ui-timepicker",".ui-timepicker-wrapper",(function(e){e.preventDefault();var i=t(this).scrollTop();t(this).scrollTop(i+e.originalEvent.deltaY)})),t(document).on("mousedown.ui-timepicker",s),t(window).on("resize.ui-timepicker",s),o.closeOnWindowScroll&&t(document).on("scroll.ui-timepicker",s),r.trigger("showTimepicker"),this}}},hide:function(e){var i=t(this),n=i.data("timepicker-obj");return n&&n.settings&&n.settings.useSelect&&i.blur(),t(".ui-timepicker-wrapper").each((function(){var e=t(this);if(p.isVisible(e)){var i=e.data("timepicker-input"),n=i.data("timepicker-obj");n&&n.settings&&n.settings.selectOnBlur&&n._selectValue(),e.hide(),i.trigger("hideTimepicker")}})),this},option:function(i,s){return"string"==typeof i&&void 0===s?t(this).data("timepicker-obj").settings[i]:this.each((function(){var a=t(this),o=a.data("timepicker-obj"),l=o.settings,u=o.list;"object"==e(i)?l=t.extend(l,i):"string"==typeof i&&(l[i]=s),l=o.parseSettings(l),o.settings=l,r.call(a.get(0),{type:"change"},"initial"),u&&(u.remove(),o.list=null),l.useSelect&&n(a)}))},getSecondsFromMidnight:function(){var e=t(this).data("timepicker-obj");return e.time2int(e._getTimeValue())},getTime:function(e){var i=t(this).data("timepicker-obj"),n=i._getTimeValue();if(!n)return null;var s=i.time2int(n);if(null===s)return null;e||(e=new Date);var r=new Date(e);return r.setHours(s/3600),r.setMinutes(s%3600/60),r.setSeconds(s%60),r.setMilliseconds(0),r},isVisible:function(){var e=this.data("timepicker-obj");return!!(e&&e.list&&p.isVisible(e.list))},setTime:function(e){var t=this.data("timepicker-obj"),i=t.settings;if(i.forceRoundTime)var n=t._roundAndFormatTime(t.time2int(e));else n=t._int2time(t.time2int(e));return e&&null===n&&i.noneOption&&(n=e),t._setTimeValue(n,"initial"),r.call(this.get(0),{type:"change"},"initial"),t&&t.list&&t._setSelected(),this},remove:function(){if(this.hasClass("ui-timepicker-input")){var e=this.data("timepicker-obj"),t=e.settings;return this.removeAttr("autocomplete","off"),this.removeClass("ui-timepicker-input"),this.removeData("timepicker-obj"),this.off(".timepicker"),e.list&&e.list.remove(),t.useSelect&&this.show(),e.list=null,this}}};function n(e){var n=e.data("timepicker-obj"),s=n.list,r=n.settings;if(s&&s.length&&(s.remove(),n.list=null),r.useSelect){s=t("<select />",{class:"ui-timepicker-select"}),e.attr("name")&&s.attr("name","ui-timepicker-"+e.attr("name"));var a=s}else s=t("<ul />",{class:"ui-timepicker-list"}),(a=t("<div />",{class:"ui-timepicker-wrapper",tabindex:-1})).css({display:"none",position:"absolute"}).append(s);if(r.noneOption)if(!0===r.noneOption&&(r.noneOption=r.useSelect?"Time...":"None"),t.isArray(r.noneOption)){for(var o in r.noneOption)if(parseInt(o,10)==o){var u=n._generateNoneElement(r.noneOption[o],r.useSelect);s.append(u)}}else u=n._generateNoneElement(r.noneOption,r.useSelect),s.append(u);r.className&&a.addClass(r.className),null===r.minTime&&null===r.durationTime||!r.showDuration||("function"==typeof r.step||r.step,a.addClass("ui-timepicker-with-duration"),a.addClass("ui-timepicker-step-"+r.step));var c=r.minTime;"function"==typeof r.durationTime?c=n.time2int(r.durationTime()):null!==r.durationTime&&(c=r.durationTime);var m=null!==r.minTime?r.minTime:0,p=null!==r.maxTime?r.maxTime:m+86400-1;p<m&&(p+=86400),86399===p&&"string"===t.type(r.timeFormat)&&r.show2400&&(p=86400);var d=r.disableTimeRanges,f=0,h=d.length,g=r.step;"function"!=typeof g&&(g=function(){return r.step}),o=m;for(var v=0;o<=p;o+=60*g(++v)){var b,k=o,y=n._int2time(k);if(r.useSelect?(b=t("<option />",{value:y})).text(y):((b=t("<li />")).addClass(k%86400<43200?"ui-timepicker-am":"ui-timepicker-pm"),b.attr("data-time",l(k,r)),b.text(y)),(null!==r.minTime||null!==r.durationTime)&&r.showDuration){var T=n._int2duration(o-c,r.step);if(r.useSelect)b.text(b.text()+" ("+T+")");else{var w=t("<span />",{class:"ui-timepicker-duration"});w.text(" ("+T+")"),b.append(w)}}f<h&&(k>=d[f][1]&&(f+=1),d[f]&&k>=d[f][0]&&k<d[f][1]&&(r.useSelect?b.prop("disabled",!0):b.addClass("ui-timepicker-disabled"))),s.append(b)}if(a.data("timepicker-input",e),n.list=a,r.useSelect)e.val()&&s.val(n._roundAndFormatTime(n.time2int(e.val()))),s.on("focus",(function(){t(this).data("timepicker-input").trigger("showTimepicker")})),s.on("blur",(function(){t(this).data("timepicker-input").trigger("hideTimepicker")})),s.on("change",(function(){n._setTimeValue(t(this).val(),"select")})),n._setTimeValue(s.val(),"initial"),e.hide().after(s);else{var O=r.appendTo;"string"==typeof O?O=t(O):"function"==typeof O&&(O=O(e)),O.append(a),n._setSelected(),s.on("mousedown click","li",(function(r){e.off("focus.timepicker"),e.on("focus.timepicker-ie-hack",(function(){e.off("focus.timepicker-ie-hack"),e.on("focus.timepicker",i.show)})),n._hideKeyboard()||e[0].focus(),s.find("li").removeClass("ui-timepicker-selected"),t(this).addClass("ui-timepicker-selected"),n._selectValue()&&(e.trigger("hideTimepicker"),s.on("mouseup.timepicker click.timepicker","li",(function(e){s.off("mouseup.timepicker click.timepicker"),a.hide()})))}))}}function s(e){if(e.target!=window){var n=t(e.target);n.closest(".ui-timepicker-input").length||n.closest(".ui-timepicker-wrapper").length||(i.hide(),t(document).unbind(".ui-timepicker"),t(window).unbind(".ui-timepicker"))}}function r(e,i){if(!e||"timepicker"!=e.detail){var n=t(this),s=n.data("timepicker-obj");if(""!==this.value){if(!n.is(":focus")||e&&"change"==e.type){var r=s.settings,a=s.time2int(this.value);if(null!==a){var o=!1;if(null!==r.minTime&&null!==r.maxTime&&(a<r.minTime||a>r.maxTime)&&(o=!0),t.each(r.disableTimeRanges,(function(){if(a>=this[0]&&a<this[1])return o=!0,!1})),r.forceRoundTime){var l=r.roundingFunction(a,r);l!=a&&(a=l,i=null)}var u=s._int2time(a);o?(s._setTimeValue(u,"error")||e&&"change"==e.type)&&n.trigger("timeRangeError"):s._setTimeValue(u,i)}else n.trigger("timeFormatError")}}else s._setTimeValue(null,i)}}function a(e){var n=t(this),s=n.data("timepicker-obj"),a=s.list;if(!a||!p.isVisible(a)){if(40!=e.keyCode)return!0;i.show.call(n.get(0)),a=s.list,s._hideKeyboard()||n.focus()}switch(e.keyCode){case 13:return s._selectValue()&&(r.call(n.get(0),{type:"change"}),i.hide.apply(this)),e.preventDefault(),!1;case 38:var o=a.find(".ui-timepicker-selected");return o.length?o.is(":first-child")||(o.removeClass("ui-timepicker-selected"),o.prev().addClass("ui-timepicker-selected"),o.prev().position().top<o.outerHeight()&&a.scrollTop(a.scrollTop()-o.outerHeight())):(a.find("li").each((function(e,i){if(t(i).position().top>0)return o=t(i),!1})),o.addClass("ui-timepicker-selected")),!1;case 40:return 0===(o=a.find(".ui-timepicker-selected")).length?(a.find("li").each((function(e,i){if(t(i).position().top>0)return o=t(i),!1})),o.addClass("ui-timepicker-selected")):o.is(":last-child")||(o.removeClass("ui-timepicker-selected"),o.next().addClass("ui-timepicker-selected"),o.next().position().top+2*o.outerHeight()>a.outerHeight()&&a.scrollTop(a.scrollTop()+o.outerHeight())),!1;case 27:a.find("li").removeClass("ui-timepicker-selected"),i.hide();break;case 9:i.hide();break;default:return!0}}function o(e){var i=t(this).data("timepicker-obj"),n=i.list,s=i.settings;if(!n||!p.isVisible(n)||s.disableTextInput)return!0;if("paste"!==e.type&&"cut"!==e.type)switch(e.keyCode){case 96:case 97:case 98:case 99:case 100:case 101:case 102:case 103:case 104:case 105:case 48:case 49:case 50:case 51:case 52:case 53:case 54:case 55:case 56:case 57:case 65:case 77:case 80:case 186:case 8:case 46:s.typeaheadHighlight?i._setSelected():n.hide()}else setTimeout((function(){s.typeaheadHighlight?i._setSelected():n.hide()}),0)}t.fn.timepicker=function(n){return this.length?i[n]?this.hasClass("ui-timepicker-input")?i[n].apply(this,Array.prototype.slice.call(arguments,1)):this:"object"!==e(n)&&n?void t.error("Method "+n+" does not exist on jQuery.timepicker"):i.init.apply(this,arguments):this},t.fn.timepicker.defaults=c},"object"===( false?"undefined":e(exports))&&exports&&"object"===( false?"undefined":e(module))&&module&&module.exports===exports?u(__webpack_require__(0)): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_FACTORY__ = (u),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):u(jQuery)}();
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)(module)))
 
 /***/ }),
-/* 51 */
+/* 49 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 52 */
+/* 50 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

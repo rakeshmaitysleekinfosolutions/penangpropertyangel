@@ -141,91 +141,47 @@
                 <h5>LISTINGS</h5>
                 <a href="#">View All Properties</a>
             </div>
-            <div class="col-md-5">
-                <div class="featured_image">
-                    <img src="<?php echo url('image/d.jpg');?>" alt="">
-                    <ul>
-                        <li class="dolor">$8.9.00000</li>
-                        <li>7000 MACAP Dr.</li>
-                    </ul>
-                    <div class="overlay">
-                        <div class="text">
+            <?php if(count($projects) > 0) { ?>
+                <?php $index = 0; foreach ($projects as $project) {
+                    if($index != 0 && $index != 1) {?>
+                        <div class="col-md-4 featured-next">
+                        <div class="featured_image">
+                            <img src="<?php echo $project['img'];?>" alt="">
                             <ul>
-                                <li>$8.9.00000</li>
-                                <li class="view"><a href="#">VIEW DETAILS</a></li>
+                                <li class="dolor"><?php echo $project['price'];?></li>
+                                <li></li>
                             </ul>
+                            <div class="overlay">
+                                <div class="text">
+                                    <ul>
+                                        <li><?php echo $project['fit'];?>/sq.ft <?php echo $project['fit1'];?> - <?php echo $project['fit2'];?> sq.ft</li>
+                                        <li class="view"><a href="<?php echo $project['url'];?>">VIEW DETAILS</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div class="featured_image">
-                    <img src="<?php echo url('image/d.jpg');?>" alt="">
-                    <ul>
-                        <li class="dolor">$8.9.00000</li>
-                        <li>7000 MACAP Dr.</li>
-                    </ul>
-                    <div class="overlay">
-                        <div class="text">
-                            <ul>
-                                <li>$8.9.00000</li>
-                                <li class="view"><a href="#">VIEW DETAILS</a></li>
-                            </ul>
+                    <?php } else { ?>
+                        <div class="col-md-5">
+                            <div class="featured_image">
+                                <img src="<?php echo $project['img'];?>" alt="">
+                                <ul>
+                                    <li class="dolor"><?php echo $project['price'];?></li>
+                                    <li></li>
+                                </ul>
+                                <div class="overlay">
+                                    <div class="text">
+                                        <ul>
+                                            <li><?php echo $project['fit'];?>/sq.ft <?php echo $project['fit1'];?> - <?php echo $project['fit2'];?> sq.ft</li>
+                                            <li class="view"><a href="<?php echo $project['url'];?>">VIEW DETAILS</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="featured_image">
-                    <img src="<?php echo url('image/d.jpg');?>" alt="">
-                    <ul>
-                        <li class="dolor_1">$8.9.00000</li>
-                        <li>7000 MACAP Dr.</li>
-                    </ul>
-                    <div class="overlay">
-                        <div class="text_1">
-                            <ul>
-                                <li>$8.9.00000</li>
-                                <li class="view"><a href="#">VIEW DETAILS</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="featured_image">
-                    <img src="<?php echo url('image/d.jpg');?>" alt="">
-                    <ul>
-                        <li class="dolor_1">$8.9.00000</li>
-                        <li>7000 MACAP Dr.</li>
-                    </ul>
-                    <div class="overlay">
-                        <div class="text_1">
-                            <ul>
-                                <li>$8.9.00000</li>
-                                <li class="view"><a href="#">VIEW DETAILS</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="featured_image">
-                    <img src="<?php echo url('image/d.jpg');?>" alt="">
-                    <ul>
-                        <li class="dolor_1">$8.9.00000</li>
-                        <li>7000 MACAP Dr.</li>
-                    </ul>
-                    <div class="overlay">
-                        <div class="text_1">
-                            <ul>
-                                <li>$8.9.00000</li>
-                                <li class="view"><a href="#">VIEW DETAILS</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                     <?php } ?>
+                <?php $index++;} ?>
+            <?php } ?>
         </div>
     </div>
 </section>

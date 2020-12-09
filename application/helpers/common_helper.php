@@ -436,7 +436,7 @@ if(!function_exists('isSubscribe')) {
     }
 }
 if(!function_exists('currencyFormat')) {
-    function currencyFormat($number, $currency, $value = '', $format = true) {
+    function currencyFormat($number, $currency, $value = '', $format = true, $prefix = true, $suffix = true) {
 
         $ci = get_instance();
         $query = $ci->db->query("SELECT * FROM currency");
@@ -469,24 +469,22 @@ if(!function_exists('currencyFormat')) {
 
         $string = '';
 
-        if ($symbol_left) {
-            $string .= $symbol_left;
+        if($prefix) {
+            if ($symbol_left) {
+                $string .= $symbol_left;
+            }
         }
+
 
         $string .= number_format($amount, (int)$decimal_place, $ci->config->item('decimal_point'), $ci->config->item('thousand_point'));
-
-        if ($symbol_right) {
-            $string .= $symbol_right;
+        if($suffix) {
+            if ($symbol_right) {
+                $string .= $symbol_right;
+            }
         }
+
 
         return $string;
-    }
-    if(!function_exists('setLayout')) {
-        function setLayout($layout) {
-            $ci = get_instance();
-            $ci->load->library('template');
-            return $ci->template->content->set_template($layout);
-        }
     }
     if(!function_exists('render')) {
         function render($view, $data = null) {
@@ -496,7 +494,6 @@ if(!function_exists('currencyFormat')) {
             $ci->template->publish();
         }
     }
-
     if(!function_exists('attach')) {
         function attach($str, $type = 'js') {
             $ci = get_instance();
