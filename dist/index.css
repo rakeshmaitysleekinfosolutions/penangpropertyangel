@@ -1159,3 +1159,204 @@ footer ul li a:hover{
 .owl-theme .owl-nav .owl-next{
     margin-left: 1373px;
 }
+
+
+/*--------------------------rent-listing page css-----------------------*/
+.r_list{
+    padding: 60px 0;
+}
+.r_list h2{
+    font-size: 40px;
+    color: #0f1b2d;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 45px;
+}
+.side_form{
+    border: 1px solid #111112;
+    padding: 20px;
+}
+.rent_listing_form{
+    margin: 20px 0;
+}
+.rent_listing_form select{
+    width: 305px;
+    height: 40px;
+    background: #D8D8D8;
+    border: none;
+}
+.rent_listing_checkbox{
+    margin-bottom: 30px;
+}
+.rent_listing_checkbox label{
+    font-size: 15px;
+    padding-right: 12px;
+    position: relative;
+}
+.rent_listing_checkbox label::after{
+    content: "";
+    position: absolute;
+    top: 178%;
+    left: -12%;
+    -webkit-transform: translate(0%, -178%);
+            transform: translate(0%, -178%);
+    width: 348px;
+    height: 1px;
+    background: #D8D8D8;
+}
+.rent_listing_checkbox input{
+    width: 20px;
+    height: 20px;
+    border: 1px solid #D8D8D8 !important;
+}
+.ui-content input{
+    width: 100%;
+}
+.ui-content label{
+    font-size: 15px;
+}
+.ui-content ul li{
+    list-style: none;
+    display: inline-block;
+    width: 47%;
+    text-align: right;
+    background: #D8D8D8;
+    margin-right: 6px;
+    padding: 4px;
+}
+.reset{
+    padding: 8px 25px;
+    background: #000;
+    font-size: 16px;
+    text-align: center;
+    color: #fff;
+    margin-left: 7px;
+    border: none;
+    border-radius: 25px;
+    margin-bottom: 25px;
+    margin-top: 12px;
+}
+.search{
+    padding: 8px 25px;
+    background: #D7D7D7;
+    font-size: 16px;
+    text-align: center;
+    color: #000;
+    border: none;
+    border-radius: 25px;
+    margin-top: 12px;
+    margin-left: 10px;
+    margin-bottom: 25px;
+}
+.rent_list_image{
+    margin-bottom: 40px;
+}
+.rent_list_image p{
+    font-size: 21px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Poppins";
+    margin-bottom: 30px;
+    position: relative;
+}
+.rent_list_image p::after{
+    content: "";
+    position: absolute;
+    top: 143%;
+    left: 1%;
+    -webkit-transform: translate(-1%, -143%);
+            transform: translate(-1%, -143%);
+    width: 321px;
+    height: 1px;
+    background: #D7D7D7;
+}
+.rent_list_image h3{
+    font-size: 13px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Futura";
+}
+.rent_list_image h3 span{
+    font-size: 30px;
+    color: #303030;
+    font-family: "Futura T";
+}
+.rent_list_image h5{
+    font-size: 23px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Futura";
+}
+.pagination{
+    margin-left: 15px;
+    margin-top: 5px;
+}
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    -webkit-transition: background-color .3s;
+    transition: background-color .3s;
+    border:1px solid #D8D8D8;
+}
+.pagination a.active {
+    background-color: #dfdfdf;
+    color: white;
+}
+
+/*Slider*/
+.price-range-block {
+    margin:60px;
+}
+
+.sliderText{
+    width:40%;
+    margin-bottom:30px;
+    border-bottom: 2px solid red;
+    padding: 10px 0 10px 0px;
+    font-weight:bold;
+}
+
+.ui-slider-horizontal {
+    height: .6em;
+}
+.ui-slider-horizontal {
+    margin-bottom: 15px;
+    width:40%;
+}
+.ui-widget-header {
+    background: #3FE331;
+}
+
+.price-range-search {
+    width:40.5%;
+    background-color: #f9f9f9;
+    border: 1px solid #6e6666;
+    min-width: 40%;
+    display: inline-block;
+    height: 32px;
+    border-radius: 5px;
+    float: left;
+    margin-bottom:20px;
+    font-size:16px;
+}
+/*.price-range-field{*/
+/*    width:20%;*/
+/*    min-width: 16%;*/
+/*    background-color:#f9f9f9;*/
+/*    border: 1px solid #6e6666;*/
+/*    color: black;*/
+/*    font-family: myFont;*/
+/*    font: normal 14px Arial, Helvetica, sans-serif;*/
+/*    border-radius: 5px;*/
+/*    height:26px;*/
+/*    padding:5px;*/
+/*}*/
+.search-results-block{
+    position: relative;
+    display: block;
+    clear: both;
+}
+

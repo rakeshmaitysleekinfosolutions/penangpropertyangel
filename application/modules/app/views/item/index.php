@@ -6,7 +6,7 @@
                 <?php foreach ($categories as $category) { ?>
                     <div class="col-md-4 col-12 buy_category">
                         <div class="buy_1">
-                            <h3><?php echo $category['name'];?></h3>
+                            <a href="<?php echo $category['url'];?>"><h3><?php echo $category['name'];?></h3></a>
                             <div class="trans_box">
                             </div>
                         </div>

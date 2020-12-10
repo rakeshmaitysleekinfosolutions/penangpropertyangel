@@ -15184,6 +15184,7 @@ $.ajaxSetup({
 
 var $frmRegister = $("#frmRegister"),
     $frmLogin = $("#frmLogin"),
+    $frmRentFilter = $('#frm-rent-filter'),
     validate = $.fn.validate !== undefined;
 
 if ($frmRegister.length > 0 && validate) {
@@ -15490,6 +15491,133 @@ function changeImageByTimer() {
 }
 
 var imgTimer = setInterval(changeImageByTimer, 3000);
+
+$('select[name="state_id"]').on('change', function () {
+      var state_id = $('select[name="state_id"]').find(":selected").val();
+      $.ajax({
+            url: myLabel.childStates,
+            dataType: 'json',
+            method: 'POST',
+            data: {
+                  state_id: state_id
+            },
+            beforeSend: function beforeSend() {
+                  $('select[name="state_id"]').after(' <i class="fa fa-circle-o-notch fa-spin"></i>');
+            },
+            complete: function complete() {
+                  $('.fa-spin').remove();
+            },
+            success: function success(json) {
+                  // }
+                  var html = '';
+                  // html = '<option value="">select option</option>';
+
+                  if (json['states'] && json['states'] != '') {
+                        for (var i = 0; i < json['states'].length; i++) {
+                              html += '<option value="' + json['states'][i]['id'] + '"';
+                              //console.log(json['states'][i]['id']);
+                              if (json['states'][i]['id'] == myLabel.state_id) {
+
+                                    html += ' selected="selected"';
+                              }
+
+                              html += '>' + json['states'][i]['name'] + '</option>';
+                        }
+                  } else {
+                        html += '<option value="0" selected="selected">Empty</option>';
+                  }
+
+                  $('select[name="childstate_id"]').html(html);
+            },
+            error: function error(xhr, ajaxOptions, thrownError) {
+                  //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+      });
+});
+
+// Price Range Slider
+$(document).ready(function () {
+
+      // $('#price-range-submit').hide();
+      $(function () {
+            $("#area-range").slider({
+                  range: true,
+                  orientation: "horizontal",
+                  min: 1,
+                  max: 999999999,
+                  values: [1, 999999999],
+                  step: 1,
+
+                  slide: function slide(event, ui) {
+                        if (ui.values[0] == ui.values[1]) {
+                              return false;
+                        }
+
+                        $("#min_area").val(ui.values[0]);
+                        $("#max_area").val(ui.values[1]);
+                  }
+            });
+            $("#min_area").val($("#area-range").slider("values", 0));
+            $("#max_area").val($("#area-range").slider("values", 1));
+
+            // price range
+            $("#price-range").slider({
+                  range: true,
+                  orientation: "horizontal",
+                  min: 1,
+                  max: 999999999,
+                  values: [1, 999999999],
+                  step: 1,
+
+                  slide: function slide(event, ui) {
+                        if (ui.values[0] == ui.values[1]) {
+                              return false;
+                        }
+
+                        $("#min_price").val(ui.values[0]);
+                        $("#max_price").val(ui.values[1]);
+                  }
+            });
+            $("#min_price").val($("#price-range").slider("values", 0));
+            $("#max_price").val($("#price-range").slider("values", 1));
+      });
+
+      // $("#slider-range,#price-range-submit").click(function () {
+      //
+      //       var min_price = $('#min_price').val();
+      //       var max_price = $('#max_price').val();
+      //
+      //       $("#searchResults").text("Here List of products will be shown which are cost between " + min_price  +" "+ "and" + " "+ max_price + ".");
+      // });
+});
+
+// Rent Filter
+if ($frmRentFilter.length > 0 && validate) {
+      $frmRentFilter.validate({
+            submitHandler: function submitHandler(form, event) {
+                  event.preventDefault();
+                  $.ajax({
+                        type: "POST",
+                        url: $(form).attr('action'),
+                        dataType: "html",
+                        data: $(form).serialize(),
+                        beforeSend: function beforeSend() {
+                              $('#render-filter-data').LoadingOverlay("show");
+                        },
+                        success: function success(html) {
+                              $('#render-filter-data').LoadingOverlay("hide");
+                              $('#render-filter-data').html(html);
+                        }
+                  });
+
+                  return false; // required to block normal submit since you used ajax
+            }
+
+      });
+}
+$(document).on('click', '#btn-reset', function (e) {
+      location.reload();
+});
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),

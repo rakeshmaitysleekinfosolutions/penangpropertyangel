@@ -62,4 +62,35 @@ class Item_model extends BaseModel {
         return ItemImage_model::factory()->find()->where('item_id', $itemId)->order_by('sort_order','ASC')->get()->result_array();
     }
 
+    public function getFilterData($data) {
+       // print_r($data);
+        $sql = "SELECT i.id as ItemId FROM items i LEFT JOIN items_descriptions idesc ON (i.id = idesc.item_id) WHERE i.status = 1";
+        if (!empty($data['type'])) {
+            $sql .= " AND i.type = '" . $data['type'] . "'";
+        }
+        if (!empty($data['category_id'])) {
+            $sql .= " AND i.category_id = '" . $data['category_id'] . "'";
+        }
+        if (!empty($data['bedroom1'])) {
+            $sql .= " AND idesc.bedroom1 = '" . $data['bedroom1'] . "'";
+        }
+        if (!empty($data['bedroom2'])) {
+            $sql .= " AND idesc.bedroom2 = '" . $data['bedroom2'] . "'";
+        }
+        if (!empty($data['state_id'])) {
+            $sql .= " AND i.state_id = '" . $data['state_id'] . "'";
+        }
+        if (!empty($data['child_state_id'])) {
+            $sql .= " AND i.child_state_id = '" . $data['child_state_id'] . "'";
+        }
+        if (!empty($data['min_area']) && !empty($data['max_area'])) {
+            $sql .= " AND i.area BETWEEN '" . $data['min_area'] . "' AND '".$data['max_area']."'";
+        }
+        if (!empty($data['min_price']) && !empty($data['max_price'])) {
+            $sql .= " AND i.price BETWEEN '" . $data['min_price'] . "' AND '".$data['max_price']."'";
+        }
+        $query = $this->db->query($sql);
+        return $query->result_array();
+    }
+
 }

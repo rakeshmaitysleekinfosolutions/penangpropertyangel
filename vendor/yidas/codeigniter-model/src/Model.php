@@ -1464,9 +1464,11 @@ class Model extends \CI_Model implements \ArrayAccess
      */
     protected function _findByCondition($condition=null)
     {
+
         // Reset Query if condition existed
         if ($condition !== null) {
             $this->_dbr->reset_query();
+
             $query = $this->find();
         } else {
             // Support for previous find(), no need to find() again
@@ -1479,6 +1481,7 @@ class Model extends \CI_Model implements \ArrayAccess
             // Check if is numeric array
             if (array_keys($condition)===range(0, count($condition)-1)) {
 
+
                 /* Numeric Array */
                 $query->where_in($this->_field($this->primaryKey), $condition);
 
@@ -1487,8 +1490,10 @@ class Model extends \CI_Model implements \ArrayAccess
                 /* Associated Array */
                 foreach ($condition as $field => $value) {
 
-                    (is_array($value)) ? $query->where_in($field, $value) : $query->where($field, $value);
+                    $d = (is_array($value)) ? $query->where_in($field, $value) : $query->where($field, $value);
                 }
+
+                //print_r($d);
             }
         }
         elseif (is_numeric($condition) || is_string($condition)) {

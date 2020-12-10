@@ -4,16 +4,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class AppController extends BaseController {
 
     private $csrfArray;
-    public function __constructor() {
-
-         parent::__constructor();
-
-
+    public function __construct() {
+         parent::__construct();
          $this->csrfArray =  array(
                 'name' => $this->security->get_csrf_token_name(),
                 'hash' => $this->security->get_csrf_hash()
         );
+        //Currency_model::factory()->refresh(true, 'MYR')
+        setSession('currency', $this->currency->getCurrency('MYR'));
 
+        if(getSession('currency')) {
+            $this->options['currency'] = $this->currency->getCurrency('MYR');
+        }
     }
     public  function __token() {
         return (isset($this->csrfArray['name'])) ? $this->csrfArray['name'] : '';
@@ -64,4 +66,5 @@ class AppController extends BaseController {
         }
         return false;
     }
+
 }

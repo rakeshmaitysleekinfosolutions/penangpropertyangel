@@ -7,8 +7,7 @@ class App extends AppController {
     {
         parent::__construct();
         $this->setLayout('layout/app');
-        //Currency_model::factory()->refresh(true, 'MYR');
-        setSession('currency', $this->currency->getCurrency('MYR'));
+
         $this->init();
     }
 
@@ -22,12 +21,12 @@ class App extends AppController {
             'name' => 'frmLogin'
         );
     }
-    public function getImgThumbnail($projectId) {
-        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
-            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
-        }
-        return false;
-    }
+//    public function getImgThumbnail($projectId) {
+//        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
+//            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
+//        }
+//        return false;
+//    }
     public function index() {
         $projects = Project_model::factory()->findAll(['status' => 1], 5,'name', 'ASC');
         if($projects) {
@@ -230,34 +229,6 @@ class App extends AppController {
         }
         //dd($this->data);
         render('agents/index', $this->data);
-    }
-    public function buy() {
-        $categories = Category_model::factory()->findAll(['status' => 1],null,'sort_order', 'asc');
-        $this->data['categories'] = array();
-        if($categories) {
-            foreach ($categories as $category) {
-                $this->data['categories'][] = array(
-                    'name'  => $category->name,
-                    'slug'  => $category->slug,
-                    'img'   => resize($category->image,100,100),
-                );
-            }
-        }
-        render('buy/index', $this->data);
-    }
-    public function rent() {
-        $categories = Category_model::factory()->findAll(['status' => 1],null,'sort_order', 'asc');
-        $this->data['categories'] = array();
-        if($categories) {
-            foreach ($categories as $category) {
-                $this->data['categories'][] = array(
-                    'name'  => $category->name,
-                    'slug'  => $category->slug,
-                    'img'   => resize($category->image,100,100),
-                );
-            }
-        }
-        render('rent/index', $this->data);
     }
     public function compare() {
         $projects = Project_model::factory()->findAll(['status' => 1], 5,'name', 'ASC');

@@ -6,6 +6,7 @@ class BaseController extends MX_Controller {
     public  $results;
     public  $json = array();
     public  $request = array();
+    public  $options = array();
     private $headers = array();
 	private $level = 0;
     private $output;
