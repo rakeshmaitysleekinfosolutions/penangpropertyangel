@@ -25,7 +25,7 @@ class Item extends AppController {
                     'name'  => $category->name,
                     'slug'  => $category->slug,
                     'url'   => url($this->itemType.'/'.$category->slug),
-                    'img'   => resize($category->image,100,100),
+                    'img'   => resize($category->image,360,298),
                 );
             }
         }

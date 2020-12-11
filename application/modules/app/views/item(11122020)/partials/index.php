@@ -3,7 +3,7 @@
         <div class="col-md-6 col-12">
             <div class="rent_list_image">
                 <img src="<?php echo $item['img'];?>" alt="<?php echo $item['title'];?>">
-                <p><?php echo readMore($item['title'],100, $options = array('href' => $item['url'],'class' => ''));?></p>
+                <p><?php echo $item['title'];?></p>
                 <h3><span><?php echo $item['price'];?></span> per month <?php echo $item['area'];?></h3>
             </div>
         </div>

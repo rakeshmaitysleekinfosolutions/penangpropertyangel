@@ -1,18 +1,18 @@
 <?php
 if(!defined('BASEPATH')) EXIT("No direct script access allowed");
-    if ( ! function_exists('dd')) {
+    if(!function_exists('dd')) {
         function dd($attr) {
             echo "<pre>";
             print_r($attr);
             die();
         }
     }
-    if ( ! function_exists('encrypt')) {
+    if(!function_exists('encrypt')) {
         function encrypt($str, $salt) {
             return sha1($salt . sha1($salt . sha1($str)));
         }
     }
-    if ( ! function_exists('decrypt')) {
+    if(!function_exists('decrypt')) {
         function decrypt($str) {
             return base64_decode($str);
         }
@@ -64,31 +64,31 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
         //Make lowercase again and trim off the padding.
         return strtolower(rtrim($output, '='));
     }
-    if ( ! function_exists('strCompress')) {
+    if(!function_exists('strCompress')) {
         function strCompress($str, $length = 9) {
             return gzencode($str, $length);
         }
     }
-    if ( ! function_exists('strUnCompress')) {
+    if(!function_exists('strUnCompress')) {
         function strUnCompress($str,$length = 9) {
             return gzdecode($str, $length);
         }
     }
-    if ( ! function_exists('__token')) {
+    if(!function_exists('__token')) {
         function __token() {
            $CI = get_instance();
            $CI->load->library('security');
            return $CI->security->get_csrf_token_name();
         }
     }
-    if ( ! function_exists('csrf_token')) {
+    if(!function_exists('csrf_token')) {
         function csrf_token() {
            $CI = get_instance();
            $CI->load->library('security');
            return $CI->security->get_csrf_hash();
         }
     }
-    if ( ! function_exists('token')) { 
+    if(!function_exists('token')) {
         function token($length = 32) {
             // Create random token
             $string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -100,7 +100,7 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
             return $token;
         }
     }
-    if ( ! function_exists('admin_url')) {
+    if(!function_exists('admin_url')) {
         function admin_url($uri = '', $protocol = NULL) {
             return get_instance()->config->base_url('admin/'.$uri, $protocol);
         }
@@ -256,254 +256,269 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
 
 
 }
-if(!function_exists('encodeUrl')) {
-    function encodeUrl($string) {
-        return urlencode(utf8_encode($string));
-    }
-}
-if(!function_exists('decodeUrl')) {
-    function decodeUrl($string) {
-        return utf8_decode(urldecode($string));
-    }
-}
-if(!function_exists('resize')) {
-    function resize($filename, $width, $height) {
-        $ci = get_instance();
-        if (!is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != str_replace('\\', '/', DIR_IMAGE)) {
-            return;
+    if(!function_exists('encodeUrl')) {
+        function encodeUrl($string) {
+            return urlencode(utf8_encode($string));
         }
-
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-
-        $image_old = $filename;
-        $image_new = 'cache/' . substr($filename, 0, strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
-
-        if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
-            list($width_orig, $height_orig, $image_type) = getimagesize(DIR_IMAGE . $image_old);
-
-            if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
-                return DIR_IMAGE . $image_old;
+    }
+    if(!function_exists('decodeUrl')) {
+        function decodeUrl($string) {
+            return utf8_decode(urldecode($string));
+        }
+    }
+    if(!function_exists('resize')) {
+        function resize($filename, $width, $height) {
+            $ci = get_instance();
+            if (!is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != str_replace('\\', '/', DIR_IMAGE)) {
+                return;
             }
 
-            $path = '';
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
 
-            $directories = explode('/', dirname($image_new));
+            $image_old = $filename;
+            $image_new = 'cache/' . substr($filename, 0, strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
-            foreach ($directories as $directory) {
-                $path = $path . '/' . $directory;
+            if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
+                list($width_orig, $height_orig, $image_type) = getimagesize(DIR_IMAGE . $image_old);
 
-                if (!is_dir(DIR_IMAGE . $path)) {
-                    @mkdir(DIR_IMAGE . $path, 0777);
+                if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
+                    return DIR_IMAGE . $image_old;
+                }
+
+                $path = '';
+
+                $directories = explode('/', dirname($image_new));
+
+                foreach ($directories as $directory) {
+                    $path = $path . '/' . $directory;
+
+                    if (!is_dir(DIR_IMAGE . $path)) {
+                        @mkdir(DIR_IMAGE . $path, 0777);
+                    }
+                }
+
+                if ($width_orig != $width || $height_orig != $height) {
+
+                    $ci->image->setFile(DIR_IMAGE . $image_old);
+                    $ci->image->resize($width, $height);
+                    $ci->image->save(DIR_IMAGE . $image_new);
+                } else {
+                    copy(DIR_IMAGE . $image_old, DIR_IMAGE . $image_new);
                 }
             }
 
-            if ($width_orig != $width || $height_orig != $height) {
-
-                $ci->image->setFile(DIR_IMAGE . $image_old);
-                $ci->image->resize($width, $height);
-                $ci->image->save(DIR_IMAGE . $image_new);
+            if ($ci->input->server('HTTPS')) {
+                return url() . 'image/' . $image_new;
             } else {
-                copy(DIR_IMAGE . $image_old, DIR_IMAGE . $image_new);
+                return url() . 'image/' . $image_new;
             }
-        }
-
-        if ($ci->input->server('HTTPS')) {
-            return url() . 'image/' . $image_new;
-        } else {
-            return url() . 'image/' . $image_new;
         }
     }
-}
+    if(!function_exists('resizeAssetImage')) {
+        function resizeAssetImage($filename, $width, $height) {
+            $ci = get_instance();
 
-if(!function_exists('resizeAssetImage')) {
-    function resizeAssetImage($filename, $width, $height) {
-        $ci = get_instance();
-
-        if (!is_file(DIR_ASSETS_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_ASSETS_IMAGE . $filename)), 0, strlen(DIR_ASSETS_IMAGE)) != str_replace('\\', '/', DIR_ASSETS_IMAGE)) {
-            return;
-        }
-        $extension = pathinfo($filename, PATHINFO_EXTENSION);
-        $image_old = $filename;
-        $image_new = 'cache/' . substr($filename, 0, strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
-
-        if (!is_file(DIR_ASSETS_IMAGE . $image_new) || (filemtime(DIR_ASSETS_IMAGE . $image_old) > filemtime(DIR_ASSETS_IMAGE . $image_new))) {
-            list($width_orig, $height_orig, $image_type) = getimagesize(DIR_ASSETS_IMAGE . $image_old);
-
-            if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
-                return DIR_ASSETS_IMAGE . $image_old;
+            if (!is_file(DIR_ASSETS_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_ASSETS_IMAGE . $filename)), 0, strlen(DIR_ASSETS_IMAGE)) != str_replace('\\', '/', DIR_ASSETS_IMAGE)) {
+                return;
             }
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            $image_old = $filename;
+            $image_new = 'cache/' . substr($filename, 0, strrpos($filename, '.')) . '-' . $width . 'x' . $height . '.' . $extension;
 
-            $path = '';
+            if (!is_file(DIR_ASSETS_IMAGE . $image_new) || (filemtime(DIR_ASSETS_IMAGE . $image_old) > filemtime(DIR_ASSETS_IMAGE . $image_new))) {
+                list($width_orig, $height_orig, $image_type) = getimagesize(DIR_ASSETS_IMAGE . $image_old);
 
-            $directories = explode('/', dirname($image_new));
+                if (!in_array($image_type, array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF))) {
+                    return DIR_ASSETS_IMAGE . $image_old;
+                }
 
-            foreach ($directories as $directory) {
-                $path = $path . '/' . $directory;
+                $path = '';
 
-                if (!is_dir(DIR_ASSETS_IMAGE . $path)) {
-                    @mkdir(DIR_ASSETS_IMAGE . $path, 0777);
+                $directories = explode('/', dirname($image_new));
+
+                foreach ($directories as $directory) {
+                    $path = $path . '/' . $directory;
+
+                    if (!is_dir(DIR_ASSETS_IMAGE . $path)) {
+                        @mkdir(DIR_ASSETS_IMAGE . $path, 0777);
+                    }
+                }
+
+                if ($width_orig != $width || $height_orig != $height) {
+
+                    $ci->image->setFile(DIR_ASSETS_IMAGE . $image_old);
+                    $ci->image->resize($width, $height);
+                    $ci->image->save(DIR_ASSETS_IMAGE . $image_new);
+                } else {
+                    copy(DIR_ASSETS_IMAGE . $image_old, DIR_ASSETS_IMAGE . $image_new);
                 }
             }
 
-            if ($width_orig != $width || $height_orig != $height) {
-
-                $ci->image->setFile(DIR_ASSETS_IMAGE . $image_old);
-                $ci->image->resize($width, $height);
-                $ci->image->save(DIR_ASSETS_IMAGE . $image_new);
+            if ($ci->input->server('HTTPS')) {
+                return url() . 'assets/images/' . $image_new;
             } else {
-                copy(DIR_ASSETS_IMAGE . $image_old, DIR_ASSETS_IMAGE . $image_new);
+                return url() . 'assets/images/' . $image_new;
             }
         }
-
-        if ($ci->input->server('HTTPS')) {
-            return url() . 'assets/images/' . $image_new;
-        } else {
-            return url() . 'assets/images/' . $image_new;
-        }
     }
-}
-function makeThumbnail($youTubeLink='',$thumbNailQuality='',$fileNameWithExt='',$fileDownLoadPath='') {
-    $videoIdExploded = explode('?v=', $youTubeLink);
-
-    if ( sizeof($videoIdExploded) == 1)
-    {
-        $videoIdExploded = explode('&v=', $youTubeLink);
-
-        $videoIdEnd = end($videoIdExploded);
-
-        $removeOtherInVideoIdExploded = explode('&',$videoIdEnd);
-
-        $youTubeVideoId = current($removeOtherInVideoIdExploded);
-    }else{
+    function makeThumbnail($youTubeLink='',$thumbNailQuality='',$fileNameWithExt='',$fileDownLoadPath='') {
         $videoIdExploded = explode('?v=', $youTubeLink);
 
-        $videoIdEnd = end($videoIdExploded);
+        if ( sizeof($videoIdExploded) == 1)
+        {
+            $videoIdExploded = explode('&v=', $youTubeLink);
 
-        $removeOtherInVideoIdExploded = explode('&',$videoIdEnd);
+            $videoIdEnd = end($videoIdExploded);
 
-        $youTubeVideoId = current($removeOtherInVideoIdExploded);
-    }
+            $removeOtherInVideoIdExploded = explode('&',$videoIdEnd);
 
-    switch ($thumbNailQuality)
-    {
-        case 'LOW':
-            $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/sddefault.jpg';
-            break;
+            $youTubeVideoId = current($removeOtherInVideoIdExploded);
+        }else{
+            $videoIdExploded = explode('?v=', $youTubeLink);
 
-        case 'MEDIUM':
-            $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/mqdefault.jpg';
-            break;
+            $videoIdEnd = end($videoIdExploded);
 
-        case 'HIGH':
-            $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/hqdefault.jpg';
-            break;
+            $removeOtherInVideoIdExploded = explode('&',$videoIdEnd);
 
-        case 'MAXIMUM':
-            $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/maxresdefault.jpg';
-            break;
-        default:
-            return  'Choose The Quality Between [ LOW (or) MEDIUM  (or) HIGH  (or)  MAXIMUM]';
-            break;
-    }
-    return $imageUrl;
-//    if( empty($fileNameWithExt) || is_null($fileNameWithExt)  || $fileNameWithExt === '')
-//    {
-//        $toArray = explode('/',$imageUrl);
-//        $fileNameWithExt = md5( time().mt_rand( 1,10 ) ).'.'.substr(strrchr(end($toArray),'.'),1);
-//    }
-//
-//    if (! is_dir($fileDownLoadPath))
-//    {
-//        mkdir($fileDownLoadPath,0777,true);
-//    }
-//
-//    file_put_contents($fileDownLoadPath.$fileNameWithExt, file_get_contents($imageUrl));
-//    return $fileNameWithExt;
-}
-function getDataPair($data, $key=NULL, $value=NULL)  {
-    $arr = array();
-    foreach ($data as $item)  {
-        if ($key !== NULL)  {
-            $arr[$item[$key]] = !is_null($value) ? $item[$value] : $item;
-        } else {  $arr[] = !is_null($value) ? $item[$value] : $item;
-        }
-    }
-    return $arr;
-}
-if(!function_exists('isSubscribe')) {
-    function isSubscribe() {
-        return getSession('subscribe');
-    }
-}
-if(!function_exists('currencyFormat')) {
-    function currencyFormat($number, $currency, $value = '', $format = true, $prefix = true, $suffix = true) {
-
-        $ci = get_instance();
-        $query = $ci->db->query("SELECT * FROM currency");
-        foreach ($query->result_array() as $result) {
-            $currencies[$result['code']] = array(
-                'id'   => $result['id'],
-                'name'         => $result['name'],
-                'code'         => $result['code'],
-                'symbol_left'   => $result['symbol_left'],
-                'symbol_right'  => $result['symbol_right'],
-                'decimal_place' => $result['decimal_place'],
-                'value'         => $result['value']
-            );
-        }
-        $symbol_left = $currencies[$currency]['symbol_left'];
-        $symbol_right = $currencies[$currency]['symbol_right'];
-        $decimal_place = $currencies[$currency]['decimal_place'];
-
-        if (!$value) {
-            $value = $currencies[$currency]['value'];
+            $youTubeVideoId = current($removeOtherInVideoIdExploded);
         }
 
-        $amount = $value ? (float)$number * $value : (float)$number;
+        switch ($thumbNailQuality)
+        {
+            case 'LOW':
+                $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/sddefault.jpg';
+                break;
 
-        $amount = round($amount, (int)$decimal_place);
+            case 'MEDIUM':
+                $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/mqdefault.jpg';
+                break;
 
-        if (!$format) {
-            return $amount;
+            case 'HIGH':
+                $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/hqdefault.jpg';
+                break;
+
+            case 'MAXIMUM':
+                $imageUrl = 'https://img.youtube.com/vi/'.$youTubeVideoId.'/maxresdefault.jpg';
+                break;
+            default:
+                return  'Choose The Quality Between [ LOW (or) MEDIUM  (or) HIGH  (or)  MAXIMUM]';
+                break;
         }
-
-        $string = '';
-
-        if($prefix) {
-            if ($symbol_left) {
-                $string .= $symbol_left;
+        return $imageUrl;
+    //    if( empty($fileNameWithExt) || is_null($fileNameWithExt)  || $fileNameWithExt === '')
+    //    {
+    //        $toArray = explode('/',$imageUrl);
+    //        $fileNameWithExt = md5( time().mt_rand( 1,10 ) ).'.'.substr(strrchr(end($toArray),'.'),1);
+    //    }
+    //
+    //    if (! is_dir($fileDownLoadPath))
+    //    {
+    //        mkdir($fileDownLoadPath,0777,true);
+    //    }
+    //
+    //    file_put_contents($fileDownLoadPath.$fileNameWithExt, file_get_contents($imageUrl));
+    //    return $fileNameWithExt;
+    }
+    function getDataPair($data, $key=NULL, $value=NULL)  {
+        $arr = array();
+        foreach ($data as $item)  {
+            if ($key !== NULL)  {
+                $arr[$item[$key]] = !is_null($value) ? $item[$value] : $item;
+            } else {  $arr[] = !is_null($value) ? $item[$value] : $item;
             }
         }
-
-
-        $string .= number_format($amount, (int)$decimal_place, $ci->config->item('decimal_point'), $ci->config->item('thousand_point'));
-        if($suffix) {
-            if ($symbol_right) {
-                $string .= $symbol_right;
-            }
-        }
-
-
-        return $string;
+        return $arr;
     }
-    if(!function_exists('render')) {
-        function render($view, $data = null) {
+    if(!function_exists('isSubscribe')) {
+        function isSubscribe() {
+            return getSession('subscribe');
+        }
+    }
+    if(!function_exists('currencyFormat')) {
+        function currencyFormat($number, $currency, $value = '', $format = true, $prefix = true, $suffix = true) {
+
             $ci = get_instance();
-            $ci->load->library('template');
-            $ci->template->content->view($view, $data);
-            $ci->template->publish();
+            $query = $ci->db->query("SELECT * FROM currency");
+            foreach ($query->result_array() as $result) {
+                $currencies[$result['code']] = array(
+                    'id'   => $result['id'],
+                    'name'         => $result['name'],
+                    'code'         => $result['code'],
+                    'symbol_left'   => $result['symbol_left'],
+                    'symbol_right'  => $result['symbol_right'],
+                    'decimal_place' => $result['decimal_place'],
+                    'value'         => $result['value']
+                );
+            }
+            $symbol_left = $currencies[$currency]['symbol_left'];
+            $symbol_right = $currencies[$currency]['symbol_right'];
+            $decimal_place = $currencies[$currency]['decimal_place'];
+
+            if (!$value) {
+                $value = $currencies[$currency]['value'];
+            }
+
+            $amount = $value ? (float)$number * $value : (float)$number;
+
+            $amount = round($amount, (int)$decimal_place);
+
+            if (!$format) {
+                return $amount;
+            }
+
+            $string = '';
+
+            if($prefix) {
+                if ($symbol_left) {
+                    $string .= $symbol_left;
+                }
+            }
+
+
+            $string .= number_format($amount, (int)$decimal_place, $ci->config->item('decimal_point'), $ci->config->item('thousand_point'));
+            if($suffix) {
+                if ($symbol_right) {
+                    $string .= $symbol_right;
+                }
+            }
+
+
+            return $string;
         }
-    }
-    if(!function_exists('attach')) {
-        function attach($str, $type = 'js') {
-            $ci = get_instance();
-            $ci->load->library('template');
-            if($type === 'js') {
-                $ci->template->javascript->add($str);
-            } else {
-                $ci->template->stylesheet->add($str);
+        if(!function_exists('render')) {
+            function render($view, $data = null) {
+                $ci = get_instance();
+                $ci->load->library('template');
+                $ci->template->content->view($view, $data);
+                $ci->template->publish();
+            }
+        }
+        if(!function_exists('attach')) {
+            function attach($str, $type = 'js') {
+                $ci = get_instance();
+                $ci->load->library('template');
+                if($type === 'js') {
+                    $ci->template->javascript->add($str);
+                } else {
+                    $ci->template->stylesheet->add($str);
+                }
             }
         }
     }
-}
+
+    if(!function_exists('readMore')) {
+        function readMore($string, $length, $options = array()) {
+            // strip tags to avoid breaking any html
+            $string = strip_tags($string);
+            if (strlen($string) > $length) {
+                // truncate string
+                $stringCut = substr($string, 0, $length);
+                $endPoint = strrpos($stringCut, ' ');
+                //if the string doesn't contain any space then it will cut without word basis.
+                $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+                $string .= '... <a class="'.$options['class'].'" href="'.$options['href'].'">Read More</a>';
+            }
+            echo $string;
+        }
+    }
 ?>

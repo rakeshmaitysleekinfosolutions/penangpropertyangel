@@ -666,18 +666,18 @@ footer ul li a:hover{
     top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
     color: #fff !important;
     z-index: 999;
     text-align: center;
 }
-.buy_1{
+/*.buy_1{
     background-image: url(/images/c.jpg?d586d89c9af4f397281ce034cb453a26);
     background-size: cover;
     width: 100%;
     min-height: 290px;
-}
-.buy_2{
+}*/
+/*.buy_2{
     background-image: url(/images/2d.jpg?04b95c425f0bf108d650159df6dffc45);
     background-size: cover;
     width: 100%;
@@ -724,16 +724,19 @@ footer ul li a:hover{
     background-size: cover;
     width: 100%;
     min-height: 290px;
+}*/
+.trans_box img{
+    width: 100%;
 }
 .trans_box{
     background-color: #000;
-    opacity: 0.7;
+    opacity: 0.2;
     width: 100%;
     min-height: 290px;
 }
 .trans_box:hover{
     background-color: #000;
-    opacity: 0.1;
+    opacity: 0.9;
     color: #fff !important;
 }
 .buy_view{
@@ -747,7 +750,7 @@ footer ul li a:hover{
     display: inline-flex;
     border-radius: 40px;
     -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-bottom: 20px;
 }
 .buy_view:hover{
@@ -1200,7 +1203,7 @@ footer ul li a:hover{
     top: 178%;
     left: -12%;
     -webkit-transform: translate(0%, -178%);
-            transform: translate(0%, -178%);
+    transform: translate(0%, -178%);
     width: 348px;
     height: 1px;
     background: #D8D8D8;
@@ -1249,6 +1252,21 @@ footer ul li a:hover{
     margin-left: 10px;
     margin-bottom: 25px;
 }
+.ui-widget.ui-widget-content {
+    border: 1px solid #c5c5c5;
+    width: 100%;
+}
+.ui-widget-header {
+    background: #4d79ff !important;
+}
+.ui-slider .ui-slider-handle{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+.ui-slider .ui-slider-handle::focus{
+    outline: none;
+}
 .rent_list_image{
     margin-bottom: 40px;
 }
@@ -1259,14 +1277,15 @@ footer ul li a:hover{
     font-family: "Poppins";
     margin-bottom: 30px;
     position: relative;
+    min-height: 100px;
 }
 .rent_list_image p::after{
     content: "";
     position: absolute;
-    top: 143%;
+    top: 129%;
     left: 1%;
-    -webkit-transform: translate(-1%, -143%);
-            transform: translate(-1%, -143%);
+    -webkit-transform: translate(-1%, -129%);
+    transform: translate(-1%, -129%);
     width: 321px;
     height: 1px;
     background: #D7D7D7;
@@ -1342,21 +1361,9 @@ footer ul li a:hover{
     margin-bottom:20px;
     font-size:16px;
 }
-/*.price-range-field{*/
-/*    width:20%;*/
-/*    min-width: 16%;*/
-/*    background-color:#f9f9f9;*/
-/*    border: 1px solid #6e6666;*/
-/*    color: black;*/
-/*    font-family: myFont;*/
-/*    font: normal 14px Arial, Helvetica, sans-serif;*/
-/*    border-radius: 5px;*/
-/*    height:26px;*/
-/*    padding:5px;*/
-/*}*/
+
 .search-results-block{
     position: relative;
     display: block;
     clear: both;
 }
-
