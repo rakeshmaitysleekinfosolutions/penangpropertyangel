@@ -4,7 +4,7 @@ window.$ = global.$ = window.jQuery = require('jquery');
 require('./additional-methods');
 require('./jquery.validate');
 require('./loadingoverlay.min');
-require ('./jquery.slimscroll');
+require('./jquery.slimscroll');
 
 
 require('./owl.carousel');
@@ -14,14 +14,9 @@ $.ajaxSetup({
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
 });
-
-
-
-
-
-
 var $frmRegister = $("#frmRegister"),
     $frmLogin = $("#frmLogin"),
+    $frmInspection = $('#inspection-arranged'),
     $frmRentFilter = $('#frm-rent-filter'),
     validate = ($.fn.validate !== undefined);
 
@@ -152,6 +147,7 @@ if ($frmLogin.length > 0 && validate) {
 
       });
 }
+
 
 
 var compare = {
@@ -461,4 +457,59 @@ if ($frmRentFilter.length > 0 && validate) {
 $(document).on('click','#btn-reset', function(e) {
       location.reload();
 })
+// require('../datetimepicker/jquery.mousewheel.min');
+// require('../datetimepicker/jquery.datetimepicker.min');
 
+import 'jquery-datetimepicker';
+$.datetimepicker.setLocale('en');
+$('#inspection-arranged-datetime').datetimepicker({
+      format:'m/d/Y H:i:a',
+      formatDate:'d.m.Y',
+      //defaultDate:'8.12.1986', // it's my birthday
+      defaultDate:'+03.01.1970', // it's my birthday
+      defaultTime:'10:00',
+      timepickerScrollbar:false,
+      minDate: new Date(),
+      step:30
+
+});
+// From Inspection
+if ($frmInspection.length > 0 && validate) {
+      $frmInspection.validate({
+            submitHandler: function (form, event) {
+                  event.preventDefault();
+                  $.ajax({
+                        type: "POST",
+                        url: $(form).attr('action'),
+                        dataType: "json",
+                        data: $(form).serialize(),
+                        beforeSend: function() {
+                              //$('#inspection-arranged-btn').LoadingOverlay("show");
+                        },
+                        success: function (json) {
+                              //$('#inspection-arranged-btn').LoadingOverlay("hide");
+                              if(json['error']) {
+                                    $('#message').html(('<div class="alert alert-danger"><i class="fa fa-check-circle"></i>  ' + json['message'] + '</div>'))
+                              }
+                              if(json['success']) {
+                                    $('#message').html(('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['message'] + '</div>'))
+                                    $(form)[0].reset();
+                              }
+
+
+                        }
+                  });
+
+                  return false; // required to block normal submit since you used ajax
+            }
+
+      });
+}
+
+window.onload = function() {
+      var $recaptcha = document.querySelector('#g-recaptcha-response');
+
+      if($recaptcha) {
+            $recaptcha.setAttribute("required", "required");
+      }
+};

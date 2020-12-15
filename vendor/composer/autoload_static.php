@@ -69,6 +69,7 @@ class ComposerStaticInit7cdb35c4860801be35b9a7e8e1c76e22
         '75c79eb1b25749b05a47976f32b0d8a2' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/operations/divideby.php',
         '6ab8ad87a734f276a6bcd5a0fe1289be' => __DIR__ . '/..' . '/markbaker/matrix/classes/src/operations/divideinto.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        'a1105708a18b76903365ca1c4aa61b02' => __DIR__ . '/..' . '/symfony/translation/Resources/functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -92,6 +93,7 @@ class ComposerStaticInit7cdb35c4860801be35b9a7e8e1c76e22
             'Symfony\\Contracts\\Translation\\' => 30,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\Translation\\' => 30,
+            'Symfony\\Component\\Finder\\' => 25,
             'Stripe\\' => 7,
         ),
         'P' => 
@@ -108,6 +110,10 @@ class ComposerStaticInit7cdb35c4860801be35b9a7e8e1c76e22
             'MyCLabs\\Enum\\' => 13,
             'Matrix\\' => 7,
             'Mail\\' => 5,
+        ),
+        'G' => 
+        array (
+            'Gregwar\\' => 8,
         ),
         'D' => 
         array (
@@ -164,6 +170,10 @@ class ComposerStaticInit7cdb35c4860801be35b9a7e8e1c76e22
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
         ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
         'Stripe\\' => 
         array (
             0 => __DIR__ . '/..' . '/stripe/stripe-php/lib',
@@ -204,6 +214,10 @@ class ComposerStaticInit7cdb35c4860801be35b9a7e8e1c76e22
         'Mail\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application/mail',
+        ),
+        'Gregwar\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gregwar/captcha/src/Gregwar',
         ),
         'Doctrine\\Instantiator\\' => 
         array (

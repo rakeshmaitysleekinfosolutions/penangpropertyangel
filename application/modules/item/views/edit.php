@@ -192,13 +192,13 @@
                             <div class="col-md-6">
                                 <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entryBathroom;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $bedroom3?>" name="bedroom3" class="form-control floating" type="text" autocomplete="off">
+                                    <input value="<?php echo $bathroom1?>" name="bathroom1" class="form-control floating" type="text" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group form-focus">
                                     <label class="control-label"><?php echo $entryBathroom;?><span class="text-danger"></span></label>
-                                    <input value="<?php echo $bedroom4;?>" name="bedroom4" class="form-control floating" type="text" autocomplete="off">
+                                    <input value="<?php echo $bathroom2;?>" name="bathroom2" class="form-control floating" type="text" autocomplete="off">
                                 </div>
                             </div>
                         </div>
@@ -234,6 +234,12 @@
                                 <div class="form-group">
                                     <label class="control-label"><?php echo $entryNotes;?><span class="text-danger"></span></label>
                                     <textarea name="notes" rows="5" class="form-control floating" type="text" autocomplete="off"><?php echo $notes;?></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entryYoutube;?><span class="text-danger"></span></label>
+                                    <input value="<?php echo $youtube_link;?>" name="youtube_link" class="form-control floating" type="text" autocomplete="off">
                                 </div>
                             </div>
                         </div>

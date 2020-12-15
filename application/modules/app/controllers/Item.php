@@ -1,10 +1,19 @@
 <?php
+use Gregwar\Captcha\CaptchaBuilder;
+
+
 class Item extends AppController {
     private $itemType;
+    private $builder;
     public function __construct() {
         parent::__construct();
         $this->setLayout('layout/app');
+        $this->builder = new CaptchaBuilder;
     }
+
+    /**
+     * @throws Exception
+     */
     public function index() {
         if(!$this->uri->segment(1)) {
             redirect(url('/'));
@@ -31,12 +40,22 @@ class Item extends AppController {
         }
         render('item/index', $this->data);
     }
+
+    /**
+     * @param $id
+     * @return bool
+     */
     public function getImgThumbnail($id) {
         if(ItemImage_model::factory()->findOne(['item_id' => $id, 'thumbnail' => 1])) {
             return ItemImage_model::factory()->findOne(['item_id' => $id, 'thumbnail' => 1])->image;
         }
         return false;
     }
+
+    /**
+     * @param $slug
+     * @throws Exception
+     */
     public function getItems($slug) {
         switch ($this->uri->segment(1)) {
             case 'rent':
@@ -79,7 +98,7 @@ class Item extends AppController {
                     'title'   => $item->title,
                     'img'     => ($this->getImgThumbnail($item->id)) ? resize($this->getImgThumbnail($item->id),319,264) : resize('no_image.png',319,264),
                     'slug'    => $item->slug,
-                    'url'     => url($rentCategory->slug.'/'.$item->slug),
+                    'url'     => url($this->uri->segment(1).'/'.$rentCategory->slug.'/'.$item->slug),
                     'price'   => currencyFormat($item->price, $this->options['currency']['code']),
                     'area'    => number_format($area, (int)$this->options['currency']['decimal_place'], $this->config->item('decimal_point'), $this->config->item('thousand_point')).' sq.ft',
                     'images'  => $item->images($item->id)
@@ -91,6 +110,92 @@ class Item extends AppController {
         render('item/list', $this->data);
     }
 
+    /**
+     * @param $categorySlug
+     * @param $itemSlug
+     */
+    public function getItem($categorySlug, $itemSlug) {
+        $this->data['breadcrumbs'] = array();
+        $this->data['breadcrumbs'][] = array(
+            'text' => 'Home',
+            'href' => url('/')
+        );
+
+
+        switch ($this->uri->segment(1)) {
+            case 'rent':
+                $this->itemType = 2;
+                break;
+            case 'buy':
+                $this->itemType = 1;
+                break;
+        }
+        // Get Rent Category
+        $this->category = Category_model::factory()->findOne(['slug' => $categorySlug]);
+        if(!$this->category) {
+            redirect(url('/rent'));
+        }
+        if($this->category) {
+            $this->data['breadcrumbs'][] = array(
+                'text' => $this->category->name,
+                'href' => url($this->uri->segment(1).'/'.$this->category->slug)
+            );
+        }
+        // Get Item by rent category
+        $this->item = Item_model::factory()->findOne(['type' => (int)$this->itemType, 'slug' => $itemSlug],10,'sort_order', 'ASC');
+        $this->data['item'] = array();
+        if(!empty($this->item)) {
+
+            $this->data['breadcrumbs'][] = array(
+                'text' => $this->item->title,
+                'href' => url($this->uri->segment(1).'/'.$this->category->slug.'/'.$this->item->title)
+            );
+            $area = round($this->item->area, (int)$this->options['currency']['decimal_place']);
+            $this->data['item'] = array(
+                'id'            => $this->item->id,
+                'title'         => $this->item->title,
+                'small_description'    => $this->item->description->small_description,
+                'long_description'     => $this->item->description->long_description,
+                'bedroom'       => $this->item->description->bedroom1 .'+'.$this->item->description->bedroom2,
+                'bathroom'      => $this->item->description->bathroom1 .'+'.$this->item->description->bathroom2,
+                'img'           => ($this->getImgThumbnail($this->item->id)) ? resize($this->getImgThumbnail($this->item->id),319,264) : resize('no_image.png',319,264),
+                'type'          => ($this->itemType == 1) ? 'BUY' : 'RENT',
+                'hold'          => ($this->item->description->hold) ? 'Leasehold' : 'Freehold',
+                'price'         => currencyFormat($this->item->price, $this->options['currency']['code']),
+                'area'          => number_format($area, (int)$this->options['currency']['decimal_place'], $this->config->item('decimal_point'), $this->config->item('thousand_point')).' sq.ft',
+                'images'        => $this->item->images($this->item->id),
+                'agent'         => $this->item->agent,
+                'map'           => $this->item->description->map,
+                'youtube_link'  => $this->item->description->youtube_link,
+            );
+
+        }
+// Get Item list by rent category
+        $related_item = Item_model::factory()->findOne(['category_id' => $this->category->id, 'type' => (int)$this->itemType],1,'RAND()', 'ASC');
+        $this->data['related_item'] = array();
+        if(!empty($related_item)) {
+                $area = round($related_item->area, (int)$this->options['currency']['decimal_place']);
+                $this->data['related_item'] = array(
+                    'id'      => $related_item->id,
+                    'title'   => $related_item->title,
+                    'img'     => ($this->getImgThumbnail($related_item->id)) ? resize($this->getImgThumbnail($related_item->id),319,264) : resize('no_image.png',319,264),
+                    'slug'    => $related_item->slug,
+                    'url'     => url($this->uri->segment(1).'/'.$this->category->slug.'/'.$related_item->slug),
+                    'price'   => currencyFormat($related_item->price, $this->options['currency']['code']),
+                    'area'    => number_format($area, (int)$this->options['currency']['decimal_place'], $this->config->item('decimal_point'), $this->config->item('thousand_point')).' sq.ft',
+                    'images'  => $related_item->images($related_item->id)
+                );
+        }
+        $this->builder->setBackgroundColor(255, 255, 255);
+        $this->builder->build($width = 350, $height = 80, $font = null);
+        $this->data['builder'] = $this->builder;
+        setSession('phrase',$this->builder->getPhrase());
+        render('item/view', $this->data);
+    }
+
+    /**
+     * @return mixed
+     */
     public function filter() {
         if($this->isAjaxRequest()) {
 
@@ -133,4 +238,76 @@ class Item extends AppController {
         }
     }
 
+    /**
+     * @return mixed
+     */
+    public function submitInspectionArranged() {
+
+        if($this->isAjaxRequest()) {
+            $phrase = '';
+            if(!empty(getSession('phrase'))) {
+                $phrase = getSession('phrase');
+            }
+            if($phrase == $this->input->post('code')) {
+                // instructions if user phrase is good
+                $datetime = $this->input->post('datetime');
+                $explodeDatetime = explode(' ', $datetime);
+                $date = ($explodeDatetime[0]) ? $explodeDatetime[0] : '';
+                $time = ($explodeDatetime[1]) ? $explodeDatetime[1] : '';
+                Inspection_model::factory()->insert([
+                    'agent_id'          => $this->input->post('agent_id'),
+                    'name'              => $this->input->post('name'),
+                    'date'              => $date,
+                    'time'              => $time,
+                    'contact'           => $this->input->post('contact'),
+                    'email'             => $this->input->post('email'),
+                ]);
+                $this->json['success'] = true;
+                $this->json['message'] = 'Message has been successfully sent!';
+            }
+            else {
+                // user phrase is wrong
+                $this->json['error'] = true;
+                $this->json['message'] = 'Captcha Invalid';
+
+            }
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(200)
+                ->set_output(json_encode($this->json));
+
+        }
+    }
+
+    /**
+     *
+     */
+    public function downloadAllFiles() {
+        if($this->isPost()) {
+            $files = $this->input->post('files');
+            //$this->dd($files);
+            $tmpFile = tempnam('/tmp', '');
+            $zip = new ZipArchive;
+            $zip->open($tmpFile, ZipArchive::CREATE);
+            foreach ($files as $file) {
+                // download file
+                $fileContent = file_get_contents($file);
+                $zip->addFromString(basename($file), $fileContent);
+            }
+            $zip->close();
+            $date = new DateTime();
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-type: application/octet-stream");
+            //header("Content-length: " . filesize($filename));
+            header("Content-disposition: attachment;filename = " . $date->format('Y-m-d H:i:sP') . ".zip");
+            header("Content-Transfer-Encoding: binary");
+            readfile($tmpFile);
+            ob_end_clean();
+            unlink($tmpFile);
+        }
+    }
 }

@@ -6,13 +6,13 @@
                 <div class="row" id="render-filter-data">
                     <?php if(count($items) > 0) {
                         foreach ($items as $item) { ?>
-                            <div class="col-md-6 col-12">
-                                <div class="rent_list_image">
-                                    <img src="<?php echo $item['img'];?>" alt="<?php echo $item['title'];?>">
-                                    <p><?php echo readMore($item['title'],100, $options = array('href' => $item['url'],'class' => ''));?></p>
-                                    <h3><span><?php echo $item['price'];?></span> per month <?php echo $item['area'];?></h3>
+                                <div class="col-md-6 col-12">
+                                    <div class="rent_list_image">
+                                        <a href="<?php echo $item['url'];?>"><img src="<?php echo $item['img'];?>" alt="<?php echo $item['title'];?>"></a>
+                                        <p><?php echo readMore($item['title'],100, $options = array('href' => $item['url'],'class' => ''));?></p>
+                                        <h3><span><?php echo $item['price'];?></span> per month <?php echo $item['area'];?></h3>
+                                    </div>
                                 </div>
-                            </div>
                         <?php } ?>
                     <?php } else { ?>
                         <div class="col-md-12">

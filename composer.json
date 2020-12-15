@@ -11,7 +11,8 @@
 		"stripe/stripe-php": "^7.51",
 		"paypal/rest-api-sdk-php": "*",
 		"phpoffice/phpspreadsheet": "^1.15",
-		"shuchkin/simplexlsxgen": "^0.9.22"
+		"shuchkin/simplexlsxgen": "^0.9.22",
+		"gregwar/captcha": "1.*"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

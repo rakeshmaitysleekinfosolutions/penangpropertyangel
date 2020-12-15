@@ -64,6 +64,7 @@ class Item extends AdminController {
         $this->data['entryStatus']              = 'Status';
         $this->data['entrySmallDescription']    = 'Short Desc';
         $this->data['entryLongDescription']     = 'LongDesc';
+        $this->data['entryYoutube']             = 'Youtube Link';
 
         $this->data['entryMetaTitle']            = 'Meta Title';
         $this->data['entryMetaDescription']      = 'Meta Description';
@@ -251,20 +252,20 @@ class Item extends AdminController {
             $this->data['bedroom2'] = 0;
         }
         // Bedroom
-        if (!empty($this->input->post('bedroom3'))) {
-            $this->data['bedroom3'] = $this->input->post('bedroom3');
+        if (!empty($this->input->post('bathroom1'))) {
+            $this->data['bathroom1'] = $this->input->post('bathroom1');
         } elseif (!empty($this->item)) {
-            $this->data['bedroom3'] = $this->item->description->bedroom3;
+            $this->data['bathroom1'] = $this->item->description->bathroom1;
         } else {
-            $this->data['bedroom3'] = 0;
+            $this->data['bathroom1'] = 0;
         }
         // Bedroom
-        if (!empty($this->input->post('bedroom4'))) {
-            $this->data['bedroom4'] = $this->input->post('bedroom4');
+        if (!empty($this->input->post('bathroom2'))) {
+            $this->data['bathroom2'] = $this->input->post('bathroom2');
         } elseif (!empty($this->item)) {
-            $this->data['bedroom4'] = $this->item->description->bedroom4;
+            $this->data['bathroom2'] = $this->item->description->bathroom2;
         } else {
-            $this->data['bedroom4'] = 0;
+            $this->data['bathroom2'] = 0;
         }
         // small description
         if (!empty($this->input->post('small_description'))) {
@@ -281,6 +282,14 @@ class Item extends AdminController {
             $this->data['long_description'] = $this->item->description->long_description;
         } else {
             $this->data['long_description'] = '';
+        }
+        // Youtube Link
+        if (!empty($this->input->post('youtube_link'))) {
+            $this->data['youtube_link'] = $this->input->post('youtube_link');
+        } elseif (!empty($this->item)) {
+            $this->data['youtube_link'] = $this->item->description->youtube_link;
+        } else {
+            $this->data['youtube_link'] = '';
         }
         // Meta Title
         if (!empty($this->input->post('meta_title'))) {
@@ -452,10 +461,11 @@ class Item extends AdminController {
                 'notes'                 => $this->data['notes'],
                 'bedroom1'              => $this->data['bedroom1'],
                 'bedroom2'              => $this->data['bedroom2'],
-                'bedroom3'              => $this->data['bedroom3'],
-                'bedroom4'              => $this->data['bedroom4'],
+                'bathroom1'             => $this->data['bathroom1'],
+                'bathroom2'             => $this->data['bathroom2'],
                 'small_description'     => $this->data['small_description'],
                 'long_description'      => $this->data['long_description'],
+                'youtube_link'          => $this->data['youtube_link'],
                 'meta_title'            => $this->data['meta_title'],
                 'meta_keywords'         => $this->data['meta_keywords'],
                 'meta_description'      => $this->data['meta_description'],
@@ -545,10 +555,11 @@ class Item extends AdminController {
                   'notes'                 => $this->data['notes'],
                   'bedroom1'              => $this->data['bedroom1'],
                   'bedroom2'              => $this->data['bedroom2'],
-                  'bedroom3'              => $this->data['bedroom3'],
-                  'bedroom4'              => $this->data['bedroom4'],
+                  'bathroom1'             => $this->data['bathroom1'],
+                  'bathroom2'             => $this->data['bathroom2'],
                   'small_description'     => $this->data['small_description'],
                   'long_description'      => $this->data['long_description'],
+                  'youtube_link'          => $this->data['youtube_link'],
                   'meta_title'            => $this->data['meta_title'],
                   'meta_keywords'         => $this->data['meta_keywords'],
                   'meta_description'      => $this->data['meta_description'],
@@ -635,8 +646,8 @@ class Item extends AdminController {
                     'agent'		    => (isset($result->agent)) ? $result->agent->firstname." ".$result->agent->lastname : '',
                     'type'		    => ($result->type == 1) ? 'Rent' : 'Sell',
                     'category' 		=> $result->category->name,
-                    'bedroom1'		=> $result->description->bedroom1.'+'.$result->description->bedroom2,
-                    'bedroom2'		=> $result->description->bedroom3.'+'.$result->description->bedroom4,
+                    'bedroom'		=> $result->description->bedroom1.'+'.$result->description->bedroom2,
+                    'bathroom'		=> $result->description->bathroom1.'+'.$result->description->bathroom2,
                     'area' 		    => $result->area,
                     'title' 		=> $result->title,
                     'price' 		=> $result->price,
@@ -665,8 +676,8 @@ class Item extends AdminController {
                 $this->data[$i][] = '<td>'.$row['agent'].'</td>';
                 $this->data[$i][] = '<td>'.$row['type'].'</td>';
                 $this->data[$i][] = '<td>'.$row['category'].'</td>';
-                $this->data[$i][] = '<td>'.$row['bedroom1'].'</td>';
-                $this->data[$i][] = '<td>'.$row['bedroom2'].'</td>';
+                $this->data[$i][] = '<td>'.$row['bedroom'].'</td>';
+                $this->data[$i][] = '<td>'.$row['bathroom'].'</td>';
                 $this->data[$i][] = '<td>'.$row['area'].'</td>';
                 $this->data[$i][] = '<td>'.$row['title'].'</td>';
                 $this->data[$i][] = '<td>'.$row['price'].'</td>';

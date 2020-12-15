@@ -3,6 +3,8 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~owl.carousel/dist/assets/owl.carousel.min.css';
 @import '~owl.carousel/dist/assets/owl.theme.default.css';
+
+@import "../../node_modules/jquery-datetimepicker/jquery.datetimepicker.css";
 *{
     margin: 0;
     padding: 0;
@@ -1037,6 +1039,7 @@ footer ul li a:hover{
     text-decoration: none;
     color: #fff;
 }
+
 /*--------------------------cell property css---------------------*/
 .cell_property{
     padding: 20px 50px;
@@ -1045,40 +1048,394 @@ footer ul li a:hover{
     border: 1px solid #000;
     padding: 25px;
 }
-
-/* Updated by rakesh*/
-.fade_div{
+.cell_details .carousel-item img{
+    width: 100%;
+    height: 450px;
+}
+.cell_details h5{
+    font-size: 19px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Poppins";
+    margin: 20px 0 30px;
+}
+.list_price_sell ul li{
+    list-style: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 500;
+    padding-left: 5px;
+}
+.li_first_sell{
+    margin-right: 320px;
+    font-size: 14px;
+    font-weight: 400;
+}
+.li_first_sell span{
+    font-size: 24px;
+    font-weight: 600;
+    margin-right: 12px;
+}
+.list_price_sell{
     position: relative;
 }
-.fade_div .carousel-item img{
-    width: 100%;
-    height: 500px;
-}
-.fade_div .carousel-caption h3{
-    font-size: 14px;
-    color: #fff !important;
-    font-weight: 400;
-    padding: 2px 10px;
-}
-.fade_div .carousel-caption{
+.list_price_sell::before{
     position: absolute;
-    width: 175px;
-    height: 60px;
-    background: #000;
+    content: "";
+    width: 865px;
+    height: 1px;
+    background: #d8d8d8;
     top: 0%;
-    left: 100%;
-    transform: translate(-100%, 0%);
+    left: 0%;
 }
-.button_feature .btn{
-    margin: 7px 7px;
-    padding: 10px 50px;
-    background: #F0F0F0;
+.list_price_sell::after{
+    position: absolute;
+    content: "";
+    width: 865px;
+    height: 1px;
+    background: #d8d8d8;
+    top: 98%;
+    left: 0%;
 }
-.owl-theme .owl-nav .owl-prev{
-    margin-left: -23px;
+.cell_details ul li{
+    list-style: none;
+    font-size: 14px;
+    line-height: 25px;
+    color: #000;
+    font-weight: 500;
+    font-family: "Poppins";
 }
-.owl-theme .owl-nav .owl-next{
-    margin-left: 1373px;
+.cell_details_para{
+    position: relative;
+}
+.cell_details_para::before{
+    position: absolute;
+    content: "";
+    width: 865px;
+    height: 1px;
+    background: #d8d8d8;
+    top: 0%;
+    left: 44%;
+    transform: translate(-44%,0%);
+}
+.cell_details_para::after{
+    position: absolute;
+    content: "";
+    width: 865px;
+    height: 1px;
+    background: #d8d8d8;
+    top: 110%;
+    left: 44%;
+    transform: translate(-44%,-110%);
+}
+.cell_details_para p{
+    font-size: 14px;
+    line-height: 25px;
+    color: #000;
+    font-weight: 500;
+    font-family: "Poppins";
+}
+.sell_para{
+    margin-top: 10px;
+}
+.sell_para h4{
+    font-size: 20px;
+    line-height: 25px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Poppins";
+}
+.sell_para p{
+    font-size: 14px;
+    line-height: 25px;
+    color: #000;
+    font-weight: 500;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+}
+.down{
+    display: block;
+    padding: 8px 15px;
+    background: #000;
+    color: #fff;
+    font-size: 16px;
+
+}
+.youtube{
+    margin-top: 20px;
+    display: block;
+    color: red;
+    font-size: 25px;
+}
+.youtube:hover{
+    text-decoration: none;
+    color: red;
+}
+.side_details_image .carousel-item{
+    position: relative;
+}
+.side_details_image .carousel-caption{
+    width: 300px;
+    height: 10px;
+
+    top: 93%;
+    left: 60%;
+    position: absolute;
+    transform: (-60%,-93%);
+}
+.side_details{
+    border: 1px solid #d8d8d8;
+}
+.side_details ul li{
+    list-style: none;
+    font-size: 16px;
+    padding-left: 10px;
+    line-height: 27px;
+}
+.side_details .row{
+    padding: 20px;
+}
+.side_details_form{
+    border: 1px solid #d8d8d8;
+    padding: 20px;
+}
+.side_details_form h3{
+    font-size: 25px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.side_details_form h6{
+    font-size: 19px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+}
+.side_details_form form input{
+    border: 1px solid #000;
+    height: 34px;
+    border-radius: 0%;
+}
+::placeholder{
+    font-size: 12px;
+    color: #000 !important;
+    background: transparent !important;
+}
+.side_details_form form h2{
+    font-size: 32px;
+    color: #ff0b0b;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.side_details_form form .notify{
+    font-size: 24px;
+    color: #272626;
+    font-weight: 400;
+    font-family: "Poppins";
+    padding: 8px 130px;
+    background: #CDCDCD;
+    border-radius: 0%;
+}
+.side_details_image{
+    border: 1px solid #d8d8d8;
+    padding: 20px;
+}
+.side_details_image img{
+    width: 100%;
+    height: 300px;
+}
+.side_details_form1{
+    border: 1px solid #d8d8d8;
+    padding: 20px;
+}
+.side_details_form1 h3{
+    font-size: 25px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+}
+.side_details_form1 h6{
+    font-size: 15px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+}
+.side_details_form1 form input{
+    border: 1px solid #000;
+    height: 34px;
+    border-radius: 0%;
+}
+::placeholder{
+    font-size: 12px;
+    color: #000 !important;
+    background: transparent !important;
+}
+.side_details_form1 select{
+    display: block;
+    width: 100%;
+    height: 35px;
+}
+.form_reset{
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: 400;
+    font-family: "Poppins";
+    width: 100%;
+    height: 50px;
+    background: #000;
+}
+.map iframe{
+    width: 600px;
+    height: 400px;
+    margin-top: 50px;
+}
+.map p{
+    font-size: 12px;
+    color: #000;
+    width: 270px;
+}
+/*--------------------------rent-listing page css-----------------------*/
+.r_list{
+    padding: 60px 0;
+}
+.r_list h2{
+    font-size: 40px;
+    color: #0f1b2d;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 45px;
+}
+.side_form{
+    border: 1px solid #111112;
+    padding: 20px;
+}
+.rent_listing_form{
+    margin: 20px 0;
+}
+.rent_listing_form select{
+    width: 305px;
+    height: 40px;
+    background: #D8D8D8;
+    border: none;
+}
+.rent_listing_checkbox{
+    margin-bottom: 30px;
+}
+.rent_listing_checkbox label{
+    font-size: 15px;
+    padding-right: 12px;
+    position: relative;
+}
+.rent_listing_checkbox label::after{
+    content: "";
+    position: absolute;
+    top: 178%;
+    left: -12%;
+    transform: translate(0%, -178%);
+    width: 348px;
+    height: 1px;
+    background: #D8D8D8;
+}
+.rent_listing_checkbox input{
+    width: 20px;
+    height: 20px;
+    border: 1px solid #D8D8D8 !important;
+}
+.ui-content input{
+    width: 100%;
+}
+.ui-content label{
+    font-size: 15px;
+}
+.ui-content ul li{
+    list-style: none;
+    display: inline-block;
+    width: 47%;
+    text-align: right;
+    background: #D8D8D8;
+    margin-right: 6px;
+    padding: 4px;
+}
+.reset{
+    padding: 8px 25px;
+    background: #000;
+    font-size: 16px;
+    text-align: center;
+    color: #fff;
+    margin-left: 7px;
+    border: none;
+    border-radius: 25px;
+    margin-bottom: 25px;
+    margin-top: 12px;
+}
+.search{
+    padding: 8px 25px;
+    background: #D7D7D7;
+    font-size: 16px;
+    text-align: center;
+    color: #000;
+    border: none;
+    border-radius: 25px;
+    margin-top: 12px;
+    margin-left: 10px;
+    margin-bottom: 25px;
+}
+.rent_list_image{
+    margin-bottom: 40px;
+}
+.rent_list_image p{
+    font-size: 21px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Poppins";
+    margin-bottom: 30px;
+    position: relative;
+}
+.rent_list_image p::after{
+    content: "";
+    position: absolute;
+    top: 143%;
+    left: 1%;
+    transform: translate(-1%, -143%);
+    width: 321px;
+    height: 1px;
+    background: #D7D7D7;
+}
+.rent_list_image h3{
+    font-size: 13px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Futura";
+}
+.rent_list_image h3 span{
+    font-size: 30px;
+    color: #303030;
+    font-family: "Futura T";
+}
+.rent_list_image h5{
+    font-size: 23px;
+    color: #111112;
+    font-weight: 500;
+    font-family: "Futura";
+}
+.pagination{
+    margin-left: 15px;
+    margin-top: 5px;
+}
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border:1px solid #D8D8D8;
+}
+.pagination a.active {
+    background-color: #dfdfdf;
+    color: white;
 }
 
 
@@ -1284,4 +1641,15 @@ footer ul li a:hover{
     position: relative;
     display: block;
     clear: both;
+}
+
+
+#g-recaptcha-response {
+    display: block !important;
+    position: absolute;
+    margin: -78px 0 0 0 !important;
+    width: 302px !important;
+    height: 76px !important;
+    z-index: -999999;
+    opacity: 0;
 }

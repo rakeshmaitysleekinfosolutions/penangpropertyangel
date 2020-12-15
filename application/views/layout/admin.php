@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/plugins/morris/morris.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/css/style.css">
         <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/js/sweetalert/sweetalert.css">
+        <link rel="stylesheet" href="<?php echo base_url();?>assets/theme/light/js/summernote/summernote.css">
         <link rel="stylesheet" href="<?php echo base_url();?>dist/app.css">
         <?php echo $this->template->stylesheet; ?>
 	</head>
@@ -117,6 +118,7 @@
 		 <script type="text/javascript" src="<?php echo base_url();?>dist/app.js" ></script>
         <?php echo $this->template->javascript; ?>
         <script type="text/javascript" src="<?php echo base_url();?>assets/theme/light/js/sweetalert/sweetalert.js" ></script>
+        <script type="text/javascript" src="<?php echo base_url();?>assets/theme/light/js/summernote/summernote.js" ></script>
     </body>
 
 <!-- Mirrored from dreamguys.co.in/smarthr/light/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 22 Mar 2018 04:09:39 GMT -->

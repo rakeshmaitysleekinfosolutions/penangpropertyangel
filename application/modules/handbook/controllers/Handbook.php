@@ -32,10 +32,12 @@ class Handbook extends AdminController {
      */
     public function init() {
         $this->data['heading']                  = 'Handbook Management';
+        $this->data['entrySortOrder']           = 'Sort Order';
         $this->data['entryName']                = 'Name';
         $this->data['entrySlug']                = 'Slug';
         $this->data['entrySequence']            = 'Sequence';
         $this->data['entryStatus']              = 'Status';
+        $this->data['entryHandbookType']        = 'Handbook Type';
         $this->data['entryRemarks']             = 'Remarks';
         $this->data['entrySmallDescription']    = 'Short Desc';
         $this->data['entryLongDescription']     = 'Long Desc';
@@ -99,6 +101,15 @@ class Handbook extends AdminController {
             $this->data['sequence'] = $this->handbook->sequence;
         } else {
             $this->data['sequence'] = 0;
+        }
+
+        // Handbook Type
+        if (!empty($this->input->post('handbook_type'))) {
+            $this->data['handbook_type'] = $this->input->post('handbook_type');
+        } elseif (!empty($this->handbook)) {
+            $this->data['handbook_type'] = $this->handbook->handbook_type;
+        } else {
+            $this->data['handbook_type'] = '';
         }
        
         // small description
@@ -200,11 +211,13 @@ class Handbook extends AdminController {
         $this->init();
         $this->data['title']     = 'Handbook List';
         $this->data['columns'][] = 'NO';
+        $this->data['columns'][] = 'Type';
         $this->data['columns'][] = 'Seq';
         $this->data['columns'][] = 'Name';
         $this->data['columns'][] = 'Remarks';
         $this->data['columns'][] = 'Img';
         $this->data['columns'][] = 'Status';
+        $this->data['columns'][] = 'Sort Order';
         $this->data['columns'][] = 'CrtDt';
         $this->data['columns'][] = 'UpdDt';
 
@@ -237,6 +250,7 @@ class Handbook extends AdminController {
                 'remarks'   => $this->data['remarks'],
                 'status'    => $this->data['status'],
                 'sequence'  => $this->data['sequence'],
+                'handbook_type'  => $this->data['handbook_type'],
             ]);
             $this->handbookId = Handbook_model::factory()->getLastInsertID();
             // Project Description Model
@@ -301,6 +315,7 @@ class Handbook extends AdminController {
                 'remarks'   => $this->data['remarks'],
                 'status'    => $this->data['status'],
                 'sequence'  => $this->data['sequence'],
+                'handbook_type'  => $this->data['handbook_type'],
             ],[
                 'id' => $id
             ]);
@@ -376,14 +391,16 @@ class Handbook extends AdminController {
      * @throws Exception
      */
     public function onLoadDataTableEventHandler() {
-        $this->results = Handbook_model::factory()->findAll([],null,'name','desc');
+        $this->results = Handbook_model::factory()->findAll([],null,'sort_order','asc');
         if($this->results) {
             foreach($this->results as $result) {
                 $this->rows[] = array(
                     'id'			=> $result->id,
                     'name'		    => $result->name,
+                    'handbook_type' => resizeAssetImage($result->handbook_type.'.png',100,100),
                     'sequence' 		=> $result->sequence,
                     'remarks' 		=> $result->remarks,
+                    'sort_order' 		=> $result->sort_order,
                     'img' 		    => ($this->getImgThumbnail($result->id)) ? resize($this->getImgThumbnail($result->id),100,100) : resize('no_image.png', 32,32),
                     'status' 		=> ($result->status && $result->status == 1) ? 1 : 0,
                     'created_at'    => $result->created_at,
@@ -402,6 +419,7 @@ class Handbook extends AdminController {
 											</label>
 										</td>';
                 $this->data[$i][] = '<td>'.$counter.'</td>';
+                $this->data[$i][] = '<td><img src="'.$row['handbook_type'].'"></td>';
                 $this->data[$i][] = '<td>'.$row['sequence'].'</td>';
                 $this->data[$i][] = '<td>'.$row['name'].'</td>';
                 $this->data[$i][] = '<td>'.$row['remarks'].'</td>';
@@ -413,6 +431,7 @@ class Handbook extends AdminController {
                                             <option value="1" '.$selected.'>Active</option>
                                         </select>
                                      </td>';
+                $this->data[$i][] = '<td>'.$row['sort_order'].'</td>';
                 $this->data[$i][] = '<td>'.$row['created_at'].'</td>';
                 $this->data[$i][] = '<td>'.$row['updated_at'].'</td>';
                 $this->data[$i][] = '<td class="text-right">

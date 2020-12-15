@@ -47,6 +47,27 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus select-focus">
+                                    <label class="control-label"><?php echo $entryHandbookType;?><span class="text-danger">*</span></label>
+                                    <select class="select form-control floating" name="handbook_type" required>
+                                        <option value="foreign-home" <? echo ($handbook_type == 'foreign-home') ? 'selected' : '';?>>Foreign Home</option>
+                                        <option value="fengshui" <? echo ($handbook_type == 'fengshui') ? 'selected' : '';?>>Fengshui</option>
+                                        <option value="foreign-passion" <? echo ($handbook_type == 'foreign-passion') ? 'selected' : '';?>>Foreign Passion</option>
+                                        <option value="foreign-visa" <? echo ($handbook_type == 'foreign-visa') ? 'selected' : '';?>>Foreign Visa</option>
+                                        <option value="houses" <? echo ($handbook_type == 'houses') ? 'selected' : '';?>>Houses</option>
+                                        <option value="import-export" <? echo ($handbook_type == 'import-export') ? 'selected' : '';?>>Import Export</option>
+                                        <option value="investment-money" <? echo ($handbook_type == 'investment-money') ? 'selected' : '';?>>Investment Money</option>
+                                        <option value="testimonial" <? echo ($handbook_type == 'testimonial') ? 'selected' : '';?>>Testimonial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entrySortOrder;?><span class="text-danger">*</span></label>
+                                    <input value="<?php echo $sort_order;?>" name="sort_order" class="form-control floating" type="text" autocomplete="off" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,6 +89,12 @@
                                 <div class="form-group">
                                     <label class="control-label"><?php echo $entrySmallDescription;?><span class="text-danger"></span></label>
                                     <textarea name="small_description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label"><?php echo $entryLongDescription;?><span class="text-danger"></span></label>
+                                    <textarea name="long_description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $long_description;?></textarea>
                                 </div>
                             </div>
                         </div>

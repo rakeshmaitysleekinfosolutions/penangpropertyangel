@@ -47,6 +47,27 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus select-focus">
+                                    <label class="control-label"><?php echo $entryHandbookType;?><span class="text-danger">*</span></label>
+                                    <select class="select form-control floating" name="handbook_type" required>
+                                       <option value="foreign-home">Foreign Home</option>
+                                       <option value="fengshui">Fengshui</option>
+                                       <option value="foreign-passion">Foreign Passion</option>
+                                       <option value="foreign-visa">Foreign Visa</option>
+                                       <option value="houses">Houses</option>
+                                       <option value="import-export">Import Export</option>
+                                       <option value="investment-money">Investment Money</option>
+                                       <option value="testimonial">Testimonial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-focus">
+                                    <label class="control-label"><?php echo $entrySortOrder;?><span class="text-danger">*</span></label>
+                                    <input value="<?php echo $sort_order;?>" name="sort_order" class="form-control floating" type="text" autocomplete="off" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -70,6 +91,13 @@
                                     <textarea name="small_description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label"><?php echo $entryLongDescription;?><span class="text-danger"></span></label>
+                                    <textarea name="long_description" rows="5" class="form-control floating summernote" type="text" autocomplete="off"><?php echo $small_description;?></textarea>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

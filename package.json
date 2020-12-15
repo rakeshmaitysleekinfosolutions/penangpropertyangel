@@ -30,6 +30,7 @@
     "bootstrap-timepicker": "^0.5.2",
     "datatables.net-bs4": "^1.10.22",
     "jquery": "^3.5.1",
+    "jquery-datetimepicker": "^2.5.21",
     "jquery-validation": "^1.19.2",
     "material-design-icons": "^3.0.1",
     "owl.carousel": "^2.3.4",
