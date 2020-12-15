@@ -31,3 +31,5 @@ $route['buy/(:any)/(:any)'] = 'app/Item/getItem/$1/$2';
 $route['rent/(:any)/(:any)'] = 'app/Item/getItem/$1/$2';
 $route['inspection-arranged'] = 'app/Item/submitInspectionArranged';
 $route['download-all-files'] = 'app/Item/downloadAllFiles';
+$route['foreigner-handbook'] = 'app/foreignerHandbooks';
+$route['foreigner-handbook/(:any)'] = 'app/foreignerHandbook/$1';

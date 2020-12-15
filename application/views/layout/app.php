@@ -45,7 +45,7 @@
                     <a class="nav-link" href="#">BLOG</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">FOREIGNER'S HANDBOOK</a>
+                    <a class="nav-link" href="<?php echo url('foreigner-handbook');?>">FOREIGNER'S HANDBOOK</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">ABOUT</a>

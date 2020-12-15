@@ -3,6 +3,15 @@
 class App extends AppController {
 
     private $project;
+    /**
+     * @var object
+     */
+    private $handbook;
+    /**
+     * @var array|int
+     */
+    private $handbooks;
+
     public function __construct()
     {
         parent::__construct();
@@ -237,5 +246,59 @@ class App extends AppController {
             $this->data['projects'] = $projects;
         }
         render('compare', $this->data);
+    }
+
+    public function foreignerHandbooks() {
+        $handbooks = Handbook_model::factory()->findAll(['status' => 1], null,'sort_order', 'asc');
+        $this->data['handbooks'] = array();
+        if($handbooks) {
+            foreach ($handbooks as $handbook) {
+                $this->data['handbooks'][] = array(
+                  'id'      => $handbook->id,
+                  'img'     => resizeAssetImage($handbook->handbook_type.'.png',360,298),
+                  'name'    => $handbook->name,
+                  'slug'    => $handbook->slug,
+                    'url'   => url('foreigner-handbook/'.$handbook->slug)
+
+                );
+            }
+        }
+        //dd($this->data);
+        render('foreigner-handbook/index', $this->data);
+    }
+    public function foreignerHandbook($slug) {
+        $this->handbook = Handbook_model::factory()->findOne(['slug' => $slug]);
+        if(!$this->handbook) {
+            redirect(url('foreigner-handbook'));
+        }
+        $this->data['handbook'] = array();
+        if($this->handbook) {
+            $this->data['handbook'] = array(
+                'id'                => $this->handbook->id,
+                'img'               => resizeAssetImage($this->handbook->handbook_type.'.png',360,298),
+                'name'              => $this->handbook->name,
+                'small_description' => $this->handbook->description->small_description,
+                'long_description'  => $this->handbook->description->long_description,
+            );
+        }
+        // List of handbook escape current handbook
+        $this->handbooks = Handbook_model::factory()->findAll(['status' => 1], null,'sort_order', 'asc');
+        $this->data['handbooks'] = array();
+        if($this->handbooks) {
+            foreach ($this->handbooks as $handbook) {
+                if($this->handbook->id != $handbook->id) {
+                    $this->data['handbooks'][] = array(
+                        'id'      => $handbook->id,
+                        'img'     => resizeAssetImage($handbook->handbook_type.'.png',360,298),
+                        'name'    => $handbook->name,
+                        'slug'    => $handbook->slug,
+                        'url'   => url('foreigner-handbook/'.$handbook->slug)
+
+                    );
+                }
+            }
+        }
+        //dd($this->data);
+        render('foreigner-handbook/view', $this->data);
     }
 }

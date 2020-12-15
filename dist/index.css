@@ -1012,6 +1012,7 @@ footer ul li a:hover{
     position: absolute;
     top: 0%;
 }
+
 /*---------------------------------.handbook---------------------------*/
 .handbook{
     padding: 40px 0;
@@ -1027,121 +1028,62 @@ footer ul li a:hover{
 .book{
     position: relative;
     padding: 10px;
+    width: 100%;
+    height: 350px;
+    background: #808080;
+    margin-bottom: 20px;
 }
 .book h3{
     position: absolute;
-    font-size: 30px;
-    top: 50%;
+    font-size: 23px;
+    top: 55%;
     left: 50%;
-    -webkit-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-55%);
+            transform: translate(-50%,-55%);
     color: #fff !important;
     z-index: 999;
     text-align: center;
 }
-.hand_1{
-    background-image: url(/images/2a.jpg?a39a9c5d1ce3c87dec10fd20e0af13b5);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
+.book img{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 22%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-22%);
+            transform: translate(-50%,-22%);
 }
-.hand_1 .transbox {
-    background-color: #000;
-    opacity: 0.8;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_1 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
+.book a{
+    position: absolute;
+    font-size: 16px;
+    top: 65%;
+    left: 50%;
+    -webkit-transform: translate(-50%,-65%);
+            transform: translate(-50%,-65%);
     color: #fff !important;
+    z-index: 999;
+    text-align: center;
+    padding: 4px 12px;
+    border: 1px solid #fff;
+    margin-top: 20px;
 }
-.hand_2 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
-    color: #fff !important;
+.book .hand_2 a{
+    color: #000 !important;
+    border: 1px solid #000;
 }
-.hand_3 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
-    color: #fff !important;
+.book .hand_4 a{
+    color: #000 !important;
+    border: 1px solid #000;
 }
-.hand_4 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
-    color: #fff !important;
+.book .hand_6 a{
+    color: #000 !important;
+    border: 1px solid #000;
 }
-.hand_5 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
-    color: #fff !important;
+.book a:hover{
+    text-decoration: none;
 }
-.hand_6 .transbox:hover{
-    background-color: #000;
-    opacity: 0.1;
-    color: #fff !important;
-}
-.hand_2{
-    background-image: url(/images/2b.jpg?77e562b7306c7e1a991a9135c55eb75b);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_2 .transbox {
-    background-color: #000;
-    opacity: 0.5;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_3{
-    background-image: url(/images/2c.jpg?88d12f091f21af1237a1185e6950ce82);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_3 .transbox {
-    background-color: #000;
-    opacity: 0.8;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_4{
-    background-image: url(/images/2d.jpg?04b95c425f0bf108d650159df6dffc45);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_4 .transbox {
-    background-color: #000;
-    opacity: 0.5;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_5{
-    background-image: url(/images/2e.jpg?9a4da612cde6228542727c23ce4424f5);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_5 .transbox {
-    background-color: #000;
-    opacity: 0.8;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_6{
-    background-image: url(/images/2f.jpg?e0143055ec5a7e5f3c7f5d88cec16484);
-    background-size: cover;
-    width: 100%;
-    min-height: 290px;
-}
-.hand_6 .transbox {
-    background-color: #000;
-    opacity: 0.5;
-    width: 100%;
-    min-height: 290px;
-}
-..owl-carousel .owl-stage-outer{
+
+.owl-carousel .owl-stage-outer{
     position: relative;
 }
 .owl-theme .owl-nav {
