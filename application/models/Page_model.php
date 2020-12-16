@@ -1,10 +1,10 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
-class Information_model extends BaseModel {
+class Page_model extends BaseModel {
 
 
-    protected $table = "informations";
+    protected $table = "pages";
 
     protected $primaryKey = 'id';
 
@@ -14,7 +14,7 @@ class Information_model extends BaseModel {
     const SOFT_DELETED = 'is_deleted';
 
     public static function factory($attr = array()) {
-        return new Information_model($attr);
+        return new Page_model($attr);
     }
 
 

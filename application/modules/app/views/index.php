@@ -139,7 +139,7 @@
             <div class="col-md-2 details">
                 <h3>FEATURED</h3>
                 <h5>LISTINGS</h5>
-                <a href="#">View All Properties</a>
+                <a href="<?php echo url('/features');?>">View All Properties</a>
             </div>
             <?php if(count($projects) > 0) { ?>
                 <?php $index = 0; foreach ($projects as $project) {
@@ -189,227 +189,19 @@
 <section class="handbook">
     <div class="container">
         <h2>PGPA HANDBOOK</h2>
-        <div class="row">
-            <div class="col-md-12 col-12">
-                <div class="owl-carousel owl-theme">
-                    <!--item1--->
-                    <div class="item">
-                        <div class="row">
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_1">
-                                    <h3>List With Us</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_2">
-                                    <h3>Interactive Map</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_3">
-                                    <h3>Our Offices</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_4">
-                                    <h3>Neighborhood Gides</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_5">
-                                    <h3>Home Valuation</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_6">
-                                    <h3>New Development</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
+        <?php if(count($handbooks) > 0) { ?>
+            <div class="row">
+                <?php foreach ($handbooks as $handbook) { ?>
+                    <div class="col-md-3 col-12">
+                        <div class="book">
+                            <img src="<?php echo $handbook['img'];?>" alt="">
+                            <h3><?php echo $handbook['name'];?></h3>
+                            <a href="<?php echo $handbook['url'];?>">See More</a>
                         </div>
-                        <a href="#" class="index_more">See More</a>
                     </div>
-                    <!--item2--->
-                    <div class="item">
-                        <div class="row">
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_1">
-                                    <h3>List With Us</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_2">
-                                    <h3>Interactive Map</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_3">
-                                    <h3>Our Offices</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_4">
-                                    <h3>Neighborhood Gides</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_5">
-                                    <h3>Home Valuation</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_6">
-                                    <h3>New Development</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="index_more">See More</a>
-                    </div>
-                    <!--item3--->
-                    <div class="item">
-                        <div class="row">
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_1">
-                                    <h3>List With Us</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_2">
-                                    <h3>Interactive Map</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_3">
-                                    <h3>Our Offices</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_4">
-                                    <h3>Neighborhood Gides</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_5">
-                                    <h3>Home Valuation</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_6">
-                                    <h3>New Development</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="index_more">See More</a>
-                    </div>
-                    <!--item4--->
-                    <div class="item">
-                        <div class="row">
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_1">
-                                    <h3>List With Us</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_2">
-                                    <h3>Interactive Map</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_3">
-                                    <h3>Our Offices</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_4">
-                                    <h3>Neighborhood Gides</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_5">
-                                    <h3>Home Valuation</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-12 book">
-                                <div class="hand_6">
-                                    <h3>New Development</h3>
-                                    <div class="transbox">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="index_more">See More</a>
-                    </div>
-                </div>
+                <?php } ?>
             </div>
-        </div>
+        <?php } ?>
     </div>
 </section>
+

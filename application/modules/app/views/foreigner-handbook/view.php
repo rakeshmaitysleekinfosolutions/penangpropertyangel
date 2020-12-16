@@ -4,8 +4,8 @@
 <section class="cell_property">
     <div class="container-fluid">
         <div class="row">
-            <div class="<?php echo (count($handbooks) > 0) ? 'col-md-8' : 'col-md-12';?>">
-                <div class="cell_details">
+            <div class="<?php echo (count($handbooks) > 0) ? 'col-md-9' : 'col-md-12';?>">
+                <div class="cell_details handbook-details">
 <!--                    <h5>--><?php //echo $handbook['name'];?><!--</h5>-->
                     <div class="cell_details_para">
                         <p><?php echo $handbook['small_description'];?></p>
@@ -16,10 +16,10 @@
                 </div>
             </div>
             <?php if(count($handbooks) > 0) {?>
-                <div class="col-md-4 col-12">
-                    <div class="side_details">
+                <div class="col-md-3 col-12">
+                    <div class="side_details remove-line">
                         <?php foreach ($handbooks as $value) {?>
-                            <div class="col-md-9 col-12">
+                            <div class="col-md-12 col-12">
                                 <div class="book">
                                     <img src="<?php echo $value['img'];?>" alt="">
                                     <h3><?php echo $value['name'];?></h3>

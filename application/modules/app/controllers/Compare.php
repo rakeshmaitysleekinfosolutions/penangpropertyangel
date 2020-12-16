@@ -4,6 +4,7 @@ class Compare extends AppController {
     {
         parent::__construct();
         $this->setLayout('layout/app');
+        $this->init();
     }
 
     public function index() {

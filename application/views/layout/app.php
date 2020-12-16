@@ -27,7 +27,7 @@
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">FEATURES</a>
+                    <a class="nav-link" href="<?php echo url('features/');?>">FEATURES</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?php echo url('buy/');?>">BUY</a>
@@ -36,22 +36,22 @@
                     <a class="nav-link" href="<?php echo url('rent/');?>">RENT</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo url('agents');?>">AGENTS</a>
+                    <a class="nav-link" href="<?php echo url('agents/');?>">AGENTS</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">SELL/LEASE</a>
+                    <a class="nav-link" href="<?php echo url('sell/');?>">SELL/LEASE</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">BLOG</a>
+                    <a class="nav-link" href="http://penangpropertyangel.blogspot.com/">BLOG</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?php echo url('foreigner-handbook');?>">FOREIGNER'S HANDBOOK</a>
+                    <a class="nav-link" href="<?php echo url('foreigner-handbook/');?>">FOREIGNER'S HANDBOOK</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">ABOUT</a>
+                    <a class="nav-link" href="<?php echo url('information/about/');?>">ABOUT</a>
                 </li>
                 <li class="nav-item con_none">
-                    <a class="nav-link con_none_a" href="#">CONTACT</a>
+                    <a class="nav-link con_none_a" href="<?php echo url('contact/');?>">CONTACT</a>
                 </li>
             </ul>
             <ul class="navbar-nav icon">
@@ -84,25 +84,25 @@
         <div class="row">
             <div class="col-md-3 col-12">
                 <ul>
-                    <li><a href="">FEATURES</a></li>
-                    <li><a href="">BUY</a></li>
-                    <li><a href="">RENT</a></li>
-                    <li><a href="">AGENTS</a></li>
+                    <li><a href="<?php echo url('features/');?>">FEATURES</a></li>
+                    <li><a href="<?php echo url('buy/');?>">BUY</a></li>
+                    <li><a href="<?php echo url('rent/');?>">RENT</a></li>
+                    <li><a href="<?php echo url('agents/');?>">AGENTS</a></li>
                 </ul>
             </div>
             <div class="col-md-3 col-12">
                 <ul>
-                    <li><a href="">SELL/LEASE</a></li>
-                    <li><a href="">BLOG</a></li>
-                    <li><a href="">FOREIGNER'S HANDBOOK</a></li>
-                    <li><a href="">ABOUT</a></li>
+                    <li><a href="<?php echo url('sell/');?>">SELL/LEASE</a></li>
+                    <li><a href="http://penangpropertyangel.blogspot.com/">BLOG</a></li>
+                    <li><a href="<?php echo url('foreigner-handbook/');?>">FOREIGNER'S HANDBOOK</a></li>
+                    <li><a href="<?php echo url('information/about/');?>">ABOUT</a></li>
                 </ul>
             </div>
             <div class="col-md-3 col-12 footer_1">
                 <ul>
-                    <li><a href="">CONTACT</a></li>
-                    <li><a href="">PRIVACY POLICY</a></li>
-                    <li><a href="">TERMS & CONDITIONS</a></li>
+                    <li><a href="<?php echo url('contact/');?>">CONTACT</a></li>
+                    <li><a href="<?php echo url('information/privacy-policy/');?>">PRIVACY POLICY</a></li>
+                    <li><a href="<?php echo url('information/terms-conditions/');?>">TERMS & CONDITIONS</a></li>
 
                 </ul>
             </div>

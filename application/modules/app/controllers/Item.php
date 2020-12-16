@@ -9,6 +9,7 @@ class Item extends AppController {
         parent::__construct();
         $this->setLayout('layout/app');
         $this->builder = new CaptchaBuilder;
+        $this->init();
     }
 
     /**

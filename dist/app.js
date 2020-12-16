@@ -20114,6 +20114,7 @@ var $frmCategory = $("#frmCategory");
 var $frmChildState = $("#frmChildState");
 var $frmItem = $("#frmItem");
 var $frmHandbook = $("#frmHandbook");
+var $frmPage = $("#frmPage");
 // Project Form Validation
 if ($frmProject.length > 0 && validate) {
     $frmProject.validate({
@@ -20252,6 +20253,26 @@ if ($frmHandbook.length > 0 && validate) {
         }
     });
 }
+// Form Page Validation
+if ($frmPage.length > 0 && validate) {
+    $frmPage.validate({
+        rules: {
+            title: {
+                required: true
+            },
+            heading: {
+                required: true
+            },
+            status: {
+                required: true
+            },
+            meta_title: {
+                required: true
+            }
+        }
+    });
+}
+
 // Global Fetch Data & Delete Data
 if ($dt.length > 0 && dataTable) {
     var dataTable = $dt.DataTable({

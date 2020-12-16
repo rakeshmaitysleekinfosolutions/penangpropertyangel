@@ -33,3 +33,10 @@ $route['inspection-arranged'] = 'app/Item/submitInspectionArranged';
 $route['download-all-files'] = 'app/Item/downloadAllFiles';
 $route['foreigner-handbook'] = 'app/foreignerHandbooks';
 $route['foreigner-handbook/(:any)'] = 'app/foreignerHandbook/$1';
+
+$route['features'] = 'app/features';
+
+$route['information/(:any)'] = 'app/Page/index/$1';
+$route['contact'] = 'app/Page/contact';
+
+$route['page-not-found']      = 'PageNotFoundController/index';

@@ -11,6 +11,10 @@ class App extends AppController {
      * @var array|int
      */
     private $handbooks;
+    /**
+     * @var array|int
+     */
+    private $projects;
 
     public function __construct()
     {
@@ -20,16 +24,16 @@ class App extends AppController {
         $this->init();
     }
 
-    public function init() {
-        $this->data['registerForm'] = array(
-            'action' => url('app-register'),
-            'name' => 'frmRegister'
-        );
-        $this->data['loginForm'] = array(
-            'action' => url('app-login'),
-            'name' => 'frmLogin'
-        );
-    }
+//    public function init() {
+//        $this->data['registerForm'] = array(
+//            'action' => url('app-register'),
+//            'name' => 'frmRegister'
+//        );
+//        $this->data['loginForm'] = array(
+//            'action' => url('app-login'),
+//            'name' => 'frmLogin'
+//        );
+//    }
 //    public function getImgThumbnail($projectId) {
 //        if(ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])) {
 //            return ProjectImage_model::factory()->findOne(['project_id' => $projectId, 'thumbnail' => 1])->image;
@@ -37,9 +41,10 @@ class App extends AppController {
 //        return false;
 //    }
     public function index() {
-        $projects = Project_model::factory()->findAll(['status' => 1], 5,'name', 'ASC');
-        if($projects) {
-            foreach ($projects as $project) {
+        // Features Project List
+        $this->projects = Project_model::factory()->findAll(['status' => 1], 5,'created_at', 'ASC');
+        if($this->projects) {
+            foreach ($this->projects as $project) {
                 $this->data['projects'][] = array(
                     'name'  => $project->name,
                     'url'   => url('p/'.$project->slug),
@@ -51,10 +56,41 @@ class App extends AppController {
                 );
             }
         }
-       // dd($this->data);
+        // Handbooks
+        $this->handbooks = Handbook_model::factory()->findAll(['status' => 1], 4,'RAND()', 'desc');
+        $this->data['handbooks'] = array();
+        if($this->handbooks) {
+            foreach ($this->handbooks as $handbook) {
+                $this->data['handbooks'][] = array(
+                    'id'      => $handbook->id,
+                    'img'     => resizeAssetImage($handbook->handbook_type.'.png',360,298),
+                    'name'    => $handbook->name,
+                    'slug'    => $handbook->slug,
+                    'url'   => url('foreigner-handbook/'.$handbook->slug)
+
+                );
+            }
+        }
         render('index', $this->data);
     }
 
+    public function features() {
+        $this->projects = Project_model::factory()->findAll(['status' => 1], null,'name', 'ASC');
+        if($this->projects) {
+            foreach ($this->projects as $project) {
+                $this->data['projects'][] = array(
+                    'name'  => $project->name,
+                    'url'   => url('p/'.$project->slug),
+                    'img'   => resize($this->getImgThumbnail($project->id),603,392),
+                    'price' => currencyFormat($project->price, getSession('currency')['code']),
+                    'fit'   => currencyFormat($project->fit, getSession('currency')['code']),
+                    'fit1'  =>currencyFormat($project->fit1, getSession('currency')['code'],'',true, false, false),
+                    'fit2'  => currencyFormat($project->fit2, getSession('currency')['code'],'',true, false, false),
+                );
+            }
+        }
+        render('features/index', $this->data);
+    }
     /**
      * @desc View Project
      * @param $slug

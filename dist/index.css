@@ -1025,6 +1025,16 @@ footer ul li a:hover{
     text-align: center;
     margin-bottom: 30px;
 }
+/*----------------handbook details ---------------*/
+.handbook-details .cell_details_para::before{
+    display: none;
+}
+.handbook-details .cell_details_para::after{
+    display: none;
+}
+.remove-line{
+    border: none;
+}
 .book{
     position: relative;
     padding: 10px;
@@ -1056,10 +1066,10 @@ footer ul li a:hover{
 .book a{
     position: absolute;
     font-size: 16px;
-    top: 65%;
+    top: 70%;
     left: 50%;
-    -webkit-transform: translate(-50%,-65%);
-            transform: translate(-50%,-65%);
+    -webkit-transform: translate(-50%,-70%);
+    transform: translate(-50%,-70%);
     color: #fff !important;
     z-index: 999;
     text-align: center;
@@ -1296,7 +1306,7 @@ footer ul li a:hover{
     border-radius: 10px;
     margin-bottom: 35px;
     -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-transition: -webkit-transform .5s;
     transition: -webkit-transform .5s;
     transition: transform .5s;
@@ -1655,6 +1665,16 @@ footer ul li a:hover{
     font-family: "Poppins";
     margin: 20px 0 30px;
 }
+.carousel-control-prev-icon {
+    color: #000 !important;
+    width: 30px;
+    height: 30px;
+}
+.carousel-control-next-icon {
+    color: #000 !important;
+    width: 30px;
+    height: 30px;
+}
 .list_price_sell ul li{
     list-style: none;
     display: inline-block;
@@ -1713,7 +1733,7 @@ footer ul li a:hover{
     top: 0%;
     left: 44%;
     -webkit-transform: translate(-44%,0%);
-            transform: translate(-44%,0%);
+    transform: translate(-44%,0%);
 }
 .cell_details_para::after{
     position: absolute;
@@ -1724,7 +1744,7 @@ footer ul li a:hover{
     top: 110%;
     left: 44%;
     -webkit-transform: translate(-44%,-110%);
-            transform: translate(-44%,-110%);
+    transform: translate(-44%,-110%);
 }
 .cell_details_para p{
     font-size: 14px;
@@ -1780,7 +1800,7 @@ footer ul li a:hover{
     left: 60%;
     position: absolute;
     -webkit-transform: (-60%,-93%);
-            transform: (-60%,-93%);
+    transform: (-60%,-93%);
 }
 .side_details{
     border: 1px solid #d8d8d8;
@@ -1964,7 +1984,7 @@ footer ul li a:hover{
     top: 178%;
     left: -12%;
     -webkit-transform: translate(0%, -178%);
-            transform: translate(0%, -178%);
+    transform: translate(0%, -178%);
     width: 348px;
     height: 1px;
     background: #D8D8D8;
@@ -2030,7 +2050,7 @@ footer ul li a:hover{
     top: 143%;
     left: 1%;
     -webkit-transform: translate(-1%, -143%);
-            transform: translate(-1%, -143%);
+    transform: translate(-1%, -143%);
     width: 321px;
     height: 1px;
     background: #D7D7D7;
@@ -2274,14 +2294,64 @@ footer ul li a:hover{
     display: block;
     clear: both;
 }
-
-
-#g-recaptcha-response {
-    display: block !important;
-    position: absolute;
-    margin: -78px 0 0 0 !important;
-    width: 302px !important;
-    height: 76px !important;
-    z-index: -999999;
-    opacity: 0;
+/*------------------------------About Page css---------------------------------*/
+.about{
+    padding: 40px 0;
+}
+.about h2{
+    font-size: 40px;
+    color: #0f1b2d;
+    font-weight: 700;
+    font-family: "Poppins";
+    text-align: center;
+    margin-bottom: 30px;
+}
+.about p{
+    font-size: 14px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+}
+.about h4{
+    font-size: 18px;
+    color: #0f1b2d;
+    font-weight: 600;
+    font-family: "Poppins";
+    text-decoration: underline;
+    margin-bottom: 20px;
+}
+.about ol {
+    padding-left: 65px;
+}
+.about ol li{
+    font-size: 13px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    line-height: 24px;
+}
+.about ol li p{
+    font-size: 13px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+.about ol li span{
+    font-size: 16px;
+    color: #0f1b2d;
+    font-weight: 600;
+    font-family: "Poppins";
+}
+.last_p{
+    font-size: 14px;
+    color: #0f1b2d;
+    font-weight: 400;
+    font-family: "Poppins";
+    margin-top: 30px;
+}
+.last_p span{
+    text-decoration: underline;
 }

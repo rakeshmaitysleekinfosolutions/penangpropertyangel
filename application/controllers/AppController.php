@@ -30,6 +30,16 @@ class AppController extends BaseController {
         }
         return false;
     }
+    public function init() {
+        $this->data['registerForm'] = array(
+            'action' => url('app-register'),
+            'name' => 'frmRegister'
+        );
+        $this->data['loginForm'] = array(
+            'action' => url('app-login'),
+            'name' => 'frmLogin'
+        );
+    }
     /*
     public function getConfigMailProtocol() {
         return $this->getSession('settings.mail.config')['protocol'];
