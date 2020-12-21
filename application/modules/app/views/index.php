@@ -195,7 +195,7 @@
                     <div class="col-md-3 col-12">
                         <div class="book">
                             <img src="<?php echo $handbook['img'];?>" alt="">
-                            <h3><?php echo $handbook['name'];?></h3>
+                            <h3><?php echo readMoreDots($handbook['name'],20);?></h3>
                             <a href="<?php echo $handbook['url'];?>">See More</a>
                         </div>
                     </div>
@@ -204,4 +204,74 @@
         <?php } ?>
     </div>
 </section>
+<!----------------------Buy ------------------------->
+<?php if(count($buyItems) > 0) { ?>
+    <section class="buy_home">
+        <div class="container">
+            <h2>BUY</h2>
+            <div class="row">
+                <?php foreach ($buyItems as $buyItem) { ?>
+                    <div class="col-md-6">
+                        <div class="card">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="<?php echo url('image/'.$buyItem['img']);?>" alt="<?php echo $buyItem['title'];?>">
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="card-title"><?php echo $buyItem['title'];?></h4>
+                                <ul>
+                                    <li>Location: <?php echo $buyItem['location'];?></li>
+                                    <li>Land size: <?php echo $buyItem['landSize'];?> sqft</li>
+                                    <li>Price: <?php echo $buyItem['price'];?></li>
+                                    <li>Price/sqft: <?php echo $buyItem['perSqPrice'];?></li>
+                                </ul>
+                                <a href="<?php echo $buyItem['url'];?>" class="btn ">read more<i class="fa fa-caret-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+               <?php } ?>
+            </div>
+<!--            <a href="#" class="home_more">MORE</a>-->
+        </div>
+    </section>
+<?php } ?>
 
+<!----------------------Rent ------------------------->
+
+
+<?php if(count($rentItems) > 0) { ?>
+    <section class="buy_home">
+        <div class="container">
+            <h2>Rent</h2>
+            <div class="row">
+                <?php foreach ($rentItems as $rentItem) { ?>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="<?php echo url('image/'.$rentItem['img']);?>" alt="<?php echo $rentItem['title'];?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 class="card-title"><?php echo $rentItem['title'];?></h4>
+                                    <ul>
+                                        <li>Location: <?php echo $rentItem['location'];?></li>
+                                        <li>Land size: <?php echo $rentItem['landSize'];?> sqft</li>
+                                        <li>Price: <?php echo $rentItem['price'];?></li>
+                                        <li>Price/sqft: <?php echo $rentItem['perSqPrice'];?></li>
+                                    </ul>
+                                    <a href="<?php echo $rentItem['url'];?>" class="btn ">read more<i class="fa fa-caret-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+            <!--            <a href="#" class="home_more">MORE</a>-->
+        </div>
+    </section>
+<?php } ?>
+<script>
+    var myLabel             = myLabel || {};
+    myLabel.baseUrl         = '<?php echo base_url();?>';
+</script>

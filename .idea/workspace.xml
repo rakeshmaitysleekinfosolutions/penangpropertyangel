@@ -20,31 +20,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34c0bfcb-d23f-4b04-8977-7ec78df0eedf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/application/modules/app/controllers/Page.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/app/views/features/index.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/app/views/page/about.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/app/views/page/contact.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/page/controllers/Page.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/page/views/create.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/page/views/edit.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application/modules/page/views/index.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/404.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/application/views/emails/reply.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/config/routes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/routes.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/controllers/AppController.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/AppController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/models/Information_model.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/models/Page_model.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/helpers/common_helper.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/helpers/common_helper.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/modules/app/controllers/App.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/controllers/App.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/modules/app/controllers/Compare.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/controllers/Compare.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/modules/app/controllers/Item.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/controllers/Item.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/modules/app/views/foreigner-handbook/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/foreigner-handbook/view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/controllers/Page.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/controllers/Page.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/features/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/features/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/foreigner-handbook/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/foreigner-handbook/index.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/modules/app/views/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/404/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/404/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/layout/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/layout/admin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/views/layout/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/layout/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/item/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/item/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/item/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/item/view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/page/contact.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/page/contact.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/partials/f_slider.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/partials/f_slider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/modules/app/views/view.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/modules/app/views/view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/views/emails/contact/contact.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/views/emails/contact.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/dist/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/dist/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/js/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/js/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/js/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -122,9 +117,12 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/assets/images" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\workspace\penangpropertyangel\application\views\emails" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\xampp\htdocs\workspace\penangpropertyangel\assets\images" />
       <recent name="C:\xampp\htdocs\workspace\penangpropertyangel\application\modules\page\views" />
@@ -144,7 +142,11 @@
       <workItem from="1607921501488" duration="26556000" />
       <workItem from="1608004880322" duration="10476000" />
       <workItem from="1608026667784" duration="7759000" />
-      <workItem from="1608092386562" duration="19262000" />
+      <workItem from="1608092386562" duration="20544000" />
+      <workItem from="1608179628803" duration="432000" />
+      <workItem from="1608181767474" duration="9236000" />
+      <workItem from="1608292301871" duration="6888000" />
+      <workItem from="1608525996582" duration="6127000" />
     </task>
     <servers />
   </component>
@@ -164,6 +166,14 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="548" y="161" key="FileChooserDialogImpl" timestamp="1608194439043">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="548" y="161" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1608194439043" />
+    <state x="425" y="189" key="run.anything.popup" timestamp="1608183698110">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="425" y="189" key="run.anything.popup/0.0.1536.834@0.0.1536.834" timestamp="1608183698110" />
     <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1608112605428">
       <screen x="0" y="0" width="1536" height="834" />
     </state>

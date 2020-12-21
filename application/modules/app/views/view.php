@@ -39,17 +39,17 @@
             <div class="row">
                 <?php if(count($project['images']) > 0) {?>
                     <div col-md-12>
-                        <div id="demo" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php $index = 1; foreach ($project['images'] as $image) { ?>
-                                    <div class="carousel-item <?php echo ($index ==1) ? 'active' : '';?>">
+                        <div class="row owl-carousel owl-theme features-banner-images">
+                            <?php $index = 1; foreach ($project['images'] as $image) { ?>
+                                <div class="item <?php echo ($index ==1) ? 'active' : '';?>">
                                     <img src="<?php echo resize($image['image'],1473, 600);?>" alt="<?php echo $project['name'];?>">
                                     <div class="carousel-caption">
-                                    <h3>Sale Ends: 0 Day</h3>
+                                        <h3>Sale Ends: 0 Day</h3>
+                                    </div>
                                 </div>
-                              </div>
-                                <?php $index++; } ?>
-                            </div>
+                            <?php
+                            $index++;
+                            } ?>
                         </div>
                     </div>
                 <?php } ?>
@@ -80,13 +80,15 @@
         <?php foreach ($project['subProjects'] as $subProject) { ?>
             <div class="fea_div<?php echo $subProject['id'];?>">
                 <h2><?php echo $subProject['name'];?></h2>
-                <div class="owl-carousel owl-theme">
+                <div class="owl-carousel owl-theme feature-banner-images">
                     <?php $images = array();$images = $subProject->images($subProject['id']);if(count($images) > 0) { ?>
                         <?php foreach ($images as $image) { ?>
                             <div class="item">
                                 <img src="<?php echo resize($image['image'],1473, 600);?>" alt="<?php echo $subProject['name'];?>" height="500px" width="100%">
                             </div>
-                        <?php } ?>
+                            <?php
+                            $index++;
+                        } ?>
                     <?php } ?>
                 </div>
                 <p><?php echo $subProject['description'];?></p>

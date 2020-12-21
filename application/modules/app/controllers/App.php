@@ -40,6 +40,16 @@ class App extends AppController {
 //        }
 //        return false;
 //    }
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function getItemImgThumbnail($id) {
+        if(ItemImage_model::factory()->findOne(['item_id' => $id, 'thumbnail' => 1])) {
+            return ItemImage_model::factory()->findOne(['item_id' => $id, 'thumbnail' => 1])->image;
+        }
+        return false;
+    }
     public function index() {
         // Features Project List
         $this->projects = Project_model::factory()->findAll(['status' => 1], 5,'created_at', 'ASC');
@@ -71,6 +81,50 @@ class App extends AppController {
                 );
             }
         }
+        // Buy Projects
+        $buyItems = Item_model::factory()->findAll(['type' => (int)2], 4,'sort_order', 'ASC');
+        $this->data['buyItems'] = array();
+        if(!empty($buyItems)) {
+            foreach ($buyItems as $buyItem) {
+
+                $landSize = round($buyItem->size, (int)$this->options['currency']['decimal_place']);
+                $perSqPrice = round($landSize/$buyItem->price,(int)$this->options['currency']['decimal_place']);
+                $this->data['buyItems'][] = array(
+                    'id'      => $buyItem->id,
+                    'title'   => $buyItem->title,
+                    'img'     => ($this->getItemImgThumbnail($buyItem->id)) ? $this->getItemImgThumbnail($buyItem->id) : 'no_image.png',
+                    'slug'    => $buyItem->slug,
+                    'url'     => url('buy/'.$buyItem->category->slug.'/'.$buyItem->slug),
+                    'price'   => currencyFormat($buyItem->price, $this->options['currency']['code']),
+                    'landSize'    => number_format($landSize, (int)$this->options['currency']['decimal_place'], $this->config->item('decimal_point'), $this->config->item('thousand_point')).' sq.ft',
+                    'images'  => $buyItem->images($buyItem->id),
+                    'location' => State_model::factory()->findOne($buyItem->id)->name,
+                    'perSqPrice' => currencyFormat($perSqPrice, $this->options['currency']['code']),
+                );
+            }
+        }
+        // Rent Projects
+        $rentItems = Item_model::factory()->findAll(['type' => (int)1],4,'sort_order', 'ASC');
+        $this->data['rentItems'] = array();
+        if(!empty($rentItems)) {
+            foreach ($rentItems as $rentItem) {
+                $landSize   = round($rentItem->size, (int)$this->options['currency']['decimal_place']);
+                $perSqPrice      = round($landSize/$rentItem->price,(int)$this->options['currency']['decimal_place']);
+                $this->data['rentItems'][] = array(
+                    'id'      => $rentItem->id,
+                    'title'   => $rentItem->title,
+                    'img'     => ($this->getItemImgThumbnail($rentItem->id)) ? $this->getItemImgThumbnail($rentItem->id) : 'no_image.png',
+                    'slug'    => $rentItem->slug,
+                    'url'     => url('buy/'.$rentItem->category->slug.'/'.$rentItem->slug),
+                    'price'   => currencyFormat($rentItem->price, $this->options['currency']['code']),
+                    'landSize'    => number_format($landSize, (int)$this->options['currency']['decimal_place'], $this->config->item('decimal_point'), $this->config->item('thousand_point')).' sq.ft',
+                    'images'  => $rentItem->images($rentItem->id),
+                    'location' => State_model::factory()->findOne($rentItem->id)->name,
+                    'perSqPrice' => currencyFormat($perSqPrice, $this->options['currency']['code']),
+                );
+            }
+        }
+      //  exit;
         render('index', $this->data);
     }
 

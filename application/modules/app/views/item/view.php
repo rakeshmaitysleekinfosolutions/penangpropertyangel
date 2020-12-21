@@ -13,21 +13,12 @@
             <div class="col-md-8">
                 <div class="cell_details">
                     <?php if($item['images'] > 0) {?>
-                        <div id="demo" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php $index = 1; foreach ($item['images'] as $image) { ?>
-                                    <div class="carousel-item <?php echo ($index ==1) ? 'active' : '';?>">
-                                        <img src="<?php echo resize($image['image'],864, 450);?>" alt="">
-                                    </div>
-                                    <?php $index++;} ?>
-                            </div>
-                            <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#demo" data-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </a>
+                        <div class="row owl-carousel owl-theme item-images">
+                            <?php $index = 1; foreach ($item['images'] as $image) { ?>
+                                <div class="carousel-item <?php echo ($index ==1) ? 'active' : '';?>">
+                                    <img src="<?php echo resize($image['image'],864, 450);?>" alt="">
+                                </div>
+                                <?php $index++;} ?>
                         </div>
                     <?php } ?>
                     <h5><?php echo $item['title'];?></h5>
@@ -131,24 +122,17 @@
                 </div>
                 <div class="side_details_image">
                     <?php if(count($related_item) > 0) {?>
-                        <div id="demo" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <?php $index = 1; foreach ($related_item['images'] as $image) { ?>
-                                    <div class="carousel-item <?php echo ($index ==1) ? 'active' : '';?>">
-                                        <img src="<?php echo resize($image['image'],864, 450);?>" alt="">
-                                        <div class="carousel-caption">
-                                            <p><?php echo $related_item['title'];?></p>
-                                        </div>
+                        <div class="row owl-carousel owl-theme item-images">
+                            <?php $index = 1; foreach ($related_item['images'] as $image) { ?>
+                                <div class="item <?php echo ($index ==1) ? 'active' : '';?>">
+                                    <img src="<?php echo resize($image['image'],864, 450);?>" alt="">
+                                    <div class="carousel-caption">
+                                        <p><?php echo $related_item['title'];?></p>
                                     </div>
-                                    <?php $index++;} ?>
-                            </div>
-                            <!-- Left and right controls -->
-                            <a class="carousel-control-prev" href="#demo" data-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </a>
-                            <a class="carousel-control-next" href="#demo" data-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </a>
+                                </div>
+                                <?php
+                                $index++;
+                            } ?>
                         </div>
                     <?php } ?>
                 </div>

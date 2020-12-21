@@ -1,7 +1,7 @@
 <?php if ($project)  { ?>
     <div class="fea_div<?php echo $project['id'];?>">
         <h2><?php echo $project['name'];?></h2>
-        <div class="owl-carousel owl-theme">
+        <div class="row owl-carousel owl-theme features-banner-images">
             <?php $images = array();$images = $project->images($project['id']);if(count($images) > 0) { ?>
                 <?php foreach ($images as $image) { ?>
                     <div class="item">

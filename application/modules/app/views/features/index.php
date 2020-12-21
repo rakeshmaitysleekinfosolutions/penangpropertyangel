@@ -49,3 +49,7 @@
         </div>
     </div>
 </section>
+<script>
+    var myLabel             = myLabel || {};
+    myLabel.baseUrl         = '<?php echo base_url();?>';
+</script>

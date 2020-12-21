@@ -1,9 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+use Gregwar\Captcha\CaptchaBuilder;
 class AppController extends BaseController {
 
     private $csrfArray;
+    protected $builder;
     public function __construct() {
          parent::__construct();
          $this->csrfArray =  array(
@@ -16,6 +17,9 @@ class AppController extends BaseController {
         if(getSession('currency')) {
             $this->options['currency'] = $this->currency->getCurrency('MYR');
         }
+        $this->builder = new CaptchaBuilder;
+        $this->builder->setBackgroundColor(255, 255, 255);
+        $this->builder->build($width = 350, $height = 80, $font = null);
     }
     public  function __token() {
         return (isset($this->csrfArray['name'])) ? $this->csrfArray['name'] : '';

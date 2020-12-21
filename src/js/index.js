@@ -18,6 +18,7 @@ var $frmRegister = $("#frmRegister"),
     $frmLogin = $("#frmLogin"),
     $frmInspection = $('#inspection-arranged'),
     $frmRentFilter = $('#frm-rent-filter'),
+    $frmContact = $('#frmContact'),
     validate = ($.fn.validate !== undefined);
 
 if ($frmRegister.length > 0 && validate) {
@@ -249,24 +250,7 @@ $(document).on('change', '#compare3', function() {
 //       $('.fea_div2').hide();
 // });
 
-$('.owl-carousel').owlCarousel({
-      autoplay:true,
-      dots:false,
-      nav:true,
-      loop:true,
-      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
-      responsive:{
-            0:{
-                  items:1
-            },
-            600:{
-                  items:1
-            },
-            1000:{
-                  items:1
-            }
-      }
-});
+
 $(document).on('click', '.sub-project', function() {
       var sub_project_id = $(this).attr('data-sub_project_id');
       console.log(sub_project_id);
@@ -506,10 +490,174 @@ if ($frmInspection.length > 0 && validate) {
       });
 }
 
-window.onload = function() {
-      var $recaptcha = document.querySelector('#g-recaptcha-response');
 
-      if($recaptcha) {
-            $recaptcha.setAttribute("required", "required");
+
+// Contact Form
+if ($frmContact.length > 0 && validate) {
+      $frmContact.validate({
+            rules:{
+                  name: {
+                        required: true
+                  },
+                  email: {
+                        required: true,
+                        email: true
+                  },
+                  phone: {
+                        required: true
+                  },
+                  subject: {
+                        required: true,
+                  },
+                  message: {
+                        required: true,
+                  }
+            },
+            submitHandler: function (form, event) {
+                  event.preventDefault();
+                  $.ajax({
+                        type: "POST",
+                        url: $(form).attr('action'),
+                        dataType: "json",
+                        data: $(form).serialize(),
+                        beforeSend: function() {
+                              $('#contact-frm-submit-btn').LoadingOverlay("show");
+                        },
+                        success: function (json) {
+                              if (json['error']) {
+                                    $('#contact-frm-submit-btn').LoadingOverlay("hide");
+                                    if (json['error']) {
+                                          $('#message').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['message'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                                    }
+                              }
+                              if (json['success']) {
+                                    $('#message').html('<div class="alert alert-success"><i class="fa fa-check-circle"></i>  ' + json['message'] + '</div>');
+                                    setTimeout(function() {
+                                          location.href = json['redirect'];
+                                    },300);
+                              }
+                        }
+                  });
+
+                  return false; // required to block normal submit since you used ajax
+            }
+
+      });
+}
+
+$('.handbook-slider').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:3
+            },
+            1000:{
+                  items:5
+            }
       }
-};
+})
+$('.handbook-slider').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:3
+            },
+            1000:{
+                  items:5
+            }
+      }
+})
+$('.feature-banner-images').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:1
+            },
+            1000:{
+                  items:1
+            }
+      }
+})
+$('.feature-images').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:1
+            },
+            1000:{
+                  items:1
+            }
+      }
+})
+$('.item-images').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:1
+            },
+            1000:{
+                  items:1
+            }
+      }
+})
+$('.related-item-images').owlCarousel({
+      stagePadding: 50,
+      loop:true,
+      margin:10,
+      nav:true,
+      navText:['<i class="fa fa-chevron-left"></i>', '<i class="fa fa-chevron-right"></i>'],
+      responsive:{
+            0:{
+                  items:1
+            },
+            600:{
+                  items:1
+            },
+            1000:{
+                  items:1
+            }
+      }
+})
+// owl.on('mousewheel', '.owl-stage', function (e) {
+//       if (e.deltaY>0) {
+//             owl.trigger('next.owl');
+//       } else {
+//             owl.trigger('prev.owl');
+//       }
+//       e.preventDefault();
+// });

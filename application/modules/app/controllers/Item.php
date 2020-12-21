@@ -1,14 +1,14 @@
 <?php
-use Gregwar\Captcha\CaptchaBuilder;
+
 
 
 class Item extends AppController {
     private $itemType;
-    private $builder;
+
     public function __construct() {
         parent::__construct();
         $this->setLayout('layout/app');
-        $this->builder = new CaptchaBuilder;
+
         $this->init();
     }
 
@@ -187,8 +187,8 @@ class Item extends AppController {
                     'images'  => $related_item->images($related_item->id)
                 );
         }
-        $this->builder->setBackgroundColor(255, 255, 255);
-        $this->builder->build($width = 350, $height = 80, $font = null);
+//        $this->builder->setBackgroundColor(255, 255, 255);
+//        $this->builder->build($width = 350, $height = 80, $font = null);
         $this->data['builder'] = $this->builder;
         setSession('phrase',$this->builder->getPhrase());
         render('item/view', $this->data);

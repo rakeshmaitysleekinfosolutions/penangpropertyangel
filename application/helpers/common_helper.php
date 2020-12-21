@@ -521,4 +521,19 @@ if(!defined('BASEPATH')) EXIT("No direct script access allowed");
             echo $string;
         }
     }
+if(!function_exists('readMoreDots')) {
+    function readMoreDots($string, $length, $options = array()) {
+        // strip tags to avoid breaking any html
+        $string = strip_tags($string);
+        if (strlen($string) > $length) {
+            // truncate string
+            $stringCut = substr($string, 0, $length);
+            $endPoint = strrpos($stringCut, ' ');
+            //if the string doesn't contain any space then it will cut without word basis.
+            $string = $endPoint? substr($stringCut, 0, $endPoint) : substr($stringCut, 0);
+            $string .= '...';
+        }
+        echo $string;
+    }
+}
 ?>

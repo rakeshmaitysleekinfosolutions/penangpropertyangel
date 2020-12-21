@@ -1025,50 +1025,6 @@ footer ul li a:hover{
     text-align: center;
     margin-bottom: 30px;
 }
-/*----------------handbook details ---------------*/
-.handbook-details .cell_details_para::before{
-    display: none;
-}
-.handbook-details .cell_details_para::after{
-    display: none;
-}
-.remove-line{
-    border: none;
-}
-.handbook-details {
-    font-size: 16px !important;
-}
-.r-iLFBv6sy2Exw {
-    font-size: 14px !important;
-}
-.p1 {
-    font-size: 14px !important;
-}
-.p1 span{
-    font-size: 13px !important;
-}
-.article-detail-subheader {
-    font-size: 16px !important;
-}
-.detail_hand p span{
-    font-size: 16px !important;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-}
-.detail_hand p span a{
-    font-size: 14px !important;
-}
-.detail_hand .code-block{
-    font-size: 16px !important;
-    line-height: 18px !important;
-}
-.detail_hand h3{
-    font-size: 20px !important;
-}
-.detail_hand h2{
-    font-size: 24px !important;
-}
 .book{
     position: relative;
     padding: 10px;
@@ -1079,11 +1035,11 @@ footer ul li a:hover{
 }
 .book h3{
     position: absolute;
-    font-size: 23px;
+    font-size: 19px;
     top: 55%;
-    left: 50%;
-    -webkit-transform: translate(-50%,-55%);
-            transform: translate(-50%,-55%);
+    left: 0%;
+    -webkit-transform: translate(0%,-55%);
+            transform: translate(0%,-55%);
     color: #fff !important;
     z-index: 999;
     text-align: center;
@@ -1103,7 +1059,7 @@ footer ul li a:hover{
     top: 70%;
     left: 50%;
     -webkit-transform: translate(-50%,-70%);
-    transform: translate(-50%,-70%);
+            transform: translate(-50%,-70%);
     color: #fff !important;
     z-index: 999;
     text-align: center;
@@ -1340,7 +1296,7 @@ footer ul li a:hover{
     border-radius: 10px;
     margin-bottom: 35px;
     -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     -webkit-transition: -webkit-transform .5s;
     transition: -webkit-transform .5s;
     transition: transform .5s;
@@ -1700,14 +1656,14 @@ footer ul li a:hover{
     margin: 20px 0 30px;
 }
 .carousel-control-prev-icon {
-    color: #000 !important;
-    width: 30px;
-    height: 30px;
+	color: #000 !important;
+	width: 30px;
+	height: 30px;
 }
 .carousel-control-next-icon {
-    color: #000 !important;
-    width: 30px;
-    height: 30px;
+	color: #000 !important;
+	width: 30px;
+	height: 30px;
 }
 .list_price_sell ul li{
     list-style: none;
@@ -1767,7 +1723,7 @@ footer ul li a:hover{
     top: 0%;
     left: 44%;
     -webkit-transform: translate(-44%,0%);
-    transform: translate(-44%,0%);
+            transform: translate(-44%,0%);
 }
 .cell_details_para::after{
     position: absolute;
@@ -1778,7 +1734,7 @@ footer ul li a:hover{
     top: 110%;
     left: 44%;
     -webkit-transform: translate(-44%,-110%);
-    transform: translate(-44%,-110%);
+            transform: translate(-44%,-110%);
 }
 .cell_details_para p{
     font-size: 14px;
@@ -1834,7 +1790,7 @@ footer ul li a:hover{
     left: 60%;
     position: absolute;
     -webkit-transform: (-60%,-93%);
-    transform: (-60%,-93%);
+            transform: (-60%,-93%);
 }
 .side_details{
     border: 1px solid #d8d8d8;
@@ -2018,7 +1974,7 @@ footer ul li a:hover{
     top: 178%;
     left: -12%;
     -webkit-transform: translate(0%, -178%);
-    transform: translate(0%, -178%);
+            transform: translate(0%, -178%);
     width: 348px;
     height: 1px;
     background: #D8D8D8;
@@ -2084,7 +2040,7 @@ footer ul li a:hover{
     top: 143%;
     left: 1%;
     -webkit-transform: translate(-1%, -143%);
-    transform: translate(-1%, -143%);
+            transform: translate(-1%, -143%);
     width: 321px;
     height: 1px;
     background: #D7D7D7;
@@ -2328,260 +2284,24 @@ footer ul li a:hover{
     display: block;
     clear: both;
 }
-/*------------------------------About Page css---------------------------------*/
-.about{
-    padding: 40px 0;
-}
-.about h2{
-    font-size: 40px;
-    color: #0f1b2d;
-    font-weight: 700;
-    font-family: "Poppins";
-    text-align: center;
-    margin-bottom: 30px;
-}
-.about p{
-    font-size: 14px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-bottom: 20px;
-}
-.about h4{
-    font-size: 18px;
-    color: #0f1b2d;
-    font-weight: 600;
-    font-family: "Poppins";
-    text-decoration: underline;
-    margin-bottom: 20px;
-}
-.about ol {
-    padding-left: 65px;
-}
-.about ol li{
-    font-size: 13px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    line-height: 24px;
-}
-.about ol li p{
-    font-size: 13px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
-.about ol li span{
-    font-size: 16px;
-    color: #0f1b2d;
-    font-weight: 600;
-    font-family: "Poppins";
-}
-.last_p{
-    font-size: 14px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-top: 30px;
-}
-.last_p span{
-    text-decoration: underline;
-}
 
-/*------------------------------Contact Page css---------------------------------*/
-.contact{
-    padding: 40px 0;
-}
-.contact h2{
-    font-size: 40px;
-    color: #0f1b2d;
-    font-weight: 700;
-    font-family: "Poppins";
-    text-align: center;
-    margin-bottom: 20px;
-}
-.contact_info h4{
-    margin-top: 40px;
-    font-size: 18px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-bottom: 30px;
-}
-.contact_info ul li{
-    list-style: none;
-    font-size: 14px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    line-height: 26px;
-}
-.contact_info ul li span{
-    padding-right: 32px;
-}
-iframe{
-    width: 685px;
-    height: 350px;
-    margin-top: 20px;
-}
-.contact_form{
-    position: relative;
-}
-.contact_form::before{
+
+#g-recaptcha-response {
+    display: block !important;
     position: absolute;
-    top: 0%;
-    left: 0%;
-    -webkit-transform: translate(0%,0%);
-            transform: translate(0%,0%);
-    content: "";
-    width: 1px;
-    height: 665px;
-    background: #000;
+    margin: -78px 0 0 0 !important;
+    width: 302px !important;
+    height: 76px !important;
+    z-index: -999999;
+    opacity: 0;
 }
-.contact_form h4{
-    font-size: 18px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-bottom: 20px;
+/*----------------handbook details ---------------*/
+.handbook-details .cell_details_para::before{
+	display: none;
 }
-.contact_form form label{
-    font-size: 14px;
-    color: #0f1b2d;
-    font-weight: 400;
-    font-family: "Poppins";
-    margin-bottom: 0px;
+.handbook-details .cell_details_para::after{
+	display: none;
 }
-.contact_form form input{
-    border: none;
-    background: #E5E5E5;
-    border-radius: 0%;
-    height: 30px;
-}
-.contact_form form textarea{
-    width: 350px;
-    border: none;
-    background: #E5E5E5;
-}
-.contact_form form h2{
-    text-align: left;
-    color: red;
-}
-.contact_form form button{
-    background: #808080;
-    font-size: 16px;
-    color: #fff;
-    border-radius: 0%;
-}
-/* Buy & Rent css on home page*/
-.buy_home{
-    padding: 30PX 0;
-}
-.buy_home h2{
-    font-size: 40px;
-    color: #303030;
-    font-weight: 700;
-    font-family: "Poppins";
-    text-align: center;
-    margin-bottom: 30px;
-}
-.buy_home .card{
-    margin-bottom: 20px;
-    background: #E5E5E5;
-    border: none;
-    border-radius: 0%;
-}
-.buy_home .card-title{
-    font-size: 20px;
-    padding: 15px 0 0;
-    position: relative;
-}
-.buy_home .card-title::after{
-    position: absolute;
-    top: 105%;
-    left: 0%;
-    -webkit-transform: translate(0%, -10%);
-            transform: translate(0%, -10%);
-    width: 240px;
-    height: 1px;
-    background: #000;
-    content: "";
-}
-.buy_home img{
-    width: 100%;
-    min-height: 250px;
-}
-.buy_home ul li{
-    list-style: none;
-    font-size: 14px;
-    font-weight: 400;
-}
-.buy_home a{
-    margin-top: -16px;
-    font-size: 14px;
-    color: #000;
-    margin-left: 140px;
-}
-.buy_home a i{
-    padding-left: 5px;
-}
-.buy_home .home_more{
-    font-size: 20px;
-    background: #808080;
-    padding: 15px 55px;
-    margin: 30px 0 0 470px;
-    color: #fff;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
-    border-radius: 40px;
-    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    margin-bottom: 15px;
-}
-.buy_home .home_more:hover{
-    text-decoration: none;
-}
-/*------------------------------erroe page css ---------------------------*/
-.error{
-    width: 100%;
-    height: 100vh;
-    padding: 200px 0;
-}
-.error_msg h1{
-    font-size: 150px;
-    color: #0f1b2d;
-    font-weight: 600;
-    font-family: "Poppins";
-    text-align: center;
-}
-.error_msg h4{
-    text-align: center;
-    font-size: 35px;
-    color: #d8d8d8;
-    font-weight: 400;
-    font-family: "Poppins";
-}
-.error_msg p{
-    text-align: center;
-    font-size: 18px;
-    color: #d8d8d8;
-    font-weight: 400;
-    font-family: "Poppins";
-}
-.error_msg a{
-    text-align: center;
-    font-size: 16px;
-    color: #000;
-    font-weight: 400;
-    font-family: "Poppins";
-    border: 1px solid #000;
-    padding: 12px 28px;
-    margin-left: 485px;
-    margin-top: 30px;
-    display: -webkit-inline-box;
-    display: -ms-inline-flexbox;
-    display: inline-flex;
+.remove-line{
+	border: none;
 }
